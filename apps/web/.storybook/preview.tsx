@@ -1,11 +1,9 @@
 import type { Preview } from '@storybook/react-vite';
-import { initialize, mswLoader } from 'msw-storybook-addon';
+import { mswLoader } from 'msw-storybook-addon/csf3';
 
 import '../src/app/globals.css';
 import { localeFlags, locales } from '../src/components/i18n/messages';
 import { withAppProviders } from './decorators/with-app-providers';
-
-initialize({ onUnhandledRequest: 'bypass' });
 
 export const globalTypes: Preview['globalTypes'] = {
     theme: {
@@ -55,7 +53,7 @@ export const initialGlobals: Preview['initialGlobals'] = {
 
 const preview: Preview = {
     decorators: [withAppProviders],
-    loaders: [mswLoader],
+    loaders: [mswLoader()],
     parameters: {
         controls: {
             matchers: {

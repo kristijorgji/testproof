@@ -1,4 +1,5 @@
-import { summarizeCoverage, type CoverageStatus, type FlowCoverage } from '../coverage.js';
+import { summarizeCoverage, type FlowCoverage } from '../coverage.js';
+import type { CoverageStatus } from '../schema.js';
 import type { Flow, Ledger } from '../schema.js';
 
 function escapeHtml(value: string): string {

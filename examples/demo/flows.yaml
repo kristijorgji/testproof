@@ -1,0 +1,23 @@
+version: 2
+platforms:
+  - id: web
+    title: Web
+  - id: mobile
+    title: Mobile
+    children:
+      - id: mobile.ios
+        title: iOS
+      - id: mobile.android
+        title: Android
+areas:
+  - id: AUTH
+    title: AUTH
+    groups:
+      - title: Login
+        flows:
+          - id: FLOW-AUTH-LOGIN-SUCCESS
+            title: Correct credentials open the dashboard
+            targets: [web, mobile]
+          - id: FLOW-AUTH-LOGIN-INVALID
+            title: Invalid credentials show an error
+            targets: [web]

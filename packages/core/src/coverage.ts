@@ -23,7 +23,7 @@ export interface FlowCoverage {
 }
 
 export interface DeriveCoverageOptions {
-    scanners: PlatformScannerConfig[];
+    scanners?: PlatformScannerConfig[];
     /** @deprecated use scanners */
     maestroFlowsDir?: string;
     /** @deprecated use scanners */

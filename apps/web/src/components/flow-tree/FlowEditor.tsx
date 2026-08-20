@@ -1,7 +1,7 @@
 'use client';
 
-import type { CoverageCell, Flow, Ledger, LedgerPatch, PlatformNode } from '@testproof/core';
-import { flattenFlows } from '@testproof/core';
+import type { CoverageCell, Ledger, LedgerPatch, PlatformNode } from '@testproof/core';
+import { flattenFlows } from '@testproof/core/parse';
 import { useMemo, useState, useTransition } from 'react';
 
 import { useT } from '../i18n/LocaleProvider';

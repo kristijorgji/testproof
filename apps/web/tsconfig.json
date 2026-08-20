@@ -9,7 +9,8 @@
         "plugins": [{ "name": "next" }],
         "paths": { "@/*": ["./src/*"] },
         "allowJs": false,
-        "incremental": true
+        "incremental": true,
+        "types": ["msw-storybook-addon/csf3"]
     },
     "include": ["src/**/*.ts", "src/**/*.tsx", ".storybook/**/*.ts", ".storybook/**/*.tsx", "next-env.d.ts"],
     "exclude": ["node_modules"]

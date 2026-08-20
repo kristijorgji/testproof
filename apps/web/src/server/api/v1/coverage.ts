@@ -18,6 +18,14 @@ const route = createRoute({
             description: 'Stored',
             content: { 'application/json': { schema: z.object({ snapshotId: z.string() }) } },
         },
+        403: {
+            description: 'Project token does not match body',
+            content: { 'application/json': { schema: z.object({ error: z.string() }) } },
+        },
+        500: {
+            description: 'Insert failed',
+            content: { 'application/json': { schema: z.object({ error: z.string() }) } },
+        },
     },
 });
 
@@ -48,5 +56,5 @@ coverageRoutes.openapi(route, async (c) => {
             })),
         );
     }
-    return c.json({ snapshotId: snapshot.id });
+    return c.json({ snapshotId: snapshot.id }, 200);
 });

@@ -1,0 +1,5 @@
+appId: demo
+tags:
+  - FLOW-AUTH-LOGIN-SUCCESS
+---
+- launchApp

@@ -1,9 +1,11 @@
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 
+import { type TestproofConfig } from '@testproof/core';
 import { createJiti } from 'jiti';
 
-import { type TestproofConfig } from '@testproof/core';
+const require = createRequire(import.meta.url);
 
 const NAMES = ['testproof.config.ts', 'testproof.config.js', 'testproof.config.mjs'];
 
@@ -20,7 +22,11 @@ export async function loadConfig(cwd = process.cwd(), explicit?: string): Promis
     if (!file) {
         throw new Error('No testproof.config.ts found. Run `testproof init` first.');
     }
-    const jiti = createJiti(import.meta.url);
+    const jiti = createJiti(import.meta.url, {
+        alias: {
+            '@testproof/core': require.resolve('@testproof/core'),
+        },
+    });
     const mod = (await jiti.import(file)) as { default?: TestproofConfig } & TestproofConfig;
     return mod.default ?? mod;
 }

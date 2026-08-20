@@ -17,13 +17,25 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Resolve CLI
+      id: cli
+      shell: bash
+      run: |
+        if [ -f packages/cli/dist/index.js ]; then
+          echo "bin=node packages/cli/dist/index.js" >> "$GITHUB_OUTPUT"
+        elif [ -x node_modules/.bin/testproof ]; then
+          echo "bin=node_modules/.bin/testproof" >> "$GITHUB_OUTPUT"
+        else
+          echo "Install the testproof package or build this workspace first." >&2
+          exit 1
+        fi
     - name: Validate
       shell: bash
-      run: npx testproof validate --config "${{ inputs.config }}"
+      run: ${{ steps.cli.outputs.bin }} validate --config "${{ inputs.config }}"
     - name: Push coverage
       shell: bash
       env:
         TESTPROOF_URL: ${{ inputs.url }}
         TESTPROOF_TOKEN: ${{ inputs.token }}
         TESTPROOF_PROJECT: ${{ inputs.project }}
-      run: npx testproof push --config "${{ inputs.config }}"
+      run: ${{ steps.cli.outputs.bin }} push --config "${{ inputs.config }}"

@@ -114,8 +114,10 @@ areas:
             behavior: negative
 `);
         const flow = ledger.areas[0]?.groups[0]?.flows[0];
-        expect(flow?.priority).toBe('high');
-        expect(resolveTargets(ledger, flow!)).toEqual([{ platform: 'mobile.android', dimensions: { theme: 'dark' } }]);
+        expect(flow).toBeDefined();
+        if (!flow) throw new Error('expected flow');
+        expect(flow.priority).toBe('high');
+        expect(resolveTargets(ledger, flow)).toEqual([{ platform: 'mobile.android', dimensions: { theme: 'dark' } }]);
     });
 
     it('expands parent platform targets to leaves when no dimensions', () => {
@@ -139,7 +141,10 @@ areas:
             title: A
             targets: [mobile]
 `);
-        expect(resolveTargets(ledger, ledger.areas[0]!.groups[0]!.flows[0]!)).toEqual([
+        const flow = ledger.areas[0]?.groups[0]?.flows[0];
+        expect(flow).toBeDefined();
+        if (!flow) throw new Error('expected flow');
+        expect(resolveTargets(ledger, flow)).toEqual([
             { platform: 'mobile.ios', dimensions: {} },
             { platform: 'mobile.android', dimensions: {} },
         ]);

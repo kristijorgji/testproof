@@ -11,10 +11,11 @@ export interface MaestroFlowInventoryRow {
 export function parseMaestroFlowTags(yamlSource: string): string[] {
     // Require indentation on list items so document `---` / body `- launchApp` are not tags.
     const tagsBlock = yamlSource.match(/^tags:\s*\n((?:[ \t]+-[ \t]*.+\n)*)/m);
-    if (!tagsBlock) {
+    const block = tagsBlock?.[1];
+    if (!block) {
         return [];
     }
-    return tagsBlock[1]
+    return block
         .split('\n')
         .map((line) => line.match(/^[ \t]+-[ \t]*(.+?)\s*$/)?.[1]?.replace(/^['"]|['"]$/g, ''))
         .filter((t): t is string => Boolean(t));

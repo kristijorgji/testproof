@@ -17,6 +17,14 @@ const route = createRoute({
             description: 'Stored',
             content: { 'application/json': { schema: z.object({ runId: z.string() }) } },
         },
+        403: {
+            description: 'Project token does not match body',
+            content: { 'application/json': { schema: z.object({ error: z.string() }) } },
+        },
+        500: {
+            description: 'Insert failed',
+            content: { 'application/json': { schema: z.object({ error: z.string() }) } },
+        },
     },
 });
 
@@ -51,5 +59,5 @@ runsRoutes.openapi(route, async (c) => {
             })),
         );
     }
-    return c.json({ runId: run.id });
+    return c.json({ runId: run.id }, 200);
 });

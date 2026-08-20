@@ -21,8 +21,10 @@ services:
       - '3100:3100'
     environment:
       DATABASE_URL: postgres://testproof:testproof@postgres:5432/testproof
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-dev-only-change-me}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-dev-only-change-me-please-replace}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3100}
+      NEXT_PUBLIC_BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3100}
+      LOCAL_LEDGER_PATH: examples/demo/flows.yaml
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
       GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-}

@@ -19,5 +19,11 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
+      - run: pnpm lint
       - run: pnpm test
+      - run: pnpm build
       - run: pnpm --filter @testproof/web storybook:build
+      - name: Validate demo ledger
+        run: node packages/cli/dist/index.js validate
+      - name: Check generated coverage docs
+        run: node packages/cli/dist/index.js generate --check

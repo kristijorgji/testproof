@@ -54,7 +54,7 @@ export function PublishDialog({
             />
             <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" checked={pullRequest} onChange={(e) => setPullRequest(e.target.checked)} />
-                Open pull request
+                {t('editor.pullRequest')}
             </label>
             <button type="submit" className="rounded bg-[var(--accent)] px-3 py-2 text-white">
                 {t('editor.publish')}

@@ -24,7 +24,10 @@ RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 COPY --from=build /app/apps/web/.next/standalone ./
 COPY --from=build /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=build /app/apps/web/public ./apps/web/public
-COPY --from=build /app/packages/db ./packages/db
+COPY --from=build /app/packages/db/dist ./packages/db/dist
+COPY --from=build /app/packages/db/migrations ./packages/db/migrations
+COPY --from=build /app/packages/db/package.json ./packages/db/package.json
+COPY --from=build /app/examples ./examples
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 EXPOSE 3100

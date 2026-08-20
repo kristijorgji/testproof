@@ -1,7 +1,7 @@
 'use client';
 
 import type { FlowTarget, PlatformNode } from '@testproof/core';
-import { targetPlatformId } from '@testproof/core';
+import { targetPlatformId } from '@testproof/core/platforms';
 
 function selectedIds(targets: FlowTarget[]): Set<string> {
     return new Set(targets.map(targetPlatformId));
