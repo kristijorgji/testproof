@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { I18nProvider } from '@/components/i18n/I18nProvider';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { getLocaleFromCookie } from '@/i18n/get-locale';
+import { THEME_INIT_SCRIPT } from '@/lib/theme/theme-init';
 
 import './globals.css';
 
@@ -14,10 +15,13 @@ export const metadata = {
 export default async function RootLayout({ children }: { children: ReactNode }) {
     const locale = await getLocaleFromCookie();
     return (
-        <html lang={locale} suppressHydrationWarning>
+        <html lang={locale} data-theme-mode="system" suppressHydrationWarning>
+            <head>
+                <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+            </head>
             <body>
                 <I18nProvider locale={locale}>
-                    <ThemeProvider>{children}</ThemeProvider>
+                    <ThemeProvider initialMode="system">{children}</ThemeProvider>
                 </I18nProvider>
             </body>
         </html>

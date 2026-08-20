@@ -1,11 +1,13 @@
 import { SignInForm } from '@/components/auth/SignInForm';
 import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 export default async function SignInPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
     const { next } = await searchParams;
     return (
         <main className="mx-auto max-w-md p-8">
-            <div className="mb-6 flex justify-end">
+            <div className="mb-6 flex justify-end gap-3">
+                <ThemeToggle />
                 <LocaleSwitcher />
             </div>
             <SignInForm nextPath={next && next.startsWith('/') ? next : '/projects'} />

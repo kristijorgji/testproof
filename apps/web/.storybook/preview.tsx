@@ -15,6 +15,7 @@ export const globalTypes: Preview['globalTypes'] = {
             items: [
                 { value: 'light', icon: 'circlehollow', title: 'Light' },
                 { value: 'dark', icon: 'circle', title: 'Dark' },
+                { value: 'system', icon: 'browser', title: 'System' },
             ],
         },
     },

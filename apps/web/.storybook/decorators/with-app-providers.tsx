@@ -15,7 +15,7 @@ function QueryProvider({ children }: { children: ReactNode }): ReactElement {
     return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }
 
-function ThemeSync({ children, sbTheme }: { children: ReactNode; sbTheme: 'light' | 'dark' }): ReactElement {
+function ThemeSync({ children, sbTheme }: { children: ReactNode; sbTheme: 'light' | 'dark' | 'system' }): ReactElement {
     const { setMode } = useTheme();
     useEffect(() => {
         setMode(sbTheme);
@@ -25,7 +25,7 @@ function ThemeSync({ children, sbTheme }: { children: ReactNode; sbTheme: 'light
 
 export const withAppProviders: Decorator = (Story, context) => {
     const locale = resolveStorybookLocaleForDecorator(context.globals.locale);
-    const sbTheme = (context.globals.theme as 'light' | 'dark') ?? 'light';
+    const sbTheme = (context.globals.theme as 'light' | 'dark' | 'system') ?? 'light';
     const deviceViewport = context.globals.deviceViewport as string | undefined;
     const forcedWidth =
         deviceViewport === 'mobile'
@@ -38,7 +38,7 @@ export const withAppProviders: Decorator = (Story, context) => {
     setPathname(`/${locale}`);
     return (
         <QueryProvider>
-            <ThemeProvider initial={sbTheme}>
+            <ThemeProvider initialMode={sbTheme}>
                 <I18nProvider locale={locale}>
                     <ThemeSync sbTheme={sbTheme}>
                         <div style={{ width: forcedWidth, maxWidth: '100%' }}>

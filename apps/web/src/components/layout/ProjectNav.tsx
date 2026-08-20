@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { SignOutButton } from '../auth/SignOutButton';
 import { LocaleSwitcher } from '../i18n/LocaleSwitcher';
+import { ThemeToggle } from '../theme/ThemeToggle';
 
 export function ProjectNav({ projectId, name }: { projectId: string; name: string }) {
     const { t } = useTranslation();
@@ -29,6 +30,7 @@ export function ProjectNav({ projectId, name }: { projectId: string; name: strin
                 ))}
             </div>
             <div className="flex items-center gap-3">
+                <ThemeToggle />
                 <LocaleSwitcher />
                 <SignOutButton />
             </div>
