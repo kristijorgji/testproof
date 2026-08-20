@@ -1,3 +1,5 @@
+.idea/
+
 node_modules
 dist
 .next
@@ -6,8 +8,10 @@ storybook-static
 .turbo
 /coverage
 *.tsbuildinfo
+
 .env
 .env.local
 .DS_Store
+
 apps/web/AGENTS.md
 apps/web/CLAUDE.md

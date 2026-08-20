@@ -15,6 +15,7 @@
         "db:migrate": "pnpm --filter @testproof/db db:migrate",
         "db:seed": "pnpm --filter @testproof/db build && pnpm --filter @testproof/db db:seed",
         "storybook": "pnpm --filter @testproof/web storybook",
+        "set-version": "node scripts/set-version.mjs",
         "clean": "turbo clean && rm -rf node_modules"
     },
     "devDependencies": {
