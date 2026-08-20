@@ -1,0 +1,7 @@
+dist
+.next
+node_modules
+storybook-static
+packages/db/migrations
+packages/core/test/fixtures
+pnpm-lock.yaml

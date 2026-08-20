@@ -1,0 +1,406 @@
+version: 1
+areas:
+  - id: AUTH
+    title: AUTH
+    scope: common
+    groups:
+      - title: Registration
+        subtitle: a. User (consumer)
+        notes: |
+          Email confirmation is **hybrid**: magic link + 6-digit OTP on **both** web and
+          mobile / Mailpit. Same email always includes both.
+        flows:
+          - id: FLOW-AUTH-REG-A-VALIDATE
+            title: On-change validations and sticky bottom CTA
+          - id: FLOW-AUTH-REG-A-CONFIRM
+            title: Receive confirmation email → confirm email account
+          - id: FLOW-AUTH-REG-A-DASHBOARD
+            title: After confirm → can access dashboard
+          - id: FLOW-AUTH-REG-A-RESEND
+            title: Resend confirmation email
+            children:
+              - id: FLOW-AUTH-REG-A-RESEND-LOCKOUT
+                title: Resend within cooldown → still **one** Mailpit message / cooldown UI
+      - title: Registration
+        subtitle: b. Professional for a country with a verification policy
+        notes: |
+          Subtypes:
+        flows:
+          - id: FLOW-AUTH-REG-B-BROKER
+            title: broker
+          - id: FLOW-AUTH-REG-B-DEVELOPER
+            title: developer
+          - id: FLOW-AUTH-REG-B-PROPERTY-MANAGER
+            title: property_manager
+          - id: FLOW-AUTH-REG-B-BANK-ASSET-MANAGER
+            title: bank_asset_manager
+          - id: FLOW-AUTH-REG-B-PRIVATE-SELLER
+            title: private_seller → auto-verified → can publish
+      - title: Registration
+        subtitle: b. Professional (common for all subtypes above)
+        flows:
+          - id: FLOW-AUTH-REG-B-VALIDATE
+            title: On-change validations and sticky bottom CTA
+          - id: FLOW-AUTH-REG-B-CONFIRM
+            title: Receive confirmation email
+          - id: FLOW-AUTH-REG-B-FIELDS
+            title: Correct registration fields for the subtype
+          - id: FLOW-AUTH-REG-B-HUB
+            title: Correct verification hub for the subtype
+      - title: Registration
+        subtitle: c. Professional for a country without a verification policy
+        notes: |
+          Unsupported = country **not** in `SUPPORTED_PUBLISH_COUNTRY_CODES` (e.g. US —
+          **not** DE; DE has a full policy). UI pickers only list supported markets.
+        flows:
+          - id: FLOW-AUTH-REG-C-UI
+            title: UI country picker only offers supported markets
+          - id: FLOW-AUTH-REG-C-API
+            title: API register with unsupported `countryCode` → HTTP 400
+            note: runScript HTTP against e2e API via `127.0.0.1`
+      - title: Registration
+        subtitle: d. Register as agency (same as professional `b`, but “registering as Agency”)
+        flows:
+          - id: FLOW-AUTH-REG-D-BLUR
+            title: Validations work correctly on blur
+          - id: FLOW-AUTH-REG-D-COMPLETE
+            title: Registration completes accordingly
+          - id: FLOW-AUTH-REG-D-ICON
+            title: Agency icon / manage-agency entry is usable
+      - title: Registration
+        subtitle: e. Agency invitation
+        flows:
+          - id: FLOW-AUTH-REG-E-INVITE
+            title: Can register while accepting an agency invitation
+            children:
+              - id: FLOW-AUTH-REG-E-INVITE-LOGGED-IN
+                title: Logged-in user (matching invite email) opens invite link → accepted; agency dashboard + success feedback
+              - id: FLOW-AUTH-REG-E-INVITE-EXISTING
+                title: Existing account, logged out → Sign in (token preserved) → accepted; not stuck on EMAIL_EXISTS
+      - title: Login
+        flows:
+          - id: FLOW-AUTH-LOGIN-INVALID
+            title: Invalid credentials → clear error message
+          - id: FLOW-AUTH-LOGIN-LOCKOUT
+            title: Lockout after repeated invalid logins
+          - id: FLOW-AUTH-LOGIN-SUCCESS
+            title: Correct credentials → dashboard (or redirect URL)
+      - title: Forgot password
+        flows:
+          - id: FLOW-AUTH-FORGOT-RESEND
+            title: Resend reset email
+            children:
+              - id: FLOW-AUTH-FORGOT-RESEND-LOCKOUT
+                title: Resend within cooldown → still one Mailpit message / wait UI
+          - id: FLOW-AUTH-FORGOT-VALID
+            title: Send reset email → reset → login with new password
+          - id: FLOW-AUTH-FORGOT-INVALID
+            title: Reset password with invalid token
+
+  - id: ALL
+    title: ALL
+    scope: common
+    groups:
+      - title: ALL
+        flows:
+          - id: FLOW-ALL-THEME
+            title: Changing theme works (light / dark / system; preference persists)
+          - id: FLOW-ALL-LOCALE
+            title: Changing locale works (UI switch and content)
+          - id: FLOW-ALL-CURRENCY
+            title: Changing currency reflects prices on properties
+
+  - id: HOME
+    title: HOME
+    scope: common
+    intro: |
+      Mobile `FLOW-HOME-AUTH-CTAS` means Account tab → Login / Sign up (same intent
+      as web header CTAs; Home has no separate auth buttons).
+    groups:
+      - title: HOME
+        flows:
+          - id: FLOW-HOME-OPENS
+            title: Page opens
+          - id: FLOW-HOME-SEARCH
+            title: Search actions work
+          - id: FLOW-HOME-AUTH-CTAS
+            title: Login / Register navigation
+            note: Account tab → Login / Sign up
+
+  - id: PROPERTIES
+    title: PROPERTIES
+    scope: common
+    groups:
+      - title: Properties page
+        flows:
+          - id: FLOW-PROP-OPEN
+            title: Select a property → opens detail
+            children:
+              - id: FLOW-PROP-GALLERY
+                title: Image gallery / lightbox — images fit viewport; swipe or next; system back closes lightbox only
+          - id: FLOW-PROP-FILTERS
+            title: Filters work
+            children:
+              - id: FLOW-PROP-FILTERS-BACK
+                title: Filters sheet — system/browser back closes sheet without leaving listings (web)
+              - id: FLOW-PROP-FILTERS-VALID
+                title: Valid listings returned
+                children:
+                  - id: FLOW-PROP-FILTERS-DYNAMIC
+                    title: Dynamic filters per property type
+              - id: FLOW-PROP-EMPTY
+                title: Empty listing → proper empty view
+          - id: FLOW-PROP-MAP
+            title: Map view toggle shows the correct map
+            children:
+              - id: FLOW-PROP-MAP-BACK
+                title: Map preview card — browser back closes the card without leaving the map (web)
+          - id: FLOW-PROP-SCROLL
+            title: Scrolling works
+          - id: FLOW-PROP-FAVORITE
+            title: Add as favorite
+            children:
+              - id: FLOW-PROP-FAVORITE-GUEST
+                title: Guest → login/register
+              - id: FLOW-PROP-FAVORITE-RETURN
+                title: "After login: return with property favorited"
+          - id: FLOW-PROP-CURRENCY
+            title: Changing currency reflects immediately on property cards
+          - id: FLOW-PROP-SELLER
+            title: Seller card shown when enabled
+          - id: FLOW-PROP-LIST
+            title: List renders property cards or empty state
+            note: List smoke (cards or empty)
+
+  - id: PROFESSIONALS
+    title: PROFESSIONALS PAGE
+    scope: common
+    groups:
+      - title: PROFESSIONALS PAGE
+        flows:
+          - id: FLOW-PRO-PUBLIC
+            title: Public professional page shown correctly; navigate with multiple properties (pagination)
+
+  - id: DASHBOARD
+    title: Logged-in dashboard
+    scope: common
+    groups:
+      - title: Account settings
+        flows:
+          - id: FLOW-DASH-ACCT-DIRTY
+            title: Change name and contact options only when the form is dirty; submit enabled then
+            children:
+              - id: FLOW-DASH-ACCT-VALIDATE
+                title: Validation works on change for all fields
+          - id: FLOW-DASH-EMAIL
+            title: Email change — submit enabled only when dirty; on-change validation
+            children:
+              - id: FLOW-DASH-EMAIL-OK
+                title: Success — message under email that a confirmation email was sent
+              - id: FLOW-DASH-EMAIL-BAD-PW
+                title: Invalid current password — proper message
+              - id: FLOW-DASH-EMAIL-ERR
+                title: Other validation / API errors shown properly
+          - id: FLOW-DASH-PW
+            title: Password change — submit enabled only when dirty; on-change validation
+            children:
+              - id: FLOW-DASH-PW-OK
+                title: Success works properly
+              - id: FLOW-DASH-PW-BAD
+                title: Invalid current password — proper message
+              - id: FLOW-DASH-PW-ERR
+                title: Other validation / API errors handled properly
+          - id: FLOW-DASH-PUBLIC
+            title: Professional users can add public information (contact, avatar, etc.)
+      - title: Property creation
+        flows:
+          - id: FLOW-DASH-CREATE-UPGRADE
+            title: User role clicks create (dashboard / home / etc.) → upgrade to professional view
+            children:
+              - id: FLOW-DASH-CREATE-UPGRADE-FORM
+                title: They upgrade; form validation mostly on-change (immediate)
+              - id: FLOW-DASH-CREATE-UPGRADE-DONE
+                title: Returned to property creation → property can be created successfully
+          - id: FLOW-DASH-CREATE-PRO
+            title: Professional role clicks create property
+            children:
+              - id: FLOW-DASH-CREATE-PENDING
+                title: Without verification for the country → pending verification; can open verification hub
+              - id: FLOW-DASH-CREATE-VERIFIED
+                title: Verified for the country → create successfully; see review pending
+              - id: FLOW-DASH-CREATE-SUPPORTED
+                title: Supported market with policy (e.g. DE) → same gates as AL; need approved profile (or agency verification) for that country; pending → hub CTA; approved → create OK
+              - id: FLOW-DASH-CREATE-UNSUPPORTED
+                title: "Unsupported listing country (not in `COUNTRIES`, e.g. US) → not offered in wizard; API create → validation error `Unsupported property countryCode: …`"
+          - id: FLOW-DASH-CREATE-WIZARD
+            title: Already verified professional for listing country completes creation
+            children:
+              - id: FLOW-DASH-CREATE-WIZARD-STEPS
+                title: All wizard steps work; most fields re-validate on change; location fields sync with map and the other way around
+      - title: Create as agency
+        flows:
+          - id: FLOW-DASH-CREATE-AGENCY-OK
+            title: Verified agency for target country matching listing country — create without blocker
+          - id: FLOW-DASH-CREATE-AGENCY-BLOCK
+            title: Unverified agency for country X — blocked from listing for that country
+          - id: FLOW-DASH-CREATE-AGENCY-CROSS
+            title: Agency verified for X posting on Y — cross-country blocked; proper UI notification
+      - title: Professional verification
+        flows:
+          - id: FLOW-DASH-VERIFY
+            title: Dashboard shows existing verifications (per country) by status; can modify or re-submit changes
+      - title: My properties
+        flows:
+          - id: FLOW-DASH-MY-DELETE
+            title: Delete a test-created property after confirming in a dialog/modal
+          - id: FLOW-DASH-MY-EDIT
+            title: "Edit flow: see properties → edit → save; change reflects immediately and on refresh"
+      - title: Statistics page
+        flows:
+          - id: FLOW-DASH-STATS-OPEN
+            title: Opens fine
+          - id: FLOW-DASH-STATS-FILTER
+            title: Filters by property
+      - title: Notification settings
+        flows:
+          - id: FLOW-DASH-NOTIF-OPEN
+            title: Opens fine
+          - id: FLOW-DASH-NOTIF-SAVE
+            title: Can update settings on save
+      - title: Security
+        flows:
+          - id: FLOW-DASH-SEC-OPEN
+            title: Opens fine
+          - id: FLOW-DASH-SEC-CLEAR
+            title: Can clear all sessions
+          - id: FLOW-DASH-SEC-REVOKE
+            title: Can delete a single session
+      - title: Agency dashboard (if one already exists)
+        flows:
+          - id: FLOW-DASH-AGENCY-DETAILS
+            title: Manage details (admin manage; others readonly)
+          - id: FLOW-DASH-AGENCY-MEMBERS
+            title: Manage members (admin)
+            children:
+              - id: FLOW-DASH-AGENCY-INVITE
+                title: Invite members (pending shown after send), remove member after accept
+              - id: FLOW-DASH-AGENCY-REVOKE
+                title: Revoke a pending invitation (list updates)
+              - id: FLOW-DASH-AGENCY-OTHER
+                title: Other member actions
+          - id: FLOW-DASH-AGENCY-VERIFY
+            title: Verifications
+            children:
+              - id: FLOW-DASH-AGENCY-VERIFY-PRIVILEGED
+                title: Owner/admin can open hub and submit/save KYB for a country
+              - id: FLOW-DASH-AGENCY-VERIFY-AGENT
+                title: Agent sees verification status read-only; clear ask owner/admin messaging; no submit
+      - title: Create agency
+        flows:
+          - id: FLOW-DASH-AGENCY-CREATE
+            title: Upgrade path when no agency yet
+
+  - id: SAVED
+    title: Saved
+    scope: common
+    groups:
+      - title: Saved
+        flows:
+          - id: FLOW-SAVED-GUEST
+            title: As guest → shows register / login
+          - id: FLOW-SAVED-USER
+            title: As logged-in → shows saved properties
+
+  - id: PUSH
+    title: Push notifications
+    scope: common
+    groups:
+      - title: Push notifications
+        flows:
+          - id: FLOW-PUSH-REVIEW
+            title: Property approved / declined received properly; property state updates in real time
+          - id: FLOW-PUSH-OTHER
+            title: All other notification types work
+
+  - id: GUEST
+    title: Guest
+    scope: common
+    groups:
+      - title: Guest
+        flows:
+          - id: FLOW-GUEST-PRIVACY
+            title: Privacy page opens
+          - id: FLOW-GUEST-TERMS
+            title: Terms page opens
+
+  - id: SITEMAPS
+    title: Sitemaps
+    scope: web
+    groups:
+      - title: Sitemaps
+        flows:
+          - id: FLOW-WEB-SITEMAP-PUBLIC
+            title: Public sitemap
+          - id: FLOW-WEB-SITEMAP-SECRET
+            title: Secret sitemaps
+
+  - id: LANDING
+    title: Landing pages
+    scope: web
+    groups:
+      - title: Landing pages
+        flows:
+          - id: FLOW-WEB-LAND-MARKET
+            title: marketSlug
+          - id: FLOW-WEB-LAND-CITY
+            title: city-pillar
+          - id: FLOW-WEB-LAND-AGENCY-COUNTRY
+            title: agency-country-page
+          - id: FLOW-WEB-LAND-AGENCY
+            title: agency
+          - id: FLOW-WEB-LAND-PRO
+            title: professional
+
+  - id: NOTFOUND
+    title: Not found
+    scope: web
+    groups:
+      - title: Branded 404
+        flows:
+          - id: FLOW-WEB-404-CITY
+            title: Unknown city pillar shows branded 404 with site chrome
+          - id: FLOW-WEB-404-UNMATCHED
+            title: Unmatched path under a locale uses that locale copy and html lang
+
+  - id: MAINTENANCE
+    title: Maintenance mode
+    scope: web
+    groups:
+      - title: Maintenance mode
+        flows:
+          - id: FLOW-WEB-MAINT-LOCALE
+            title: Locale flicker fixed — with maintenance enabled, `/sq/register` shows maintenance view (no header/footer); no brief English→Albanian flash
+            manual: true
+            refs: [FIX-024, WQA-085]
+          - id: FLOW-WEB-MAINT-RETRY
+            title: Retry flicker fixed — from a live page, enable maintenance → full maintenance view + 503; **Try Again** reloads without a brief header/other view flash over maintenance
+            manual: true
+            refs: [FIX-025, WQA-086]
+
+  - id: LOCALE
+    title: Correct locale resolution
+    scope: web
+    groups:
+      - title: Correct locale resolution
+        flows:
+          - id: FLOW-WEB-GEOIP
+            title: GeoIP locale resolution (e.g. Albanian IP → Albanian, German IP → German); cookies and redirects work
+            note: |
+              Partial auto (web): `x-app-country: DE` with no locale cookie → `/de`
+              via theme-locale-currency.spec.ts
+          - id: FLOW-WEB-LOCALE-NO-FLICKER
+            title: Client-side locale uses backend context without flicker (e.g. no brief sq→en text flash)
+            note: |
+              Auto (web): SSR HTML for `/de/properties` contains German title; hydration
+              keeps `html[lang]=de` with no English title mutation
+              via locale-no-flicker.spec.ts

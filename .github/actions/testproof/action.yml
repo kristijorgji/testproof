@@ -1,0 +1,29 @@
+name: Testproof
+description: Validate a flow ledger and push coverage to a Testproof server
+inputs:
+  url:
+    description: Testproof server URL
+    required: false
+  token:
+    description: Project API token
+    required: false
+  project:
+    description: Project id
+    required: false
+  config:
+    description: Path to testproof.config.ts
+    required: false
+    default: testproof.config.ts
+runs:
+  using: composite
+  steps:
+    - name: Validate
+      shell: bash
+      run: npx testproof validate --config "${{ inputs.config }}"
+    - name: Push coverage
+      shell: bash
+      env:
+        TESTPROOF_URL: ${{ inputs.url }}
+        TESTPROOF_TOKEN: ${{ inputs.token }}
+        TESTPROOF_PROJECT: ${{ inputs.project }}
+      run: npx testproof push --config "${{ inputs.config }}"

@@ -1,0 +1,29 @@
+{
+    "name": "testproof",
+    "version": "0.1.0",
+    "description": "Testproof CLI — validate, generate, report and push flow coverage",
+    "license": "MIT",
+    "type": "module",
+    "bin": {
+        "testproof": "./dist/index.js"
+    },
+    "files": ["dist"],
+    "scripts": {
+        "build": "tsc -p tsconfig.build.json",
+        "typecheck": "tsc --noEmit",
+        "lint": "eslint src test",
+        "fix": "eslint src test --fix",
+        "test": "vitest run",
+        "clean": "rm -rf dist"
+    },
+    "dependencies": {
+        "@testproof/core": "workspace:*",
+        "commander": "^15.0.0",
+        "jiti": "^2.6.1"
+    },
+    "devDependencies": {
+        "@types/node": "^22.15.0",
+        "typescript": "^5.9.3",
+        "vitest": "^3.2.4"
+    }
+}

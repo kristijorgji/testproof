@@ -1,0 +1,32 @@
+{
+    "name": "testproof-workspace",
+    "private": true,
+    "type": "module",
+    "description": "Git-native test case management",
+    "license": "MIT",
+    "scripts": {
+        "dev": "turbo dev",
+        "build": "turbo build",
+        "lint": "turbo lint",
+        "typecheck": "turbo typecheck",
+        "test": "turbo test",
+        "fix": "turbo fix && prettier --write .",
+        "db:generate": "pnpm --filter @testproof/db db:generate",
+        "db:migrate": "pnpm --filter @testproof/db db:migrate",
+        "storybook": "pnpm --filter @testproof/web storybook",
+        "clean": "turbo clean && rm -rf node_modules"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.39.0",
+        "eslint": "^9.39.0",
+        "prettier": "^3.8.1",
+        "turbo": "^2.6.4",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.46.0",
+        "vitest": "^3.2.4"
+    },
+    "packageManager": "pnpm@9.15.4",
+    "engines": {
+        "node": ">=22"
+    }
+}
