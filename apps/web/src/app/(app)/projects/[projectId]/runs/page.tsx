@@ -3,14 +3,16 @@ import { desc, eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { T } from '@/components/i18n/T';
 import { ProjectNav } from '@/components/layout/ProjectNav';
+import { getLocaleFromCookie } from '@/i18n/get-locale';
+import { getServerTranslation } from '@/i18n/server';
 import { getDb } from '@/server/db';
 import { getProject } from '@/server/project';
 import { requireUser } from '@/server/session';
 
 export default async function RunsPage({ params }: { params: Promise<{ projectId: string }> }) {
     await requireUser();
+    const { t } = await getServerTranslation(await getLocaleFromCookie());
     const { projectId } = await params;
     const project = await getProject(projectId);
     if (!project) notFound();
@@ -24,9 +26,7 @@ export default async function RunsPage({ params }: { params: Promise<{ projectId
         <>
             <ProjectNav name={project.name} projectId={projectId} />
             <main className="mx-auto max-w-4xl p-6">
-                <h1 className="mb-4 text-2xl font-semibold">
-                    <T k="runs.title" />
-                </h1>
+                <h1 className="mb-4 text-2xl font-semibold">{t('runs.title')}</h1>
                 <ul className="grid gap-2">
                     {rows.map((run) => (
                         <li key={run.id}>

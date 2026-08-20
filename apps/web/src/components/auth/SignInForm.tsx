@@ -1,13 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-
-import { useT } from '../i18n/LocaleProvider';
+import { useTranslation } from 'react-i18next';
 
 import { authClient } from '@/lib/auth-client';
 
 export function SignInForm({ nextPath }: { nextPath: string }) {
-    const t = useT();
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');

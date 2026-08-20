@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 import { SignOutButton } from '../auth/SignOutButton';
-import { useT } from '../i18n/LocaleProvider';
+import { LocaleSwitcher } from '../i18n/LocaleSwitcher';
 
 export function ProjectNav({ projectId, name }: { projectId: string; name: string }) {
-    const t = useT();
+    const { t } = useTranslation();
     const links = [
         ['nav.flows', 'flows'],
         ['nav.coverage', 'coverage'],
@@ -27,7 +28,10 @@ export function ProjectNav({ projectId, name }: { projectId: string; name: strin
                     </Link>
                 ))}
             </div>
-            <SignOutButton />
+            <div className="flex items-center gap-3">
+                <LocaleSwitcher />
+                <SignOutButton />
+            </div>
         </header>
     );
 }

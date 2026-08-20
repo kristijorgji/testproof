@@ -1,9 +1,9 @@
 'use client';
 
-import { useT } from '../i18n/LocaleProvider';
+import { useTranslation } from 'react-i18next';
 
 export function CreateProjectFields() {
-    const t = useT();
+    const { t } = useTranslation();
     return (
         <>
             <input

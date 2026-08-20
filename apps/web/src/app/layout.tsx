@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 
-import { LocaleProvider } from '@/components/i18n/LocaleProvider';
+import { I18nProvider } from '@/components/i18n/I18nProvider';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
+import { getLocaleFromCookie } from '@/i18n/get-locale';
 
 import './globals.css';
 
@@ -10,13 +11,14 @@ export const metadata = {
     description: 'Git-native test case management',
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+    const locale = await getLocaleFromCookie();
     return (
-        <html lang="en">
+        <html lang={locale} suppressHydrationWarning>
             <body>
-                <ThemeProvider>
-                    <LocaleProvider locale="en">{children}</LocaleProvider>
-                </ThemeProvider>
+                <I18nProvider locale={locale}>
+                    <ThemeProvider>{children}</ThemeProvider>
+                </I18nProvider>
             </body>
         </html>
     );

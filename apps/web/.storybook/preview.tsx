@@ -2,7 +2,7 @@ import type { Preview } from '@storybook/react-vite';
 import { mswLoader } from 'msw-storybook-addon/csf3';
 
 import '../src/app/globals.css';
-import { localeFlags, locales } from '../src/components/i18n/messages';
+import { localeFlags, locales } from '../src/i18n/config';
 
 import { withAppProviders } from './decorators/with-app-providers';
 

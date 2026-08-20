@@ -2,8 +2,7 @@
 
 import type { CoverageCell, Flow, FlowTarget, PlatformNode } from '@testproof/core';
 import { useState } from 'react';
-
-import { useT } from '../i18n/LocaleProvider';
+import { useTranslation } from 'react-i18next';
 
 import { TargetPicker } from './TargetPicker';
 
@@ -20,7 +19,7 @@ export function FlowDetail({
     covered?: CoverageCell[];
     onChange?: (patch: Partial<Flow>) => void;
 }) {
-    const t = useT();
+    const { t } = useTranslation();
     const [more, setMore] = useState(false);
     const [title, setTitle] = useState(flow.title);
     const [note, setNote] = useState(flow.note ?? '');
@@ -57,7 +56,7 @@ export function FlowDetail({
                 }}
             />
             <div className="rounded border border-[var(--border)] p-2 text-xs">
-                demanded {demanded.length} · covered {covered.length}
+                {t('coverage.demandedCovered', { demanded: demanded.length, covered: covered.length })}
             </div>
             <button type="button" className="text-sm underline" onClick={() => setMore((v) => !v)}>
                 {t('editor.more')}

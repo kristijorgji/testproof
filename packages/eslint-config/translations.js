@@ -6,7 +6,7 @@ export const translationsConfig = {
     },
     rules: {
         'i18next/no-literal-string': [
-            'warn',
+            'error',
             {
                 mode: 'jsx-text-only',
                 'jsx-attributes': {

@@ -1,0 +1,89 @@
+{
+  "app": {
+    "name": "Testproof"
+  },
+  "nav": {
+    "flows": "Flows",
+    "coverage": "Coverage",
+    "runs": "Runs",
+    "sessions": "Sessions",
+    "settings": "Settings"
+  },
+  "editor": {
+    "more": "More fields",
+    "publish": "Publish",
+    "changes": "Changes",
+    "targets": "Targets",
+    "note": "Note",
+    "platformWhole": "Leaving a dimension untouched means the platform as a whole.",
+    "pullRequest": "Open pull request",
+    "edit": "Edit"
+  },
+  "coverage": {
+    "empty": "No coverage snapshot yet. Run `testproof push` from CI.",
+    "title": "Coverage",
+    "demandedCovered": "demanded {{demanded}} · covered {{covered}}"
+  },
+  "sessions": {
+    "new": "New session",
+    "title": "Manual sessions",
+    "titleField": "Session title",
+    "notes": "Notes"
+  },
+  "conflict": {
+    "title": "Remote ledger changed",
+    "replay": "Replay my patches onto latest",
+    "discard": "Discard mine"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "signOut": "Sign out",
+    "github": "Continue with GitHub",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "failed": "Could not sign in"
+  },
+  "projects": {
+    "title": "Projects",
+    "empty": "No projects yet.",
+    "name": "Project name",
+    "slug": "slug",
+    "create": "Create project"
+  },
+  "project": {
+    "title": "Project"
+  },
+  "settings": {
+    "title": "Settings",
+    "repo": "GitHub repository",
+    "owner": "Owner",
+    "repoName": "Repository",
+    "saveRepo": "Save repository",
+    "tokenName": "Token name",
+    "createToken": "Create API token",
+    "tokenOnce": "Copy this token now. It will not be shown again."
+  },
+  "runs": {
+    "title": "Runs",
+    "detail": "Run",
+    "untagged": "{{count}} untagged results"
+  },
+  "home": {
+    "openProjects": "Open projects",
+    "tagline": "Git-native test case management. Definitions stay in YAML; runs live in Postgres."
+  },
+  "share": {
+    "coverageTitle": "Coverage report"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "locale": {
+    "label": "Language"
+  }
+}

@@ -1,13 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-
-import { useT } from '../i18n/LocaleProvider';
+import { useTranslation } from 'react-i18next';
 
 import { createApiToken } from '@/actions/settings';
 
 export function TokenForm({ projectId }: { projectId: string }) {
-    const t = useT();
+    const { t } = useTranslation();
     const [token, setToken] = useState<string | null>(null);
 
     return (

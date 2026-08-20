@@ -1,18 +1,20 @@
 import Link from 'next/link';
 
-import { T } from '@/components/i18n/T';
+import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
+import { getLocaleFromCookie } from '@/i18n/get-locale';
+import { getServerTranslation } from '@/i18n/server';
 
-export default function HomePage() {
+export default async function HomePage() {
+    const { t } = await getServerTranslation(await getLocaleFromCookie());
     return (
         <main className="mx-auto max-w-2xl p-8">
-            <h1 className="mb-2 text-3xl font-semibold">
-                <T k="app.name" />
-            </h1>
-            <p className="mb-6 text-[var(--muted)]">
-                <T k="home.tagline" />
-            </p>
+            <div className="mb-6 flex justify-end">
+                <LocaleSwitcher />
+            </div>
+            <h1 className="mb-2 text-3xl font-semibold">{t('app.name')}</h1>
+            <p className="mb-6 text-[var(--muted)]">{t('home.tagline')}</p>
             <Link className="rounded bg-[var(--accent)] px-4 py-2 text-white" href="/projects">
-                <T k="home.openProjects" />
+                {t('home.openProjects')}
             </Link>
         </main>
     );

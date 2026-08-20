@@ -2,7 +2,7 @@ import type { Decorator } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type ReactElement, type ReactNode, useEffect, useMemo } from 'react';
 
-import { LocaleProvider } from '../../src/components/i18n/LocaleProvider';
+import { I18nProvider } from '../../src/components/i18n/I18nProvider';
 import { ThemeProvider, useTheme } from '../../src/components/theme/ThemeProvider';
 import { setPathname } from '../mocks/next-navigation';
 import { resolveStorybookLocaleForDecorator } from '../resolve-storybook-locale';
@@ -39,13 +39,13 @@ export const withAppProviders: Decorator = (Story, context) => {
     return (
         <QueryProvider>
             <ThemeProvider initial={sbTheme}>
-                <LocaleProvider locale={locale}>
+                <I18nProvider locale={locale}>
                     <ThemeSync sbTheme={sbTheme}>
                         <div style={{ width: forcedWidth, maxWidth: '100%' }}>
                             <Story />
                         </div>
                     </ThemeSync>
-                </LocaleProvider>
+                </I18nProvider>
             </ThemeProvider>
         </QueryProvider>
     );

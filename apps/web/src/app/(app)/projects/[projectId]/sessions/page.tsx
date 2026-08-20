@@ -3,15 +3,17 @@ import { desc, eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 
 import { createSession } from '@/actions/sessions';
-import { T } from '@/components/i18n/T';
 import { ProjectNav } from '@/components/layout/ProjectNav';
 import { SessionFields } from '@/components/sessions/SessionFields';
+import { getLocaleFromCookie } from '@/i18n/get-locale';
+import { getServerTranslation } from '@/i18n/server';
 import { getDb } from '@/server/db';
 import { getProject } from '@/server/project';
 import { requireUser } from '@/server/session';
 
 export default async function SessionsPage({ params }: { params: Promise<{ projectId: string }> }) {
     await requireUser();
+    const { t } = await getServerTranslation(await getLocaleFromCookie());
     const { projectId } = await params;
     const project = await getProject(projectId);
     if (!project) notFound();
@@ -30,13 +32,11 @@ export default async function SessionsPage({ params }: { params: Promise<{ proje
         <>
             <ProjectNav name={project.name} projectId={projectId} />
             <main className="mx-auto max-w-4xl p-6">
-                <h1 className="mb-4 text-2xl font-semibold">
-                    <T k="sessions.title" />
-                </h1>
+                <h1 className="mb-4 text-2xl font-semibold">{t('sessions.title')}</h1>
                 <form action={action} className="mb-6 grid gap-2 rounded border border-[var(--border)] p-4">
                     <SessionFields />
                     <button type="submit" className="rounded bg-[var(--accent)] px-3 py-2 text-white">
-                        <T k="sessions.new" />
+                        {t('sessions.new')}
                     </button>
                 </form>
                 <ul className="grid gap-2">

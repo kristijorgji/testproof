@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-
-import { useT } from '../i18n/LocaleProvider';
+import { useTranslation } from 'react-i18next';
 
 export function PublishDialog({
     conflict,
@@ -15,7 +14,7 @@ export function PublishDialog({
     onReplay?: () => void;
     onDiscard?: () => void;
 }) {
-    const t = useT();
+    const { t } = useTranslation();
     const [message, setMessage] = useState('chore: update flows ledger');
     const [pullRequest, setPullRequest] = useState(true);
 

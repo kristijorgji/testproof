@@ -3,8 +3,7 @@
 import type { CoverageCell, Ledger, LedgerPatch, PlatformNode } from '@testproof/core';
 import { flattenFlows } from '@testproof/core/parse';
 import { useMemo, useState, useTransition } from 'react';
-
-import { useT } from '../i18n/LocaleProvider';
+import { useTranslation } from 'react-i18next';
 
 import { FlowDetail } from './FlowDetail';
 import { FlowTreeRow } from './FlowTreeRow';
@@ -37,7 +36,7 @@ export function FlowEditor({
     onReplay: () => Promise<void>;
     onDiscard: () => Promise<void>;
 }) {
-    const t = useT();
+    const { t } = useTranslation();
     const flows = useMemo(() => flattenFlows(ledger), [ledger]);
     const [selectedId, setSelectedId] = useState(flows[0]?.id);
     const selected = flows.find((f) => f.id === selectedId);
@@ -67,7 +66,7 @@ export function FlowEditor({
             <main className="flex-1 pb-20">
                 <div className="flex gap-3 border-b border-[var(--border)] px-4 py-2 text-sm">
                     <button type="button" onClick={() => setTab('edit')}>
-                        Edit
+                        {t('editor.edit')}
                     </button>
                     <button type="button" onClick={() => setTab('changes')}>
                         {t('editor.changes')}

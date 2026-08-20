@@ -1,11 +1,11 @@
 'use client';
 
-import { useT } from '../i18n/LocaleProvider';
+import { useTranslation } from 'react-i18next';
 
 import { authClient } from '@/lib/auth-client';
 
 export function SignOutButton() {
-    const t = useT();
+    const { t } = useTranslation();
     return (
         <button
             type="button"

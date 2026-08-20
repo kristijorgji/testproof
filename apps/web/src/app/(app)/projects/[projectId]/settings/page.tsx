@@ -1,14 +1,16 @@
 import { notFound } from 'next/navigation';
 
 import { saveRepo } from '@/actions/settings';
-import { T } from '@/components/i18n/T';
 import { ProjectNav } from '@/components/layout/ProjectNav';
 import { TokenForm } from '@/components/settings/TokenForm';
+import { getLocaleFromCookie } from '@/i18n/get-locale';
+import { getServerTranslation } from '@/i18n/server';
 import { getProject, getProjectRepo } from '@/server/project';
 import { requireUser } from '@/server/session';
 
 export default async function SettingsPage({ params }: { params: Promise<{ projectId: string }> }) {
     await requireUser();
+    const { t } = await getServerTranslation(await getLocaleFromCookie());
     const { projectId } = await params;
     const project = await getProject(projectId);
     if (!project) notFound();
@@ -18,13 +20,9 @@ export default async function SettingsPage({ params }: { params: Promise<{ proje
         <>
             <ProjectNav name={project.name} projectId={projectId} />
             <main className="mx-auto max-w-2xl p-6">
-                <h1 className="mb-4 text-2xl font-semibold">
-                    <T k="settings.title" />
-                </h1>
+                <h1 className="mb-4 text-2xl font-semibold">{t('settings.title')}</h1>
                 <section className="mb-6 grid gap-2 rounded border border-[var(--border)] p-4">
-                    <h2 className="font-medium">
-                        <T k="settings.repo" />
-                    </h2>
+                    <h2 className="font-medium">{t('settings.repo')}</h2>
                     <form action={save} className="grid gap-2">
                         <input
                             name="owner"
@@ -39,7 +37,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ proje
                             className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
                         />
                         <button type="submit" className="rounded bg-[var(--accent)] px-3 py-2 text-white">
-                            <T k="settings.saveRepo" />
+                            {t('settings.saveRepo')}
                         </button>
                     </form>
                 </section>

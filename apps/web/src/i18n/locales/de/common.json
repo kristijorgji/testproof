@@ -1,0 +1,89 @@
+{
+  "app": {
+    "name": "Testproof"
+  },
+  "nav": {
+    "flows": "Flows",
+    "coverage": "Abdeckung",
+    "runs": "Läufe",
+    "sessions": "Sitzungen",
+    "settings": "Einstellungen"
+  },
+  "editor": {
+    "more": "Weitere Felder",
+    "publish": "Veröffentlichen",
+    "changes": "Änderungen",
+    "targets": "Ziele",
+    "note": "Notiz",
+    "platformWhole": "Eine unberührte Dimension bedeutet die Plattform als Ganzes.",
+    "pullRequest": "Pull Request öffnen",
+    "edit": "Bearbeiten"
+  },
+  "coverage": {
+    "empty": "Noch kein Coverage-Snapshot. Führe `testproof push` in CI aus.",
+    "title": "Abdeckung",
+    "demandedCovered": "gefordert {{demanded}} · abgedeckt {{covered}}"
+  },
+  "sessions": {
+    "new": "Neue Sitzung",
+    "title": "Manuelle Sitzungen",
+    "titleField": "Sitzungstitel",
+    "notes": "Notizen"
+  },
+  "conflict": {
+    "title": "Remote-Ledger geändert",
+    "replay": "Patches auf neueste Version anwenden",
+    "discard": "Meine verwerfen"
+  },
+  "auth": {
+    "signIn": "Anmelden",
+    "signUp": "Konto erstellen",
+    "signOut": "Abmelden",
+    "github": "Mit GitHub fortfahren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "name": "Name",
+    "failed": "Anmeldung fehlgeschlagen"
+  },
+  "projects": {
+    "title": "Projekte",
+    "empty": "Noch keine Projekte.",
+    "name": "Projektname",
+    "slug": "slug",
+    "create": "Projekt erstellen"
+  },
+  "project": {
+    "title": "Projekt"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "repo": "GitHub-Repository",
+    "owner": "Owner",
+    "repoName": "Repository",
+    "saveRepo": "Repository speichern",
+    "tokenName": "Tokenname",
+    "createToken": "API-Token erstellen",
+    "tokenOnce": "Token jetzt kopieren. Er wird nicht erneut angezeigt."
+  },
+  "runs": {
+    "title": "Läufe",
+    "detail": "Lauf",
+    "untagged": "{{count}} ungetaggte Ergebnisse"
+  },
+  "home": {
+    "openProjects": "Projekte öffnen",
+    "tagline": "Git-native Testfallverwaltung. Definitionen bleiben in YAML; Läufe in Postgres."
+  },
+  "share": {
+    "coverageTitle": "Abdeckungsbericht"
+  },
+  "theme": {
+    "label": "Design",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System"
+  },
+  "locale": {
+    "label": "Sprache"
+  }
+}

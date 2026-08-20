@@ -1,13 +1,15 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { T } from '@/components/i18n/T';
 import { ProjectNav } from '@/components/layout/ProjectNav';
+import { getLocaleFromCookie } from '@/i18n/get-locale';
+import { getServerTranslation } from '@/i18n/server';
 import { getProject } from '@/server/project';
 import { requireUser } from '@/server/session';
 
 export default async function ProjectOverview({ params }: { params: Promise<{ projectId: string }> }) {
     await requireUser();
+    const { t } = await getServerTranslation(await getLocaleFromCookie());
     const { projectId } = await params;
     const project = await getProject(projectId);
     if (!project) notFound();
@@ -30,7 +32,7 @@ export default async function ProjectOverview({ params }: { params: Promise<{ pr
                             className="rounded border border-[var(--border)] p-3"
                             href={`/projects/${projectId}/${href}`}
                         >
-                            <T k={key} />
+                            {t(key)}
                         </Link>
                     ))}
                 </nav>
