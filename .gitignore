@@ -4,7 +4,7 @@ dist
 out
 storybook-static
 .turbo
-coverage
+/coverage
 *.tsbuildinfo
 .env
 .env.local
