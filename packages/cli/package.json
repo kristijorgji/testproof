@@ -7,7 +7,20 @@
     "bin": {
         "testproof": "./dist/index.js"
     },
-    "files": ["dist"],
+    "files": ["dist", "README.md", "LICENSE"],
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kristijorgji/testproof.git",
+        "directory": "packages/cli"
+    },
+    "homepage": "https://github.com/kristijorgji/testproof#readme",
+    "bugs": {
+        "url": "https://github.com/kristijorgji/testproof/issues"
+    },
+    "keywords": ["testing", "test-management", "coverage", "playwright", "maestro", "e2e", "cli"],
     "scripts": {
         "prepare": "tsc -p tsconfig.build.json",
         "build": "tsc -p tsconfig.build.json",
@@ -18,14 +31,11 @@
         "clean": "rm -rf dist"
     },
     "dependencies": {
+        "@testproof/core": "^0.1.0",
         "commander": "^15.0.0",
         "jiti": "^2.6.1"
     },
-    "peerDependencies": {
-        "@testproof/core": ">=0.1.0"
-    },
     "devDependencies": {
-        "@testproof/core": "workspace:*",
         "@types/node": "^22.15.0",
         "typescript": "^5.9.3",
         "vitest": "^3.2.4"

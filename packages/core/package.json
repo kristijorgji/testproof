@@ -23,7 +23,20 @@
             "default": "./dist/platforms.js"
         }
     },
-    "files": ["dist"],
+    "files": ["dist", "README.md", "LICENSE"],
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kristijorgji/testproof.git",
+        "directory": "packages/core"
+    },
+    "homepage": "https://github.com/kristijorgji/testproof#readme",
+    "bugs": {
+        "url": "https://github.com/kristijorgji/testproof/issues"
+    },
+    "keywords": ["testing", "test-management", "coverage", "playwright", "maestro", "e2e", "ledger"],
     "scripts": {
         "prepare": "tsc -p tsconfig.build.json",
         "build": "tsc -p tsconfig.build.json",

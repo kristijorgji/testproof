@@ -21,13 +21,10 @@ runs:
       id: cli
       shell: bash
       run: |
-        if [ -f packages/cli/dist/index.js ]; then
-          echo "bin=node packages/cli/dist/index.js" >> "$GITHUB_OUTPUT"
-        elif [ -x node_modules/.bin/testproof ]; then
+        if [ -x node_modules/.bin/testproof ]; then
           echo "bin=node_modules/.bin/testproof" >> "$GITHUB_OUTPUT"
         else
-          echo "Install the testproof package or build this workspace first." >&2
-          exit 1
+          echo "bin=npx --yes testproof@latest" >> "$GITHUB_OUTPUT"
         fi
     - name: Validate
       shell: bash
