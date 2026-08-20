@@ -17,11 +17,14 @@
         "clean": "rm -rf dist"
     },
     "dependencies": {
-        "@testproof/core": "file:../core",
         "commander": "^15.0.0",
         "jiti": "^2.6.1"
     },
+    "peerDependencies": {
+        "@testproof/core": ">=0.1.0"
+    },
     "devDependencies": {
+        "@testproof/core": "workspace:*",
         "@types/node": "^22.15.0",
         "typescript": "^5.9.3",
         "vitest": "^3.2.4"

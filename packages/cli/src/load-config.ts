@@ -7,6 +7,14 @@ import { createJiti } from 'jiti';
 
 const require = createRequire(import.meta.url);
 
+function resolveCore(): string {
+    try {
+        return require.resolve('@testproof/core');
+    } catch {
+        return createRequire(path.join(process.cwd(), 'package.json')).resolve('@testproof/core');
+    }
+}
+
 const NAMES = ['testproof.config.ts', 'testproof.config.js', 'testproof.config.mjs'];
 
 export function findConfigPath(cwd = process.cwd()): string | undefined {
@@ -24,7 +32,7 @@ export async function loadConfig(cwd = process.cwd(), explicit?: string): Promis
     }
     const jiti = createJiti(import.meta.url, {
         alias: {
-            '@testproof/core': require.resolve('@testproof/core'),
+            '@testproof/core': resolveCore(),
         },
     });
     const mod = (await jiti.import(file)) as { default?: TestproofConfig } & TestproofConfig;

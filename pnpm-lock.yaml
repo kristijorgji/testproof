@@ -147,9 +147,6 @@ importers:
 
   packages/cli:
     dependencies:
-      '@testproof/core':
-        specifier: file:../core
-        version: link:../core
       commander:
         specifier: ^15.0.0
         version: 15.0.0
@@ -157,6 +154,9 @@ importers:
         specifier: ^2.6.1
         version: 2.7.0
     devDependencies:
+      '@testproof/core':
+        specifier: workspace:*
+        version: link:../core
       '@types/node':
         specifier: ^22.15.0
         version: 22.20.1
