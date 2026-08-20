@@ -4,6 +4,8 @@ import path from 'node:path';
 import {
     deriveCoverage,
     flattenFlowIds,
+    type FlowCoverage,
+    type Ledger,
     parseLedger,
     renderFlowsHtml,
     renderFlowsMarkdown,
@@ -11,7 +13,7 @@ import {
     type TestproofConfig,
 } from '@testproof/core';
 
-function derive(config: TestproofConfig, cwd: string) {
+function derive(config: TestproofConfig, cwd: string): { ledger: Ledger; coverage: Map<string, FlowCoverage> } {
     const yamlSource = fs.readFileSync(path.resolve(cwd, config.ledger), 'utf8');
     const ledger = parseLedger(yamlSource);
     const scanners = config.platforms.map((p) => ({

@@ -31,7 +31,7 @@ const route = createRoute({
 
 coverageRoutes.openapi(route, async (c) => {
     const body = c.req.valid('json');
-    const projectId = c.get('projectId') as string;
+    const projectId = c.get('projectId');
     if (body.projectId !== projectId) return c.json({ error: 'project mismatch' }, 403);
     const db = getDb();
     const [snapshot] = await db

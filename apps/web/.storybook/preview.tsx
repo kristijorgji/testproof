@@ -3,6 +3,7 @@ import { mswLoader } from 'msw-storybook-addon/csf3';
 
 import '../src/app/globals.css';
 import { localeFlags, locales } from '../src/components/i18n/messages';
+
 import { withAppProviders } from './decorators/with-app-providers';
 
 export const globalTypes: Preview['globalTypes'] = {

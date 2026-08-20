@@ -20,12 +20,16 @@ export default async function ProjectOverview({ params }: { params: Promise<{ pr
     ] as const;
     return (
         <>
-            <ProjectNav projectId={projectId} name={project.name} />
+            <ProjectNav name={project.name} projectId={projectId} />
             <main className="mx-auto max-w-3xl p-6">
                 <h1 className="mb-4 text-2xl font-semibold">{project.name}</h1>
                 <nav className="grid gap-2">
                     {links.map(([key, href]) => (
-                        <Link key={href} className="rounded border border-[var(--border)] p-3" href={`/projects/${projectId}/${href}`}>
+                        <Link
+                            key={href}
+                            className="rounded border border-[var(--border)] p-3"
+                            href={`/projects/${projectId}/${href}`}
+                        >
                             <T k={key} />
                         </Link>
                     ))}

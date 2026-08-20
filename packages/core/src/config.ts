@@ -47,12 +47,7 @@ export const DEFAULT_MARKDOWN: Required<Pick<MarkdownRenderConfig, 'title'>> & M
         'Source of truth for **what must work**, plus honest automation coverage.',
         '**Definitions** live in the ledger YAML; this file is **generated**.',
     ],
-    goals: [
-        'Create automated tests for the flows below that cover:',
-        '',
-        '- Functionality',
-        '- Accessibility',
-    ],
+    goals: ['Create automated tests for the flows below that cover:', '', '- Functionality', '- Accessibility'],
     legendRows: [
         ['`FLOW-…`', 'Stable hierarchical ID for this branch'],
         ['`[x]`', 'Fully automated for that **exact** branch (spec/flow linked)'],

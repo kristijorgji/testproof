@@ -4,6 +4,7 @@ import type { CoverageCell, Flow, FlowTarget, PlatformNode } from '@testproof/co
 import { useState } from 'react';
 
 import { useT } from '../i18n/LocaleProvider';
+
 import { TargetPicker } from './TargetPicker';
 
 export function FlowDetail({

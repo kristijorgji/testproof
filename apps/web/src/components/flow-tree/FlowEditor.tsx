@@ -5,6 +5,7 @@ import { flattenFlows } from '@testproof/core/parse';
 import { useMemo, useState, useTransition } from 'react';
 
 import { useT } from '../i18n/LocaleProvider';
+
 import { FlowDetail } from './FlowDetail';
 import { FlowTreeRow } from './FlowTreeRow';
 import { PublishDialog } from './PublishDialog';
@@ -24,7 +25,10 @@ export function FlowEditor({
 }: {
     ledger: Ledger;
     platforms: PlatformNode[];
-    coverage: Record<string, { status: 'automated' | 'partial' | 'todo' | 'manual'; demanded: CoverageCell[]; covered: CoverageCell[] }>;
+    coverage: Record<
+        string,
+        { status: 'automated' | 'partial' | 'todo' | 'manual'; demanded: CoverageCell[]; covered: CoverageCell[] }
+    >;
     beforeYaml: string;
     afterYaml: string;
     conflict?: { remote: string; draft: string };
@@ -82,13 +86,27 @@ export function FlowEditor({
                         onChange={(partial) => {
                             start(() => {
                                 if (partial.title) {
-                                    void onPatch({ op: 'set-flow-field', flowId: selected.id, field: 'title', value: partial.title });
+                                    void onPatch({
+                                        op: 'set-flow-field',
+                                        flowId: selected.id,
+                                        field: 'title',
+                                        value: partial.title,
+                                    });
                                 }
                                 if (partial.note !== undefined) {
-                                    void onPatch({ op: 'set-flow-field', flowId: selected.id, field: 'note', value: partial.note ?? '' });
+                                    void onPatch({
+                                        op: 'set-flow-field',
+                                        flowId: selected.id,
+                                        field: 'note',
+                                        value: partial.note ?? '',
+                                    });
                                 }
                                 if (partial.targets) {
-                                    void onPatch({ op: 'set-flow-targets', flowId: selected.id, value: partial.targets });
+                                    void onPatch({
+                                        op: 'set-flow-targets',
+                                        flowId: selected.id,
+                                        value: partial.targets,
+                                    });
                                 }
                             });
                         }}

@@ -9,7 +9,7 @@ export default async function RunDetailPage({ params }: { params: Promise<{ runI
     try {
         rows = await getDb().select().from(runResults).where(eq(runResults.runId, runId));
     } catch {
-        rows = [];
+        // Keep the empty list when the database is not available.
     }
     const untagged = rows.filter((r) => !r.flowId);
     return (
@@ -22,7 +22,9 @@ export default async function RunDetailPage({ params }: { params: Promise<{ runI
                     </li>
                 ))}
             </ul>
-            {untagged.length > 0 ? <p className="mt-4 text-sm text-[var(--muted)]">{untagged.length} untagged results</p> : null}
+            {untagged.length > 0 ? (
+                <p className="mt-4 text-sm text-[var(--muted)]">{untagged.length} untagged results</p>
+            ) : null}
         </main>
     );
 }

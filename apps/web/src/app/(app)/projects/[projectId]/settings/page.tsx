@@ -16,7 +16,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ proje
     const save = saveRepo.bind(null, projectId);
     return (
         <>
-            <ProjectNav projectId={projectId} name={project.name} />
+            <ProjectNav name={project.name} projectId={projectId} />
             <main className="mx-auto max-w-2xl p-6">
                 <h1 className="mb-4 text-2xl font-semibold">
                     <T k="settings.title" />

@@ -1,7 +1,6 @@
+import { applyPatches, type LedgerPatch, openLedgerDocument, serializeLedgerDocument } from '@testproof/core';
 import type { Octokit } from 'octokit';
 import { RequestError } from 'octokit';
-
-import { applyPatches, openLedgerDocument, serializeLedgerDocument, type LedgerPatch } from '@testproof/core';
 
 export class PublishConflictError extends Error {
     readonly current: string;

@@ -4,8 +4,8 @@ import { type ReactElement, type ReactNode, useEffect, useMemo } from 'react';
 
 import { LocaleProvider } from '../../src/components/i18n/LocaleProvider';
 import { ThemeProvider, useTheme } from '../../src/components/theme/ThemeProvider';
-import { resolveStorybookLocaleForDecorator } from '../resolve-storybook-locale';
 import { setPathname } from '../mocks/next-navigation';
+import { resolveStorybookLocaleForDecorator } from '../resolve-storybook-locale';
 
 function QueryProvider({ children }: { children: ReactNode }): ReactElement {
     const client = useMemo(
@@ -27,7 +27,14 @@ export const withAppProviders: Decorator = (Story, context) => {
     const locale = resolveStorybookLocaleForDecorator(context.globals.locale);
     const sbTheme = (context.globals.theme as 'light' | 'dark') ?? 'light';
     const deviceViewport = context.globals.deviceViewport as string | undefined;
-    const forcedWidth = deviceViewport === 'mobile' ? 390 : deviceViewport === 'tablet' ? 900 : deviceViewport === 'desktop' ? 1280 : undefined;
+    const forcedWidth =
+        deviceViewport === 'mobile'
+            ? 390
+            : deviceViewport === 'tablet'
+              ? 900
+              : deviceViewport === 'desktop'
+                ? 1280
+                : undefined;
     setPathname(`/${locale}`);
     return (
         <QueryProvider>

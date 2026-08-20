@@ -1,7 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { coveragePushBodySchema, deriveCoverage, parseLedger, summarizeCoverage, type TestproofConfig } from '@testproof/core';
+import {
+    coveragePushBodySchema,
+    deriveCoverage,
+    parseLedger,
+    summarizeCoverage,
+    type TestproofConfig,
+} from '@testproof/core';
 
 export async function pushCommand(config: TestproofConfig, cwd: string): Promise<number> {
     const url = config.server?.url;

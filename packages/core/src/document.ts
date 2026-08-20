@@ -1,5 +1,7 @@
-import { parseDocument, type Document } from 'yaml';
+import { type Document, parseDocument } from 'yaml';
 
+// Document.Parsed is a namespaced type; a local alias keeps the public API readable.
+// eslint-disable-next-line kj/no-pure-type-alias -- wraps yaml's namespaced Document.Parsed
 export type LedgerDocument = Document.Parsed;
 
 export function openLedgerDocument(source: string): LedgerDocument {

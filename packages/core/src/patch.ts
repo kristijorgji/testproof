@@ -9,11 +9,21 @@ export type LedgerPatch =
     | { op: 'set-flow-field'; flowId: string; field: 'title' | 'note'; value: string }
     | { op: 'set-flow-manual'; flowId: string; value: boolean }
     | { op: 'set-flow-refs'; flowId: string; value: string[] }
-    | { op: 'set-flow-targets'; flowId: string; value: Array<string | { platform: string; dimensions?: Record<string, string[]> }> }
+    | {
+          op: 'set-flow-targets';
+          flowId: string;
+          value: Array<string | { platform: string; dimensions?: Record<string, string[]> }>;
+      }
     | { op: 'add-flow'; parent: FlowParent; flow: Flow; index: number }
     | { op: 'remove-flow'; flowId: string }
     | { op: 'move-flow'; flowId: string; to: FlowParent & { index: number } }
-    | { op: 'set-group-field'; areaId: string; groupIndex: number; field: 'title' | 'subtitle' | 'notes'; value: string }
+    | {
+          op: 'set-group-field';
+          areaId: string;
+          groupIndex: number;
+          field: 'title' | 'subtitle' | 'notes';
+          value: string;
+      }
     | { op: 'add-group'; areaId: string; title: string; index: number }
     | { op: 'remove-group'; areaId: string; groupIndex: number }
     | { op: 'move-group'; areaId: string; from: number; to: number }
@@ -57,10 +67,7 @@ function groupsSeq(area: YAMLMap): YAMLSeq {
     return groups;
 }
 
-function walkFlows(
-    seq: YAMLSeq,
-    visit: (map: YAMLMap, parent: YAMLSeq, index: number) => boolean | void,
-): boolean {
+function walkFlows(seq: YAMLSeq, visit: (map: YAMLMap, parent: YAMLSeq, index: number) => boolean | void): boolean {
     for (let i = 0; i < seq.items.length; i += 1) {
         const map = asMap(seq.items[i]);
         if (!map) continue;

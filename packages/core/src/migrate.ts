@@ -1,8 +1,8 @@
 import { parse as parseYaml } from 'yaml';
 
 import { openLedgerDocument, serializeLedgerDocument } from './document.js';
-import { applyPatch } from './patch.js';
 import { parseLedger } from './parse.js';
+import { applyPatch } from './patch.js';
 
 const DEFAULT_V2_PLATFORMS = [
     {

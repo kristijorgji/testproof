@@ -1,9 +1,8 @@
 import { createHash } from 'node:crypto';
 
+import { apiTokens } from '@testproof/db';
 import { eq } from 'drizzle-orm';
 import type { Context, Next } from 'hono';
-
-import { apiTokens } from '@testproof/db';
 
 import { getDb } from '../../db';
 

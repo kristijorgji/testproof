@@ -1,6 +1,5 @@
-import { summarizeCoverage, type FlowCoverage } from '../coverage.js';
-import type { CoverageStatus } from '../schema.js';
-import type { Flow, Ledger } from '../schema.js';
+import { type FlowCoverage, summarizeCoverage } from '../coverage.js';
+import type { CoverageStatus, Flow, Ledger } from '../schema.js';
 
 function escapeHtml(value: string): string {
     return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');

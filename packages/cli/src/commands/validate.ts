@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { validateLedger, type TestproofConfig } from '@testproof/core';
+import { type TestproofConfig, validateLedger } from '@testproof/core';
 
 export function validateCommand(config: TestproofConfig, cwd: string, strict = false): number {
     const yamlSource = fs.readFileSync(path.resolve(cwd, config.ledger), 'utf8');

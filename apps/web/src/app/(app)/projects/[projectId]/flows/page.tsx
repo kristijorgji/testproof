@@ -1,5 +1,11 @@
 import type { CoverageCell, LedgerPatch } from '@testproof/core';
-import { applyPatches, ledgerPlatforms, openLedgerDocument, parseLedger, serializeLedgerDocument } from '@testproof/core';
+import {
+    applyPatches,
+    ledgerPlatforms,
+    openLedgerDocument,
+    parseLedger,
+    serializeLedgerDocument,
+} from '@testproof/core';
 import { coverageSnapshots, flowCoverage } from '@testproof/db';
 import { desc, eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
@@ -27,7 +33,10 @@ export default async function FlowsPage({ params }: { params: Promise<{ projectI
     })();
     const ledger = parseLedger(after);
 
-    const coverage: Record<string, { status: 'automated' | 'partial' | 'todo' | 'manual'; demanded: CoverageCell[]; covered: CoverageCell[] }> = {};
+    const coverage: Record<
+        string,
+        { status: 'automated' | 'partial' | 'todo' | 'manual'; demanded: CoverageCell[]; covered: CoverageCell[] }
+    > = {};
     try {
         const [snapshot] = await getDb()
             .select()
@@ -53,7 +62,7 @@ export default async function FlowsPage({ params }: { params: Promise<{ projectI
 
     return (
         <>
-            <ProjectNav projectId={projectId} name={project.name} />
+            <ProjectNav name={project.name} projectId={projectId} />
             <FlowEditor
                 ledger={ledger}
                 platforms={ledgerPlatforms(ledger)}

@@ -1,5 +1,5 @@
-import { collectIncompleteCoreIds, deriveCoverage } from './coverage.js';
 import type { PlatformScannerConfig } from './config.js';
+import { collectIncompleteCoreIds, deriveCoverage } from './coverage.js';
 import { flattenFlowIds, parseLedger } from './parse.js';
 import { collectMaestroFlowInventory } from './scan/maestro.js';
 import { collectWebE2eFlowFileMap } from './scan/web.js';

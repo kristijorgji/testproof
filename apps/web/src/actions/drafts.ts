@@ -7,10 +7,17 @@ import { drafts } from '@testproof/db';
 import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
-import { applyDraft, getOpenDraft, getProject, getProjectRepo, readProjectLedger, resolveLocalLedgerPath } from '@/server/project';
 import { getDb } from '@/server/db';
 import { createOctokit } from '@/server/github/client';
-import { PublishConflictError, publishCommit, publishPullRequest } from '@/server/github/publish';
+import { publishCommit, PublishConflictError, publishPullRequest } from '@/server/github/publish';
+import {
+    applyDraft,
+    getOpenDraft,
+    getProject,
+    getProjectRepo,
+    readProjectLedger,
+    resolveLocalLedgerPath,
+} from '@/server/project';
 import { getGithubAccessToken, requireUser } from '@/server/session';
 
 function revalidateFlows(projectId: string): void {
@@ -34,7 +41,10 @@ export async function appendDraftPatch(projectId: string, patch: LedgerPatch): P
         });
     } else {
         const next = [...(existing.patches as LedgerPatch[]), patch];
-        await db.update(drafts).set({ patches: next, updatedAt: new Date(), status: 'open' }).where(eq(drafts.id, existing.id));
+        await db
+            .update(drafts)
+            .set({ patches: next, updatedAt: new Date(), status: 'open' })
+            .where(eq(drafts.id, existing.id));
     }
     revalidateFlows(projectId);
 }
@@ -53,7 +63,10 @@ export async function publishDraft(projectId: string, input: { message: string; 
         const dest = resolveLocalLedgerPath();
         fs.writeFileSync(dest, yaml);
         if (draft) {
-            await getDb().update(drafts).set({ status: 'published', updatedAt: new Date() }).where(eq(drafts.id, draft.id));
+            await getDb()
+                .update(drafts)
+                .set({ status: 'published', updatedAt: new Date() })
+                .where(eq(drafts.id, draft.id));
         }
         revalidateFlows(projectId);
         return;
@@ -86,7 +99,10 @@ export async function publishDraft(projectId: string, input: { message: string; 
             });
         }
         if (draft) {
-            await getDb().update(drafts).set({ status: 'published', updatedAt: new Date() }).where(eq(drafts.id, draft.id));
+            await getDb()
+                .update(drafts)
+                .set({ status: 'published', updatedAt: new Date() })
+                .where(eq(drafts.id, draft.id));
         }
     } catch (error) {
         if (error instanceof PublishConflictError && draft) {

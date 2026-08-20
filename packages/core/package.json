@@ -52,7 +52,9 @@
         "zod": "^4.4.3"
     },
     "devDependencies": {
+        "@testproof/eslint-config": "workspace:*",
         "@types/node": "^22.15.0",
+        "eslint": "^9.39.0",
         "typescript": "^5.9.3",
         "vitest": "^3.2.4"
     }

@@ -1,7 +1,8 @@
 import { createHash, randomBytes } from 'node:crypto';
 
-import { createDb } from './index.js';
 import { apiTokens, projects } from './schema.js';
+
+import { createDb } from './index.js';
 
 const url = process.env.DATABASE_URL;
 if (!url) throw new Error('DATABASE_URL is required');
@@ -13,12 +14,7 @@ const name = process.env.SEED_NAME ?? 'Demo';
 const existing = await db.select().from(projects);
 const project =
     existing.find((row) => row.slug === slug) ??
-    (
-        await db
-            .insert(projects)
-            .values({ name, slug, shareToken: crypto.randomUUID() })
-            .returning()
-    )[0];
+    (await db.insert(projects).values({ name, slug, shareToken: crypto.randomUUID() }).returning())[0];
 
 if (!project) throw new Error('Could not seed project');
 

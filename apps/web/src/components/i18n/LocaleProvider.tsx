@@ -1,8 +1,8 @@
 'use client';
 
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { createContext, type ReactNode, useContext, useMemo } from 'react';
 
-import { messages, type AppLocale } from './messages';
+import { type AppLocale, messages } from './messages';
 
 const LocaleContext = createContext<{ locale: AppLocale; t: (key: string) => string }>({
     locale: 'en',

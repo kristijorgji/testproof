@@ -31,12 +31,7 @@ function wrapProse(text: string, indent: string, width = 100): string[] {
     return out;
 }
 
-function renderPlatformLine(
-    platform: string,
-    files: string[],
-    indent: string,
-    scopeRequires: boolean,
-): string[] {
+function renderPlatformLine(platform: string, files: string[], indent: string, scopeRequires: boolean): string[] {
     if (!scopeRequires && files.length === 0) {
         return [];
     }
@@ -75,7 +70,9 @@ function renderFlow(flow: Flow, coverage: Map<string, FlowCoverage>, depth: numb
     }
     if (status !== 'manual') {
         const scope = cov?.scope ?? 'common';
-        const extra = Object.entries(cov?.filesByPlatform ?? {}).filter(([name]) => name !== 'web' && name !== 'mobile');
+        const extra = Object.entries(cov?.filesByPlatform ?? {}).filter(
+            ([name]) => name !== 'web' && name !== 'mobile',
+        );
         if (scope === 'common' || scope === 'web') {
             lines.push(...renderPlatformLine('web', cov?.web.files ?? [], childIndent, true));
         }

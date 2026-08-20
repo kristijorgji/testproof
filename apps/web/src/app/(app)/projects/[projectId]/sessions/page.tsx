@@ -6,8 +6,8 @@ import { createSession } from '@/actions/sessions';
 import { T } from '@/components/i18n/T';
 import { ProjectNav } from '@/components/layout/ProjectNav';
 import { SessionFields } from '@/components/sessions/SessionFields';
-import { getProject } from '@/server/project';
 import { getDb } from '@/server/db';
+import { getProject } from '@/server/project';
 import { requireUser } from '@/server/session';
 
 export default async function SessionsPage({ params }: { params: Promise<{ projectId: string }> }) {
@@ -17,14 +17,18 @@ export default async function SessionsPage({ params }: { params: Promise<{ proje
     if (!project) notFound();
     let rows: Array<{ id: string; title: string; performedAt: Date; notes: string | null }> = [];
     try {
-        rows = await getDb().select().from(sessions).where(eq(sessions.projectId, projectId)).orderBy(desc(sessions.performedAt));
+        rows = await getDb()
+            .select()
+            .from(sessions)
+            .where(eq(sessions.projectId, projectId))
+            .orderBy(desc(sessions.performedAt));
     } catch {
-        rows = [];
+        // Keep the empty list when the database is not available.
     }
     const action = createSession.bind(null, projectId);
     return (
         <>
-            <ProjectNav projectId={projectId} name={project.name} />
+            <ProjectNav name={project.name} projectId={projectId} />
             <main className="mx-auto max-w-4xl p-6">
                 <h1 className="mb-4 text-2xl font-semibold">
                     <T k="sessions.title" />

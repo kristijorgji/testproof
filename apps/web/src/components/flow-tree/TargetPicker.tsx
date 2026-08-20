@@ -29,18 +29,18 @@ function NodeRow({
         <div>
             <label className="flex items-center gap-2 py-1" style={{ paddingLeft: depth * 16 }}>
                 <input
-                    type="checkbox"
-                    checked={checked}
                     ref={(el) => {
                         if (el) el.indeterminate = indeterminate;
                     }}
+                    type="checkbox"
+                    checked={checked}
                     onChange={() => onToggle(node.id)}
                 />
                 <span>{node.title}</span>
                 <code className="text-xs text-[var(--muted)]">{node.id}</code>
             </label>
             {(node.children ?? []).map((child) => (
-                <NodeRow key={child.id} node={child} selected={selected} onToggle={onToggle} depth={depth + 1} />
+                <NodeRow key={child.id} node={child} selected={selected} depth={depth + 1} onToggle={onToggle} />
             ))}
         </div>
     );
@@ -67,7 +67,7 @@ export function TargetPicker({
     return (
         <div className="rounded-md border border-[var(--border)] p-3">
             {platforms.map((node) => (
-                <NodeRow key={node.id} node={node} selected={selected} onToggle={toggle} depth={0} />
+                <NodeRow key={node.id} node={node} selected={selected} depth={0} onToggle={toggle} />
             ))}
         </div>
     );

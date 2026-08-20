@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { useT } from '../i18n/LocaleProvider';
+
 import { authClient } from '@/lib/auth-client';
 
 export function SignInForm({ nextPath }: { nextPath: string }) {
@@ -33,43 +34,55 @@ export function SignInForm({ nextPath }: { nextPath: string }) {
         <form className="grid gap-3" onSubmit={(event) => event.preventDefault()}>
             <h1 className="text-2xl font-semibold">{t('app.name')}</h1>
             <input
+                name="name"
                 className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
                 type="text"
-                name="name"
                 autoComplete="name"
                 placeholder={t('auth.name')}
                 value={name}
                 onChange={(event) => setName(event.target.value)}
             />
             <input
+                name="email"
                 className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
                 type="email"
-                name="email"
                 autoComplete="email"
                 placeholder={t('auth.email')}
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
                 required
+                onChange={(event) => setEmail(event.target.value)}
             />
             <input
+                name="password"
                 className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
                 type="password"
-                name="password"
                 autoComplete="current-password"
                 placeholder={t('auth.password')}
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
                 required
+                onChange={(event) => setPassword(event.target.value)}
             />
             {error ? <p className="text-sm text-red-600">{error}</p> : null}
             <div className="flex flex-wrap gap-2">
-                <button type="button" className="rounded bg-[var(--accent)] px-3 py-2 text-white" onClick={() => void signInEmail()}>
+                <button
+                    type="button"
+                    className="rounded bg-[var(--accent)] px-3 py-2 text-white"
+                    onClick={() => void signInEmail()}
+                >
                     {t('auth.signIn')}
                 </button>
-                <button type="button" className="rounded border border-[var(--border)] px-3 py-2" onClick={() => void signUpEmail()}>
+                <button
+                    type="button"
+                    className="rounded border border-[var(--border)] px-3 py-2"
+                    onClick={() => void signUpEmail()}
+                >
                     {t('auth.signUp')}
                 </button>
-                <button type="button" className="rounded border border-[var(--border)] px-3 py-2" onClick={() => void signInGithub()}>
+                <button
+                    type="button"
+                    className="rounded border border-[var(--border)] px-3 py-2"
+                    onClick={() => void signInGithub()}
+                >
                     {t('auth.github')}
                 </button>
             </div>

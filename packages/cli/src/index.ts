@@ -11,9 +11,12 @@ import { loadConfig } from './load-config.js';
 async function main(): Promise<void> {
     const program = new Command('testproof').description('Git-native test case management').version('0.1.0');
 
-    program.command('init').description('Write a starter config and empty ledger').action(() => {
-        initCommand(process.cwd());
-    });
+    program
+        .command('init')
+        .description('Write a starter config and empty ledger')
+        .action(() => {
+            initCommand(process.cwd());
+        });
 
     program
         .command('validate')

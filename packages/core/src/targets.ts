@@ -49,7 +49,11 @@ export function cellKey(cell: CoverageCell): string {
 }
 
 export function cellsMatch(demanded: CoverageCell, covered: CoverageCell): boolean {
-    if (demanded.platform !== covered.platform && !covered.platform.startsWith(`${demanded.platform}.`) && !demanded.platform.startsWith(`${covered.platform}.`)) {
+    if (
+        demanded.platform !== covered.platform &&
+        !covered.platform.startsWith(`${demanded.platform}.`) &&
+        !demanded.platform.startsWith(`${covered.platform}.`)
+    ) {
         return false;
     }
     const demandedDims = Object.keys(demanded.dimensions);

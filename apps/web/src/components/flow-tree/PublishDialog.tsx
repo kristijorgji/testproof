@@ -28,7 +28,11 @@ export function PublishDialog({
                     <pre className="max-h-64 overflow-auto text-xs">{conflict.draft}</pre>
                 </div>
                 <div className="mt-3 flex gap-2">
-                    <button type="button" className="rounded bg-[var(--accent)] px-3 py-1 text-white" onClick={onReplay}>
+                    <button
+                        type="button"
+                        className="rounded bg-[var(--accent)] px-3 py-1 text-white"
+                        onClick={onReplay}
+                    >
                         {t('conflict.replay')}
                     </button>
                     <button type="button" className="rounded border px-3 py-1" onClick={onDiscard}>

@@ -1,4 +1,4 @@
-import { locales, type AppLocale } from '../src/components/i18n/messages';
+import { type AppLocale, locales } from '../src/components/i18n/messages';
 
 export function resolveStorybookLocale(value: unknown): AppLocale {
     if (typeof value === 'string' && (locales as readonly string[]).includes(value)) {

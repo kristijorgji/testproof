@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 
-import { createApiToken } from '@/actions/settings';
 import { useT } from '../i18n/LocaleProvider';
+
+import { createApiToken } from '@/actions/settings';
 
 export function TokenForm({ projectId }: { projectId: string }) {
     const t = useT();
@@ -18,7 +19,11 @@ export function TokenForm({ projectId }: { projectId: string }) {
                 void createApiToken(projectId, form).then((result) => setToken(result.token));
             }}
         >
-            <input name="name" placeholder={t('settings.tokenName')} className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2" />
+            <input
+                name="name"
+                placeholder={t('settings.tokenName')}
+                className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
+            />
             <button type="submit" className="rounded bg-[var(--accent)] px-3 py-2 text-white">
                 {t('settings.createToken')}
             </button>

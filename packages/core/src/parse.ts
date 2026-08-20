@@ -10,8 +10,8 @@ import {
 } from './platforms.js';
 import {
     DEFAULT_PLATFORMS,
-    FLOW_ID_RE,
     type Flow,
+    FLOW_ID_RE,
     type FlowArea,
     type Ledger,
     ledgerSchema,
@@ -78,14 +78,19 @@ function assertRefs(ledger: Ledger): void {
             for (const [dimId, values] of Object.entries(dims)) {
                 const dim = dimById.get(dimId);
                 if (!dim) throw new Error(`flows ledger: unknown dimension "${dimId}" on ${flow.id}`);
-                if (dim.appliesTo?.length && !dim.appliesTo.some((p) => platformId === p || platformId.startsWith(`${p}.`))) {
+                if (
+                    dim.appliesTo?.length &&
+                    !dim.appliesTo.some((p) => platformId === p || platformId.startsWith(`${p}.`))
+                ) {
                     throw new Error(
                         `flows ledger: dimension "${dimId}" does not apply to platform "${platformId}" on ${flow.id}`,
                     );
                 }
                 for (const value of values) {
                     if (!dim.values.includes(value)) {
-                        throw new Error(`flows ledger: unknown value "${value}" for dimension "${dimId}" on ${flow.id}`);
+                        throw new Error(
+                            `flows ledger: unknown value "${value}" for dimension "${dimId}" on ${flow.id}`,
+                        );
                     }
                 }
             }
@@ -138,12 +143,12 @@ export function parseLedger(yamlSource: string): Ledger {
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         if (/invalid_format|FLOW_ID_RE|regex/i.test(message) || message.includes('FLOW')) {
-            throw new Error(`flows ledger: invalid FLOW id ${message}`);
+            throw new Error(`flows ledger: invalid FLOW id ${message}`, { cause: error });
         }
         if (/scope/.test(message)) {
-            throw new Error(`flows ledger: areas[].scope must be common|web|mobile`);
+            throw new Error(`flows ledger: areas[].scope must be common|web|mobile`, { cause: error });
         }
-        throw new Error(`flows ledger: ${message}`);
+        throw new Error(`flows ledger: ${message}`, { cause: error });
     }
     if (parsed.version === 1 && parsed.areas.some((a) => !a.scope)) {
         throw new Error('flows ledger: areas[].scope must be common|web|mobile');

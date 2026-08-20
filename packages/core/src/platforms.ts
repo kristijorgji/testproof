@@ -1,7 +1,10 @@
 import type { Flow, FlowArea, FlowScope, FlowTarget, Ledger, PlatformNode, TargetObject } from './schema.js';
 import { DEFAULT_PLATFORMS } from './schema.js';
 
-export function walkPlatforms(nodes: PlatformNode[], visit: (node: PlatformNode, ancestors: PlatformNode[]) => void): void {
+export function walkPlatforms(
+    nodes: PlatformNode[],
+    visit: (node: PlatformNode, ancestors: PlatformNode[]) => void,
+): void {
     const walk = (list: PlatformNode[], ancestors: PlatformNode[]): void => {
         for (const node of list) {
             visit(node, ancestors);

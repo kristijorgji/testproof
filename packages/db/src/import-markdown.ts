@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 
-import { createDb } from './index.js';
 import { runResults, runs, sessions } from './schema.js';
+
+import { createDb } from './index.js';
 
 function parseRows(markdown: string): Array<{ id: string; flow?: string; status: string }> {
     const rows: Array<{ id: string; flow?: string; status: string }> = [];
@@ -10,7 +11,13 @@ function parseRows(markdown: string): Array<{ id: string; flow?: string; status:
         if (!match) continue;
         const id = `${match[1]}-${match[2]}`;
         const flow = match[3] || undefined;
-        const status = /Pass/.test(line) ? 'pass' : /Partial/.test(line) ? 'blocked' : /Bug/.test(line) ? 'fail' : 'skip';
+        const status = /Pass/.test(line)
+            ? 'pass'
+            : /Partial/.test(line)
+              ? 'blocked'
+              : /Bug/.test(line)
+                ? 'fail'
+                : 'skip';
         rows.push({ id, flow, status });
     }
     return rows;

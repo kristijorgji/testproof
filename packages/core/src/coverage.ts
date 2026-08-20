@@ -1,10 +1,10 @@
 import type { PlatformScannerConfig } from './config.js';
 import { flattenFlows } from './parse.js';
 import { inferAreaScope, ledgerPlatforms, platformCovers } from './platforms.js';
-import { cellKey, cellsMatch, resolveTargets } from './targets.js';
-import type { CoverageCell, CoverageStatus, Flow, FlowScope, Ledger } from './schema.js';
 import { collectMaestroFlowInventory } from './scan/maestro.js';
 import { collectTaggedSourceFiles, collectWebE2eFlowFileMap } from './scan/web.js';
+import type { CoverageCell, CoverageStatus, Flow, FlowScope, Ledger } from './schema.js';
+import { cellKey, cellsMatch, resolveTargets } from './targets.js';
 
 export interface PlatformCoverage {
     files: string[];
@@ -97,7 +97,10 @@ interface Hit {
     file: string;
 }
 
-function collectHits(options: DeriveCoverageOptions): { hits: Map<string, Hit[]>; filesByPlatform: Map<string, Map<string, string[]>> } {
+function collectHits(options: DeriveCoverageOptions): {
+    hits: Map<string, Hit[]>;
+    filesByPlatform: Map<string, Map<string, string[]>>;
+} {
     const hits = new Map<string, Hit[]>();
     const filesByPlatform = new Map<string, Map<string, string[]>>();
 
@@ -158,10 +161,20 @@ function collectHits(options: DeriveCoverageOptions): { hits: Map<string, Hit[]>
     return { hits, filesByPlatform };
 }
 
-function statusFromCells(manual: boolean, draft: boolean, demanded: CoverageCell[], covered: CoverageCell[]): CoverageStatus {
+function statusFromCells(
+    manual: boolean,
+    draft: boolean,
+    demanded: CoverageCell[],
+    covered: CoverageCell[],
+): CoverageStatus {
     if (manual || draft) return 'manual';
     if (demanded.length === 0) return covered.length > 0 ? 'automated' : 'todo';
-    const matched = demanded.filter((d) => covered.some((c) => cellsMatch(d, c) || platformCovers(c.platform, d.platform) && Object.keys(d.dimensions).length === 0));
+    const matched = demanded.filter((d) =>
+        covered.some(
+            (c) =>
+                cellsMatch(d, c) || (platformCovers(c.platform, d.platform) && Object.keys(d.dimensions).length === 0),
+        ),
+    );
     if (matched.length === demanded.length) return 'automated';
     if (matched.length > 0) return 'partial';
     return 'todo';
@@ -193,7 +206,9 @@ export function deriveCoverage(ledger: Ledger, options: DeriveCoverageOptions): 
         }
         const manual = Boolean(flow.manual);
         const draft = flow.status === 'draft';
-        const useLegacy = demanded.every((c) => Object.keys(c.dimensions).length === 0) && (scope === 'common' || scope === 'web' || scope === 'mobile');
+        const useLegacy =
+            demanded.every((c) => Object.keys(c.dimensions).length === 0) &&
+            (scope === 'common' || scope === 'web' || scope === 'mobile');
         const status = useLegacy
             ? coverageStatusFor(scope, manual || draft, webFiles, mobileFiles)
             : statusFromCells(manual, draft, demanded, uniqueCovered);

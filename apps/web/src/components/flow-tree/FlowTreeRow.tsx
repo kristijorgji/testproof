@@ -21,9 +21,9 @@ export function FlowTreeRow({
         <div>
             <button
                 type="button"
-                onClick={() => onSelect?.(flow.id)}
                 className={`flex w-full items-baseline gap-2 px-3 py-2 text-left ${selected ? 'bg-[var(--border)]' : ''}`}
                 style={{ paddingLeft: 12 + depth * 16 }}
+                onClick={() => onSelect?.(flow.id)}
             >
                 <StatusBadge status={status} />
                 <code className="text-xs">{flow.id}</code>

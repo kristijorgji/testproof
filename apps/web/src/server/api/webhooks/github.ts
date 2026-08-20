@@ -1,6 +1,6 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
-import { and, eq } from 'drizzle-orm';
 import { drafts, projects, repos } from '@testproof/db';
+import { and, eq } from 'drizzle-orm';
 
 import { getDb } from '../../db';
 import { verifyGithubSignature } from '../../github/webhook';
@@ -22,12 +22,17 @@ githubWebhook.post('/', async (c) => {
     const name = event.repository?.name;
     if (!owner || !name) return c.json({ ok: true });
     const db = getDb();
-    const repoRows = await db.select().from(repos).where(and(eq(repos.owner, owner), eq(repos.name, name)));
+    const repoRows = await db
+        .select()
+        .from(repos)
+        .where(and(eq(repos.owner, owner), eq(repos.name, name)));
     for (const repo of repoRows) {
         const [project] = await db.select().from(projects).where(eq(projects.id, repo.projectId)).limit(1);
         if (!project) continue;
         const touched = (event.commits ?? []).some((commit) =>
-            [...(commit.modified ?? []), ...(commit.added ?? []), ...(commit.removed ?? [])].includes(project.ledgerPath),
+            [...(commit.modified ?? []), ...(commit.added ?? []), ...(commit.removed ?? [])].includes(
+                project.ledgerPath,
+            ),
         );
         if (!touched) continue;
         await db

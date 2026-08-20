@@ -11,6 +11,8 @@ const styles: Record<CoverageStatus, string> = {
 
 export function StatusBadge({ status }: { status: CoverageStatus }) {
     return (
-        <span className={cn('rounded px-1.5 py-0.5 text-[11px] uppercase tracking-wide', styles[status])}>{status}</span>
+        <span className={cn('rounded px-1.5 py-0.5 text-[11px] uppercase tracking-wide', styles[status])}>
+            {status}
+        </span>
     );
 }

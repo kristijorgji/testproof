@@ -15,10 +15,7 @@ export async function createProject(formData: FormData): Promise<void> {
         .toLowerCase()
         .replace(/[^a-z0-9-]+/g, '-');
     if (!name || !slug) throw new Error('Name and slug are required');
-    const [row] = await getDb()
-        .insert(projects)
-        .values({ name, slug, shareToken: crypto.randomUUID() })
-        .returning();
+    const [row] = await getDb().insert(projects).values({ name, slug, shareToken: crypto.randomUUID() }).returning();
     if (!row) throw new Error('Could not create project');
     revalidatePath('/projects');
     redirect(`/projects/${row.id}`);

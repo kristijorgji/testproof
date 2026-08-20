@@ -6,11 +6,11 @@ import { redirect } from 'next/navigation';
 import { auth } from './auth';
 import { getDb } from './db';
 
-export async function getSession() {
+export async function getSession(): Promise<Awaited<ReturnType<typeof auth.api.getSession>>> {
     return auth.api.getSession({ headers: await headers() });
 }
 
-export async function requireUser() {
+export async function requireUser(): Promise<NonNullable<Awaited<ReturnType<typeof getSession>>>['user']> {
     const session = await getSession();
     if (!session?.user) redirect('/sign-in');
     return session.user;

@@ -35,6 +35,9 @@ export async function loadConfig(cwd = process.cwd(), explicit?: string): Promis
             '@testproof/core': resolveCore(),
         },
     });
-    const mod = (await jiti.import(file)) as { default?: TestproofConfig } & TestproofConfig;
-    return mod.default ?? mod;
+    const mod: unknown = await jiti.import(file);
+    if (typeof mod === 'object' && mod !== null && 'default' in mod) {
+        return (mod as { default: TestproofConfig }).default;
+    }
+    return mod as TestproofConfig;
 }

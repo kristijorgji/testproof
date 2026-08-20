@@ -175,7 +175,9 @@ export const ledgerSchema = z.object({
 
 export type Ledger = z.infer<typeof ledgerSchema>;
 /** @deprecated use Ledger */
+// eslint-disable-next-line kj/no-pure-type-alias -- public deprecated alias kept for existing consumers
 export type FlowsLedger = Ledger;
+// eslint-disable-next-line kj/no-pure-type-alias -- public alias kept for existing consumers
 export type FlowDefinition = Flow;
 
 export const DEFAULT_PLATFORMS: PlatformNode[] = [
