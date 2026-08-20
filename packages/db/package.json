@@ -20,6 +20,8 @@
         "test": "vitest run --passWithNoTests",
         "db:generate": "drizzle-kit generate",
         "db:migrate": "node dist/migrate.js",
+        "db:seed": "node dist/seed.js",
+        "db:import-markdown": "node dist/import-markdown.js",
         "clean": "rm -rf dist"
     },
     "dependencies": {

@@ -30,7 +30,7 @@ Open http://localhost:3100. The web UI commits ledger edits back to GitHub when 
 
 ## Ledger
 
-`version: 1` files (the original prona365 `scope: common|web|mobile` format) still parse. `testproof migrate` rewrites them to `version: 2` with a platform tree and optional dimensions.
+`version: 1` files (the original `scope: common|web|mobile` format) still parse. `testproof migrate` rewrites them to `version: 2` with a platform tree and optional dimensions.
 
 ```yaml
 version: 2

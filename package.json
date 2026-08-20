@@ -13,7 +13,7 @@
         "fix": "turbo fix && prettier --write .",
         "db:generate": "pnpm --filter @testproof/db db:generate",
         "db:migrate": "pnpm --filter @testproof/db db:migrate",
-        "db:seed": "npx tsx scripts/seed.ts",
+        "db:seed": "pnpm --filter @testproof/db build && pnpm --filter @testproof/db db:seed",
         "storybook": "pnpm --filter @testproof/web storybook",
         "clean": "turbo clean && rm -rf node_modules"
     },

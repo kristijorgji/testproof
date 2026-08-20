@@ -53,9 +53,29 @@ export async function readProjectLedger(projectId: string, userId: string): Prom
         });
         return { ...file, fromGithub: true };
     }
-    const fallback = process.env.LOCAL_LEDGER_PATH ?? 'examples/demo/flows.yaml';
-    const content = fs.readFileSync(path.resolve(fallback), 'utf8');
+    const content = fs.readFileSync(/* turbopackIgnore: true */ resolveLocalLedgerPath(), 'utf8');
     return { content, sha: createHash('sha1').update(content).digest('hex'), fromGithub: false };
+}
+
+/** Next starts from `apps/web`; Docker and CLI start from the repo root. */
+export function resolveLocalLedgerPath(): string {
+    const raw = process.env.LOCAL_LEDGER_PATH ?? 'examples/demo/flows.yaml';
+    if (path.isAbsolute(raw)) {
+        return raw;
+    }
+    let dir = process.cwd();
+    for (let i = 0; i < 6; i += 1) {
+        const candidate = path.join(/* turbopackIgnore: true */ dir, raw);
+        if (fs.existsSync(/* turbopackIgnore: true */ candidate)) {
+            return candidate;
+        }
+        const parent = path.dirname(dir);
+        if (parent === dir) {
+            break;
+        }
+        dir = parent;
+    }
+    return path.resolve(/* turbopackIgnore: true */ process.cwd(), raw);
 }
 
 export function applyDraft(source: string, patches: LedgerPatch[]): string {

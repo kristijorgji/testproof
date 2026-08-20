@@ -148,7 +148,7 @@ importers:
   packages/cli:
     dependencies:
       '@testproof/core':
-        specifier: workspace:*
+        specifier: file:../core
         version: link:../core
       commander:
         specifier: ^15.0.0

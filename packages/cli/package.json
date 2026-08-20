@@ -17,7 +17,7 @@
         "clean": "rm -rf dist"
     },
     "dependencies": {
-        "@testproof/core": "workspace:*",
+        "@testproof/core": "file:../core",
         "commander": "^15.0.0",
         "jiti": "^2.6.1"
     },

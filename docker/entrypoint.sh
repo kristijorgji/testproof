@@ -5,4 +5,4 @@ if [ -z "${DATABASE_URL:-}" ]; then
   exit 1
 fi
 node packages/db/dist/migrate.js
-exec node apps/web/server.js
+exec pnpm --filter @testproof/web start

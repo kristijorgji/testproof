@@ -1,14 +1,13 @@
 'use server';
 
 import fs from 'node:fs';
-import path from 'node:path';
 
 import type { LedgerPatch } from '@testproof/core';
 import { drafts } from '@testproof/db';
 import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
-import { applyDraft, getOpenDraft, getProject, getProjectRepo, readProjectLedger } from '@/server/project';
+import { applyDraft, getOpenDraft, getProject, getProjectRepo, readProjectLedger, resolveLocalLedgerPath } from '@/server/project';
 import { getDb } from '@/server/db';
 import { createOctokit } from '@/server/github/client';
 import { PublishConflictError, publishCommit, publishPullRequest } from '@/server/github/publish';
@@ -51,7 +50,7 @@ export async function publishDraft(projectId: string, input: { message: string; 
     if (!project) throw new Error('Project not found');
 
     if (!repo) {
-        const dest = path.resolve(process.env.LOCAL_LEDGER_PATH ?? 'examples/demo/flows.yaml');
+        const dest = resolveLocalLedgerPath();
         fs.writeFileSync(dest, yaml);
         if (draft) {
             await getDb().update(drafts).set({ status: 'published', updatedAt: new Date() }).where(eq(drafts.id, draft.id));

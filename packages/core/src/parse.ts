@@ -153,5 +153,5 @@ export function parseLedger(yamlSource: string): Ledger {
     return normalized;
 }
 
-/** Alias used by the prona365 port. */
+/** Alias kept for existing consumer configs. */
 export const parseFlowsLedger = parseLedger;

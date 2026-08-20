@@ -10,7 +10,7 @@ import { renderFlowsMarkdown } from '../src/render/markdown.js';
 const dir = dirname(fileURLToPath(import.meta.url));
 
 describe('renderFlowsMarkdown', () => {
-    it('renders the prona365 fixture ledger without crashing', () => {
+    it('renders the sample fixture ledger without crashing', () => {
         const yaml = readFileSync(join(dir, 'fixtures/flows.yaml'), 'utf8');
         const ledger = parseLedger(yaml);
         const coverage = deriveCoverage(ledger, { scanners: [] });

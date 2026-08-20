@@ -15,4 +15,3 @@ export * from './render/html.js';
 export * from './ingest/playwright.js';
 export * from './ingest/junit.js';
 export * from './ingest/maestro.js';
-export * from './presets/prona365.js';
