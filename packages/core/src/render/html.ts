@@ -1,5 +1,6 @@
 import { type FlowCoverage, summarizeCoverage } from '../coverage.js';
-import type { CoverageStatus, Flow, Ledger } from '../schema.js';
+import { flattenPlatformNodes } from '../platforms.js';
+import { type CoverageStatus, DEFAULT_PLATFORMS, type Flow, type Ledger } from '../schema.js';
 
 function escapeHtml(value: string): string {
     return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -18,26 +19,18 @@ function fileLinks(files: string[]): string {
 function renderFlowHtml(flow: Flow, coverage: Map<string, FlowCoverage>, depth: number): string {
     const cov = coverage.get(flow.id);
     const status = cov?.status ?? 'todo';
-    const scope = cov?.scope ?? 'common';
     const children = (flow.children ?? []).map((c) => renderFlowHtml(c, coverage, depth + 1)).join('');
-    const note = flow.note ? `<div class="note">${escapeHtml(flow.note)}</div>` : '';
     const refs = flow.refs?.length ? `<span class="refs">${escapeHtml(flow.refs.join(', '))}</span>` : '';
-    const platforms: string[] = [];
-    const names = new Set(['web', 'mobile', ...Object.keys(cov?.filesByPlatform ?? {})]);
-    if (scope === 'common' || scope === 'web' || names.has('web')) {
-        if (scope === 'common' || scope === 'web') {
-            platforms.push(`<div><strong>web:</strong> ${fileLinks(cov?.web.files ?? [])}</div>`);
-        }
-    }
-    if (scope === 'common' || scope === 'mobile') {
-        platforms.push(`<div><strong>mobile:</strong> ${fileLinks(cov?.mobile.files ?? [])}</div>`);
-    }
-    for (const [name, files] of Object.entries(cov?.filesByPlatform ?? {})) {
-        if (name === 'web' || name === 'mobile') continue;
-        platforms.push(`<div><strong>${escapeHtml(name)}:</strong> ${fileLinks(files)}</div>`);
-    }
+    const files = cov?.filesByPlatform ?? {};
+    const demandedPlatforms = [...new Set((cov?.demanded ?? []).map((cell) => cell.platform))].sort();
+    const extraPlatforms = Object.keys(files)
+        .filter((name) => !demandedPlatforms.includes(name))
+        .sort();
+    const platforms = [...demandedPlatforms, ...extraPlatforms].map(
+        (name) => `<div><strong>${escapeHtml(name)}:</strong> ${fileLinks(files[name] ?? [])}</div>`,
+    );
     return `
-<details class="flow" data-status="${status}" data-scope="${scope}" data-id="${escapeHtml(flow.id)}" data-title="${escapeHtml(flow.title.toLowerCase())}" open>
+<details class="flow" data-status="${status}" data-platforms="${escapeHtml([...demandedPlatforms, ...extraPlatforms].join(' '))}" data-id="${escapeHtml(flow.id)}" data-title="${escapeHtml(flow.title.toLowerCase())}" open>
   <summary>
     <span class="badge ${status}">${status}</span>
     <code>${escapeHtml(flow.id)}</code>
@@ -45,7 +38,6 @@ function renderFlowHtml(flow: Flow, coverage: Map<string, FlowCoverage>, depth: 
     ${refs}
   </summary>
   <div class="body" style="margin-left:${depth * 12}px">
-    ${note}
     ${platforms.join('')}
     ${children}
   </div>
@@ -75,8 +67,8 @@ export function renderFlowsHtml(
                 .join('');
             const intro = area.intro ? `<p class="intro">${escapeHtml(area.intro.trim())}</p>` : '';
             return `
-<section class="area" data-area="${escapeHtml(area.id)}" data-scope="${area.scope ?? 'common'}">
-  <h2>${escapeHtml(area.title)} <small>${area.scope ?? 'common'}</small></h2>
+<section class="area" data-area="${escapeHtml(area.id)}">
+  <h2>${escapeHtml(area.title)}</h2>
   ${intro}
   ${groups}
 </section>`;
@@ -118,7 +110,7 @@ export function renderFlowsHtml(
   .badge.partial { background: #854d0e; color: #fef9c3; }
   .badge.todo { background: #7f1d1d; color: #fee2e2; }
   .badge.manual { background: #1e3a8a; color: #dbeafe; }
-  .muted, .notes, .intro, .note { color: var(--muted); white-space: pre-wrap; }
+  .muted, .notes, .intro { color: var(--muted); white-space: pre-wrap; }
   a { color: var(--accent); }
   .hidden { display: none !important; }
 </style>
@@ -134,11 +126,9 @@ export function renderFlowsHtml(
     <div class="chips" id="statusChips">
       ${statuses.map((s) => `<span class="chip active" data-status="${s}">${s} (${summary[s]})</span>`).join('')}
     </div>
-    <div class="chips" id="scopeChips">
-      <span class="chip active" data-scope="common">common</span>
-      <span class="chip active" data-scope="web">web</span>
-      <span class="chip active" data-scope="mobile">mobile</span>
-    </div>
+    <div class="chips" id="platformChips">${flattenPlatformNodes(ledger.platforms ?? DEFAULT_PLATFORMS)
+        .map((node) => `<span class="chip active" data-platform="${escapeHtml(node.id)}">${escapeHtml(node.id)}</span>`)
+        .join('')}</div>
   </div>
   <div class="stats">Total ${total} · automated ${summary.automated} · partial ${summary.partial} · todo ${summary.todo} · manual ${summary.manual}
   · regenerate with <code>${escapeHtml(sourceHint)}</code></div>
@@ -149,14 +139,14 @@ export function renderFlowsHtml(
   const q = document.getElementById('q');
   const area = document.getElementById('area');
   const statusChips = [...document.querySelectorAll('#statusChips .chip')];
-  const scopeChips = [...document.querySelectorAll('#scopeChips .chip')];
+  const platformChips = [...document.querySelectorAll('#platformChips .chip')];
   function activeSet(chips, attr) {
     return new Set(chips.filter(c => c.classList.contains('active')).map(c => c.dataset[attr]));
   }
   function apply() {
     const query = q.value.trim().toLowerCase();
     const statuses = activeSet(statusChips, 'status');
-    const scopes = activeSet(scopeChips, 'scope');
+    const platforms = activeSet(platformChips, 'platform');
     const areaId = area.value;
     document.querySelectorAll('.area').forEach(section => {
       const areaMatch = !areaId || section.dataset.area === areaId;
@@ -166,7 +156,7 @@ export function renderFlowsHtml(
         const ok =
           areaMatch &&
           statuses.has(flow.dataset.status) &&
-          scopes.has(flow.dataset.scope) &&
+          (flow.dataset.platforms || '').split(' ').some(p => platforms.has(p)) &&
           (!query || text.includes(query));
         flow.classList.toggle('hidden', !ok);
         if (ok) visibleFlows += 1;
@@ -175,7 +165,7 @@ export function renderFlowsHtml(
     });
   }
   statusChips.forEach(c => c.addEventListener('click', () => { c.classList.toggle('active'); apply(); }));
-  scopeChips.forEach(c => c.addEventListener('click', () => { c.classList.toggle('active'); apply(); }));
+  platformChips.forEach(c => c.addEventListener('click', () => { c.classList.toggle('active'); apply(); }));
   q.addEventListener('input', apply);
   area.addEventListener('change', apply);
 })();

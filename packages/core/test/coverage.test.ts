@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { coverageStatusFor, deriveCoverage } from '../src/coverage.js';
+import { deriveCoverage } from '../src/coverage.js';
 import { parseLedger } from '../src/parse.js';
 
 const tempDirs: string[] = [];
@@ -20,18 +20,6 @@ function makeTempDir(): string {
     tempDirs.push(dir);
     return dir;
 }
-
-describe('coverageStatusFor', () => {
-    it('computes status by scope', () => {
-        expect(coverageStatusFor('common', false, ['a'], ['b'])).toBe('automated');
-        expect(coverageStatusFor('common', false, ['a'], [])).toBe('partial');
-        expect(coverageStatusFor('common', false, [], [])).toBe('todo');
-        expect(coverageStatusFor('web', false, ['a'], [])).toBe('automated');
-        expect(coverageStatusFor('web', false, [], ['m'])).toBe('todo');
-        expect(coverageStatusFor('mobile', false, [], ['m'])).toBe('automated');
-        expect(coverageStatusFor('common', true, [], [])).toBe('manual');
-    });
-});
 
 describe('deriveCoverage', () => {
     it('maps code tags to coverage rows', () => {
@@ -50,7 +38,7 @@ version: 2
 areas:
   - id: HOME
     title: HOME
-    scope: common
+    targets: [web, mobile]
     groups:
       - title: Home
         flows:
@@ -60,7 +48,7 @@ areas:
             title: Search
   - id: MAINT
     title: Maint
-    scope: web
+    targets: [web]
     groups:
       - title: M
         flows:
@@ -69,14 +57,14 @@ areas:
             manual: true
 `);
         const coverage = deriveCoverage(ledger, {
-            maestroFlowsDir: maestro,
-            webSpecsDir: specs,
-            maestroLinkPrefix: 'M',
-            webLinkPrefix: 'W',
+            scanners: [
+                { name: 'web', dir: specs, extractor: 'regex-tag', linkPrefix: 'W' },
+                { name: 'mobile', dir: maestro, extractor: 'maestro-tags', linkPrefix: 'M' },
+            ],
         });
         expect(coverage.get('FLOW-HOME-OPENS')?.status).toBe('automated');
-        expect(coverage.get('FLOW-HOME-OPENS')?.web.files).toEqual(['W/home.spec.ts']);
-        expect(coverage.get('FLOW-HOME-OPENS')?.mobile.files).toEqual(['M/home.yaml']);
+        expect(coverage.get('FLOW-HOME-OPENS')?.filesByPlatform.web).toEqual(['W/home.spec.ts']);
+        expect(coverage.get('FLOW-HOME-OPENS')?.filesByPlatform.mobile).toEqual(['M/home.yaml']);
         expect(coverage.get('FLOW-HOME-SEARCH')?.status).toBe('todo');
         expect(coverage.get('FLOW-WEB-MAINT')?.status).toBe('manual');
     });

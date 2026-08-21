@@ -4,9 +4,6 @@ export const FLOW_ID_RE = /^FLOW-[A-Z0-9-]+$/;
 export const STEP_ID_RE = /^STEP-[A-Z0-9-]+$/;
 export const PARAM_ID_RE = /^PARAM-[A-Z0-9-]+$/;
 
-export const flowScopeSchema = z.enum(['common', 'web', 'mobile']);
-export type FlowScope = z.infer<typeof flowScopeSchema>;
-
 export const coverageStatusSchema = z.enum(['automated', 'partial', 'todo', 'manual']);
 export type CoverageStatus = z.infer<typeof coverageStatusSchema>;
 
@@ -90,7 +87,6 @@ export type ParameterDef = z.infer<typeof parameterDefSchema>;
 export interface Flow {
     id: string;
     title: string;
-    note?: string;
     notes?: string;
     manual?: boolean;
     refs?: string[];
@@ -120,7 +116,6 @@ export const flowSchema: z.ZodType<Flow> = z.lazy(() =>
     z.object({
         id: z.string().regex(FLOW_ID_RE, { error: `invalid FLOW id` }),
         title: z.string().min(1),
-        note: z.string().min(1).optional(),
         notes: z.string().min(1).optional(),
         manual: z.boolean().optional(),
         refs: z.array(z.string()).optional(),
@@ -158,7 +153,7 @@ export type FlowGroup = z.infer<typeof groupSchema>;
 export const areaSchema = z.object({
     id: z.string().min(1),
     title: z.string().min(1),
-    scope: flowScopeSchema.optional(),
+    targets: z.array(targetSchema).optional(),
     intro: z.string().min(1).optional(),
     groups: z.array(groupSchema),
 });
@@ -174,11 +169,6 @@ export const ledgerSchema = z.object({
 });
 
 export type Ledger = z.infer<typeof ledgerSchema>;
-/** @deprecated use Ledger */
-// eslint-disable-next-line kj/no-pure-type-alias -- public deprecated alias kept for existing consumers
-export type FlowsLedger = Ledger;
-// eslint-disable-next-line kj/no-pure-type-alias -- public alias kept for existing consumers
-export type FlowDefinition = Flow;
 
 export const DEFAULT_PLATFORMS: PlatformNode[] = [
     { id: 'web', title: 'Web' },
@@ -193,7 +183,6 @@ export type CoverageCell = z.infer<typeof coverageCellSchema>;
 
 export const coveragePushFlowSchema = z.object({
     id: z.string(),
-    scope: flowScopeSchema.optional(),
     status: coverageStatusSchema,
     demanded: z.array(coverageCellSchema).optional(),
     covered: z.array(coverageCellSchema).optional(),

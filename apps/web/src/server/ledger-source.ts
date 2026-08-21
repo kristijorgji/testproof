@@ -43,32 +43,12 @@ export interface LedgerSource {
     write(yaml: string, opts: LedgerWriteOpts): Promise<void>;
 }
 
-let warnedLocalEnv = false;
-
 function revisionFromSha(sha: string): number {
     return Number.parseInt(sha.slice(0, 8), 16);
 }
 
 function shaOf(content: string): string {
     return createHash('sha1').update(content).digest('hex');
-}
-
-function resolveDeprecatedEnvPath(): string {
-    if (!warnedLocalEnv) {
-        console.warn('LOCAL_LEDGER_PATH is deprecated; set a per-project file path in Settings');
-        warnedLocalEnv = true;
-    }
-    const raw = process.env.LOCAL_LEDGER_PATH ?? 'examples/demo/flows.yaml';
-    if (path.isAbsolute(raw)) return raw;
-    let dir = process.cwd();
-    for (let i = 0; i < 6; i += 1) {
-        const candidate = path.join(/* turbopackIgnore: true */ dir, raw);
-        if (fs.existsSync(/* turbopackIgnore: true */ candidate)) return candidate;
-        const parent = path.dirname(dir);
-        if (parent === dir) break;
-        dir = parent;
-    }
-    return path.resolve(/* turbopackIgnore: true */ process.cwd(), raw);
 }
 
 class GitLedgerSource implements LedgerSource {
@@ -204,7 +184,10 @@ export async function getLedgerSource(projectId: string, userId: string): Promis
     }
 
     if (storage === 'file') {
-        const raw = project.ledgerFilePath ?? resolveDeprecatedEnvPath();
+        const raw = project.ledgerFilePath;
+        if (!raw) {
+            throw new Error('File storage requires a ledger file path. Set it in project Settings.');
+        }
         if (!path.isAbsolute(raw)) {
             throw new Error('File storage requires an absolute ledger path');
         }

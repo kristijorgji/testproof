@@ -36,7 +36,7 @@ platforms:
 areas:
   - id: HOME
     title: HOME
-    scope: common
+    targets: [web, mobile]
     groups:
       - title: HOME
         flows:

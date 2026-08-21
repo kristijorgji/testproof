@@ -2,11 +2,11 @@ import type { PlatformScannerConfig } from './config.js';
 import { collectIncompleteCoreIds, deriveCoverage } from './coverage.js';
 import { flattenFlowIds, parseLedger } from './parse.js';
 import { collectMaestroFlowInventory } from './scan/maestro.js';
-import { collectWebE2eFlowFileMap } from './scan/web.js';
+import { collectFlowFileMap } from './scan/web.js';
 
 export interface ValidateResult {
-    maestroIds: string[];
-    webIds: string[];
+    /** Flow ids found in source, keyed by scanner name. */
+    idsByScanner: Record<string, string[]>;
     ledgerIds: string[];
     missingFromLedger: string[];
     incompleteCoreIds: string[];
@@ -24,31 +24,26 @@ export function validateLedger(options: {
     const ledger = parseLedger(options.yamlSource);
     const ledgerIds = uniqueSorted(flattenFlowIds(ledger));
     const ledgerSet = new Set(ledgerIds);
-    const maestroIds: string[] = [];
-    const webIds: string[] = [];
+    const idsByScanner: Record<string, string[]> = {};
 
     for (const scanner of options.scanners) {
+        const found: string[] = [];
         if (scanner.extractor === 'maestro-tags') {
             for (const row of collectMaestroFlowInventory(scanner.dir)) {
                 for (const tag of row.tags) {
-                    if (tag.startsWith('FLOW-')) maestroIds.push(tag);
+                    if (tag.startsWith('FLOW-')) found.push(tag);
                 }
             }
         } else {
-            webIds.push(...collectWebE2eFlowFileMap(scanner.dir, scanner.ignore).keys());
+            found.push(...collectFlowFileMap(scanner.dir, scanner.ignore).keys());
         }
+        idsByScanner[scanner.name] = uniqueSorted([...(idsByScanner[scanner.name] ?? []), ...found]);
     }
 
-    const codeIds = uniqueSorted([...maestroIds, ...webIds]);
+    const codeIds = uniqueSorted(Object.values(idsByScanner).flat());
     const missingFromLedger = codeIds.filter((id) => !ledgerSet.has(id));
     const coverage = deriveCoverage(ledger, { scanners: options.scanners });
     const incompleteCoreIds = collectIncompleteCoreIds(ledger, coverage, options.coreAreaIds ?? []);
 
-    return {
-        maestroIds: uniqueSorted(maestroIds),
-        webIds: uniqueSorted(webIds),
-        ledgerIds,
-        missingFromLedger,
-        incompleteCoreIds,
-    };
+    return { idsByScanner, ledgerIds, missingFromLedger, incompleteCoreIds };
 }

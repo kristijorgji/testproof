@@ -48,7 +48,7 @@ export function collectTaggedSourceFiles(
     return files;
 }
 
-export function collectWebE2eFlowFileMap(specsDir: string, ignore?: string[]): Map<string, string[]> {
+export function collectFlowFileMap(specsDir: string, ignore?: string[]): Map<string, string[]> {
     const map = new Map<string, string[]>();
     for (const file of collectTaggedSourceFiles(specsDir, { ignore })) {
         for (const id of file.flowIds) {

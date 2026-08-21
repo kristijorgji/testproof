@@ -10,7 +10,7 @@ Source of truth for **what must work**, plus honest automation coverage.
 
 - [Goals](#goals)
 - [Legend](#legend)
-- [Common for web and mobile](#common-for-web-and-mobile)
+- [Areas](#areas)
   - [AUTH](#auth)
 
 ## Goals
@@ -34,26 +34,25 @@ Create automated tests for the flows below that cover:
 **Hierarchy:** headings nest areas → flows → branches; checklist indentation is
 parent → **sub-cases**.
 
-**Coverage:** derived automatically. Top-level `[x]` when the required platform(s)
-for the area scope are covered. One test may cover **many** `FLOW-…` IDs.
+**Coverage:** derived automatically. Top-level `[x]` when every demanded platform
+is covered. One test may cover **many** `FLOW-…` IDs.
 
 ---
 
-## Common for web and mobile
-
-Flows below apply to **both** web and the native app unless noted.
+## Areas
 
 ### AUTH
 
 #### Login
 
 - [x] `FLOW-AUTH-LOGIN-SUCCESS` Correct credentials open the dashboard
+  - **mobile.android:** [ ] `todo`
+  - **mobile.ios:** [ ] `todo`
   - **web:** [x]
     [`login.spec.ts`](examples/demo/web-specs/login.spec.ts)
   - **mobile:** [x]
     [`login.yaml`](examples/demo/mobile-flows/login.yaml)
-- [ ] `FLOW-AUTH-LOGIN-INVALID` Invalid credentials show an error `Partial`
+- [x] `FLOW-AUTH-LOGIN-INVALID` Invalid credentials show an error
   - **web:** [x]
     [`login.spec.ts`](examples/demo/web-specs/login.spec.ts)
-  - **mobile:** [ ] `todo`
 

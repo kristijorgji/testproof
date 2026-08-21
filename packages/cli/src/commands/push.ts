@@ -34,7 +34,6 @@ export async function pushCommand(config: TestproofConfig, cwd: string): Promise
         summary,
         flows: [...coverage.values()].map((row) => ({
             id: row.id,
-            scope: row.scope,
             status: row.status,
             demanded: row.demanded,
             covered: row.covered,

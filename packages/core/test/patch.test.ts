@@ -16,15 +16,15 @@ areas:
 `;
 
 describe('applyPatch flow fields', () => {
-    it('sets, deletes and aliases flow metadata', () => {
+    it('sets and deletes flow metadata', () => {
         const doc = openLedgerDocument(SOURCE);
         applyPatch(doc, { op: 'set-flow-enum', flowId: 'FLOW-AUTH-LOGIN', field: 'priority', value: 'high' });
         applyPatch(doc, { op: 'set-flow-field', flowId: 'FLOW-AUTH-LOGIN', field: 'owner', value: 'qa' });
         applyPatch(doc, { op: 'set-flow-flag', flowId: 'FLOW-AUTH-LOGIN', field: 'flaky', value: true });
         applyPatch(doc, { op: 'set-flow-number', flowId: 'FLOW-AUTH-LOGIN', field: 'estimateMinutes', value: 12 });
         applyPatch(doc, { op: 'set-flow-list', flowId: 'FLOW-AUTH-LOGIN', field: 'tags', value: ['smoke'] });
-        applyPatch(doc, { op: 'set-flow-manual', flowId: 'FLOW-AUTH-LOGIN', value: true });
-        applyPatch(doc, { op: 'set-flow-refs', flowId: 'FLOW-AUTH-LOGIN', value: ['REQ-1'] });
+        applyPatch(doc, { op: 'set-flow-flag', flowId: 'FLOW-AUTH-LOGIN', field: 'manual', value: true });
+        applyPatch(doc, { op: 'set-flow-list', flowId: 'FLOW-AUTH-LOGIN', field: 'refs', value: ['REQ-1'] });
         const first = parseLedger(serializeLedgerDocument(doc)).areas[0]?.groups[0]?.flows[0];
         expect(first).toMatchObject({
             priority: 'high',

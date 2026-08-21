@@ -18,6 +18,6 @@ describe('renderFlowsMarkdown', () => {
         const md = renderFlowsMarkdown(ledger, coverage);
         expect(md).toContain('# Test Flows & Coverage');
         expect(md).toContain('FLOW-AUTH-LOGIN-INVALID');
-        expect(md).toContain('## Common for web and mobile');
+        expect(md).toContain('## Areas');
     });
 });

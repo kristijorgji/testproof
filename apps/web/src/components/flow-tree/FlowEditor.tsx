@@ -236,8 +236,8 @@ function dispatchFlowChange(flowId: string, partial: Partial<Flow>, apply: (patc
     if (partial.title) {
         apply({ op: 'set-flow-field', flowId, field: 'title', value: partial.title });
     }
-    if (partial.note !== undefined) {
-        apply({ op: 'set-flow-field', flowId, field: 'note', value: partial.note || null });
+    if (partial.notes !== undefined) {
+        apply({ op: 'set-flow-field', flowId, field: 'notes', value: partial.notes || null });
     }
     if (partial.targets) {
         apply({ op: 'set-flow-targets', flowId, value: partial.targets });

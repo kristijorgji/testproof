@@ -31,7 +31,7 @@
   .badge.partial { background: #854d0e; color: #fef9c3; }
   .badge.todo { background: #7f1d1d; color: #fee2e2; }
   .badge.manual { background: #1e3a8a; color: #dbeafe; }
-  .muted, .notes, .intro, .note { color: var(--muted); white-space: pre-wrap; }
+  .muted, .notes, .intro { color: var(--muted); white-space: pre-wrap; }
   a { color: var(--accent); }
   .hidden { display: none !important; }
 </style>
@@ -43,23 +43,19 @@
     <input id="q" type="search" placeholder="Search FLOW id or title…" size="32" />
     <select id="area"><option value="">All areas</option><option value="AUTH">AUTH</option></select>
     <div class="chips" id="statusChips">
-      <span class="chip active" data-status="automated">automated (1)</span><span class="chip active" data-status="partial">partial (1)</span><span class="chip active" data-status="todo">todo (0)</span><span class="chip active" data-status="manual">manual (0)</span>
+      <span class="chip active" data-status="automated">automated (2)</span><span class="chip active" data-status="partial">partial (0)</span><span class="chip active" data-status="todo">todo (0)</span><span class="chip active" data-status="manual">manual (0)</span>
     </div>
-    <div class="chips" id="scopeChips">
-      <span class="chip active" data-scope="common">common</span>
-      <span class="chip active" data-scope="web">web</span>
-      <span class="chip active" data-scope="mobile">mobile</span>
-    </div>
+    <div class="chips" id="platformChips"><span class="chip active" data-platform="web">web</span><span class="chip active" data-platform="mobile">mobile</span><span class="chip active" data-platform="mobile.ios">mobile.ios</span><span class="chip active" data-platform="mobile.android">mobile.android</span></div>
   </div>
-  <div class="stats">Total 2 · automated 1 · partial 1 · todo 0 · manual 0
+  <div class="stats">Total 2 · automated 2 · partial 0 · todo 0 · manual 0
   · regenerate with <code>testproof report</code></div>
 </header>
 <main>
-<section class="area" data-area="AUTH" data-scope="common">
-  <h2>AUTH <small>common</small></h2>
+<section class="area" data-area="AUTH">
+  <h2>AUTH</h2>
   
   <section class="group"><h3>Login</h3>
-<details class="flow" data-status="automated" data-scope="common" data-id="FLOW-AUTH-LOGIN-SUCCESS" data-title="correct credentials open the dashboard" open>
+<details class="flow" data-status="automated" data-platforms="mobile.android mobile.ios web mobile" data-id="FLOW-AUTH-LOGIN-SUCCESS" data-title="correct credentials open the dashboard" open>
   <summary>
     <span class="badge automated">automated</span>
     <code>FLOW-AUTH-LOGIN-SUCCESS</code>
@@ -67,21 +63,19 @@
     
   </summary>
   <div class="body" style="margin-left:0px">
-    
-    <div><strong>web:</strong> <a href="examples/demo/web-specs/login.spec.ts">login.spec.ts</a></div><div><strong>mobile:</strong> <a href="examples/demo/mobile-flows/login.yaml">login.yaml</a></div>
+    <div><strong>mobile.android:</strong> <span class="muted">todo</span></div><div><strong>mobile.ios:</strong> <span class="muted">todo</span></div><div><strong>web:</strong> <a href="examples/demo/web-specs/login.spec.ts">login.spec.ts</a></div><div><strong>mobile:</strong> <a href="examples/demo/mobile-flows/login.yaml">login.yaml</a></div>
     
   </div>
 </details>
-<details class="flow" data-status="partial" data-scope="common" data-id="FLOW-AUTH-LOGIN-INVALID" data-title="invalid credentials show an error" open>
+<details class="flow" data-status="automated" data-platforms="web" data-id="FLOW-AUTH-LOGIN-INVALID" data-title="invalid credentials show an error" open>
   <summary>
-    <span class="badge partial">partial</span>
+    <span class="badge automated">automated</span>
     <code>FLOW-AUTH-LOGIN-INVALID</code>
     <span class="title">Invalid credentials show an error</span>
     
   </summary>
   <div class="body" style="margin-left:0px">
-    
-    <div><strong>web:</strong> <a href="examples/demo/web-specs/login.spec.ts">login.spec.ts</a></div><div><strong>mobile:</strong> <span class="muted">todo</span></div>
+    <div><strong>web:</strong> <a href="examples/demo/web-specs/login.spec.ts">login.spec.ts</a></div>
     
   </div>
 </details></section>
@@ -91,14 +85,14 @@
   const q = document.getElementById('q');
   const area = document.getElementById('area');
   const statusChips = [...document.querySelectorAll('#statusChips .chip')];
-  const scopeChips = [...document.querySelectorAll('#scopeChips .chip')];
+  const platformChips = [...document.querySelectorAll('#platformChips .chip')];
   function activeSet(chips, attr) {
     return new Set(chips.filter(c => c.classList.contains('active')).map(c => c.dataset[attr]));
   }
   function apply() {
     const query = q.value.trim().toLowerCase();
     const statuses = activeSet(statusChips, 'status');
-    const scopes = activeSet(scopeChips, 'scope');
+    const platforms = activeSet(platformChips, 'platform');
     const areaId = area.value;
     document.querySelectorAll('.area').forEach(section => {
       const areaMatch = !areaId || section.dataset.area === areaId;
@@ -108,7 +102,7 @@
         const ok =
           areaMatch &&
           statuses.has(flow.dataset.status) &&
-          scopes.has(flow.dataset.scope) &&
+          (flow.dataset.platforms || '').split(' ').some(p => platforms.has(p)) &&
           (!query || text.includes(query));
         flow.classList.toggle('hidden', !ok);
         if (ok) visibleFlows += 1;
@@ -117,7 +111,7 @@
     });
   }
   statusChips.forEach(c => c.addEventListener('click', () => { c.classList.toggle('active'); apply(); }));
-  scopeChips.forEach(c => c.addEventListener('click', () => { c.classList.toggle('active'); apply(); }));
+  platformChips.forEach(c => c.addEventListener('click', () => { c.classList.toggle('active'); apply(); }));
   q.addEventListener('input', apply);
   area.addEventListener('change', apply);
 })();

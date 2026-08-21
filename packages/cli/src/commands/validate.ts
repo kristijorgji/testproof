@@ -23,8 +23,9 @@ export function validateCommand(config: TestproofConfig, cwd: string, strict = f
         console.warn(line);
         for (const id of result.incompleteCoreIds) console.warn(`  - ${id}`);
     }
-    console.log(
-        `testproof validate: ok (maestro=${result.maestroIds.length} web=${result.webIds.length} ledger=${result.ledgerIds.length})`,
-    );
+    const perScanner = Object.entries(result.idsByScanner)
+        .map(([name, ids]) => `${name}=${ids.length}`)
+        .join(' ');
+    console.log(`testproof validate: ok (${perScanner} ledger=${result.ledgerIds.length})`);
     return 0;
 }

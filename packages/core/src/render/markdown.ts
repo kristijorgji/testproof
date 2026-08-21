@@ -31,10 +31,7 @@ function wrapProse(text: string, indent: string, width = 100): string[] {
     return out;
 }
 
-function renderPlatformLine(platform: string, files: string[], indent: string, scopeRequires: boolean): string[] {
-    if (!scopeRequires && files.length === 0) {
-        return [];
-    }
+function renderPlatformLine(platform: string, files: string[], indent: string): string[] {
     if (files.length === 0) {
         return [`${indent}- **${platform}:** [ ] \`todo\``];
     }
@@ -65,22 +62,12 @@ function renderFlow(flow: Flow, coverage: Map<string, FlowCoverage>, depth: numb
         lines.push(head);
         lines.push(...wrapProse(rest, `${indent}  `));
     }
-    if (flow.note) {
-        lines.push(...wrapProse(flow.note, childIndent));
-    }
     if (status !== 'manual') {
-        const scope = cov?.scope ?? 'common';
-        const extra = Object.entries(cov?.filesByPlatform ?? {}).filter(
-            ([name]) => name !== 'web' && name !== 'mobile',
-        );
-        if (scope === 'common' || scope === 'web') {
-            lines.push(...renderPlatformLine('web', cov?.web.files ?? [], childIndent, true));
-        }
-        if (scope === 'common' || scope === 'mobile') {
-            lines.push(...renderPlatformLine('mobile', cov?.mobile.files ?? [], childIndent, true));
-        }
-        for (const [name, files] of extra) {
-            lines.push(...renderPlatformLine(name, files, childIndent, true));
+        const files = cov?.filesByPlatform ?? {};
+        const demandedPlatforms = [...new Set((cov?.demanded ?? []).map((cell) => cell.platform))].sort();
+        const extraPlatforms = Object.keys(files).filter((name) => !demandedPlatforms.includes(name));
+        for (const platform of [...demandedPlatforms, ...extraPlatforms.sort()]) {
+            lines.push(...renderPlatformLine(platform, files[platform] ?? [], childIndent));
         }
     }
     for (const child of flow.children ?? []) {
@@ -137,27 +124,15 @@ function renderArea(area: FlowArea, coverage: Map<string, FlowCoverage>): string
 }
 
 function renderToc(ledger: Ledger): string[] {
-    const lines: string[] = ['## Table of contents', '', '- [Goals](#goals)', '- [Legend](#legend)'];
-    const common = ledger.areas.filter((a) => (a.scope ?? 'common') === 'common');
-    const web = ledger.areas.filter((a) => a.scope === 'web');
-    const mobile = ledger.areas.filter((a) => a.scope === 'mobile');
-    if (common.length) {
-        lines.push('- [Common for web and mobile](#common-for-web-and-mobile)');
-        for (const area of common) {
-            lines.push(`  - [${area.title}](#${slugify(area.title)})`);
-        }
-    }
-    if (web.length) {
-        lines.push('- [Web only](#web-only)');
-        for (const area of web) {
-            lines.push(`  - [${area.title}](#${slugify(area.title)})`);
-        }
-    }
-    if (mobile.length) {
-        lines.push('- [Mobile only](#mobile-only)');
-        for (const area of mobile) {
-            lines.push(`  - [${area.title}](#${slugify(area.title)})`);
-        }
+    const lines: string[] = [
+        '## Table of contents',
+        '',
+        '- [Goals](#goals)',
+        '- [Legend](#legend)',
+        '- [Areas](#areas)',
+    ];
+    for (const area of ledger.areas) {
+        lines.push(`  - [${area.title}](#${slugify(area.title)})`);
     }
     lines.push('');
     return lines;
@@ -196,43 +171,18 @@ export function renderFlowsMarkdown(
             '**Hierarchy:** headings nest areas → flows → branches; checklist indentation is',
             'parent → **sub-cases**.',
             '',
-            '**Coverage:** derived automatically. Top-level `[x]` when the required platform(s)',
-            'for the area scope are covered. One test may cover **many** `FLOW-…` IDs.',
+            '**Coverage:** derived automatically. Top-level `[x]` when every demanded platform',
+            'is covered. One test may cover **many** `FLOW-…` IDs.',
             '',
         ]),
         '---',
         '',
-        '## Common for web and mobile',
-        '',
-        'Flows below apply to **both** web and the native app unless noted.',
+        '## Areas',
         '',
     ];
 
-    for (const area of ledger.areas.filter((a) => (a.scope ?? 'common') === 'common')) {
+    for (const area of ledger.areas) {
         lines.push(...renderArea(area, coverage));
-    }
-
-    const webAreas = ledger.areas.filter((a) => a.scope === 'web');
-    if (webAreas.length) {
-        lines.push(
-            '---',
-            '',
-            '## Web only',
-            '',
-            'Flows below are **web-only** (no native-app counterpart required).',
-            '',
-        );
-        for (const area of webAreas) {
-            lines.push(...renderArea(area, coverage));
-        }
-    }
-
-    const mobileAreas = ledger.areas.filter((a) => a.scope === 'mobile');
-    if (mobileAreas.length) {
-        lines.push('---', '', '## Mobile only', '', 'Flows below are **mobile-only**.', '');
-        for (const area of mobileAreas) {
-            lines.push(...renderArea(area, coverage));
-        }
     }
 
     return `${lines.join('\n').replace(/\n{3,}/g, '\n\n')}\n`;

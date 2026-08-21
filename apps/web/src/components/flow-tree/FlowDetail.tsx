@@ -40,7 +40,7 @@ export function FlowDetail({
     const { t } = useTranslation();
     const [more, setMore] = useState(false);
     const [title, setTitle] = useState(flow.title);
-    const [note, setNote] = useState(flow.note ?? '');
+    const [notes, setNotes] = useState(flow.notes ?? '');
     const [targets, setTargets] = useState<FlowTarget[]>(flow.targets ?? []);
 
     return (
@@ -65,13 +65,13 @@ export function FlowDetail({
                 }}
             />
             <p className="text-xs text-[var(--muted)]">{t('editor.platformWhole')}</p>
-            <label className="text-sm text-[var(--muted)]">{t('editor.note')}</label>
+            <label className="text-sm text-[var(--muted)]">{t('editor.notes')}</label>
             <textarea
                 className="min-h-24 rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
-                value={note}
+                value={notes}
                 onChange={(e) => {
-                    setNote(e.target.value);
-                    onChange?.({ note: e.target.value });
+                    setNotes(e.target.value);
+                    onChange?.({ notes: e.target.value });
                 }}
             />
             <div className="rounded border border-[var(--border)] p-2 text-xs">
