@@ -67,7 +67,7 @@
         "@testproof/eslint-config": "workspace:*",
         "@types/node": "^22.15.0",
         "eslint": "^10.8.1",
-        "typescript": "^5.9.3",
+        "typescript": "^7.0.2",
         "vitest": "^3.2.4"
     }
 }
