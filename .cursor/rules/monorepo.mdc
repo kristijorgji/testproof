@@ -1,0 +1,11 @@
+---
+description: Monorepo structure, imports, and workspace conventions
+globs: "{apps,packages}/**/*.{ts,tsx,js,mjs}"
+alwaysApply: false
+---
+
+# Monorepo
+
+When working in `apps/` or `packages/`, read and follow:
+
+- [.agents/skills/monorepo-conventions/SKILL.md](.agents/skills/monorepo-conventions/SKILL.md)

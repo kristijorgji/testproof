@@ -1,0 +1,12 @@
+---
+description: Testproof CLI command and config conventions
+globs: "packages/cli/**/*.ts"
+alwaysApply: false
+---
+
+# CLI
+
+When working in `packages/cli/`, read and follow:
+
+- [.agents/skills/cli-commands/SKILL.md](.agents/skills/cli-commands/SKILL.md)
+- [.agents/skills/core-library/SKILL.md](.agents/skills/core-library/SKILL.md)

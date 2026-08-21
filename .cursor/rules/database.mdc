@@ -1,0 +1,11 @@
+---
+description: Drizzle schema and migration conventions
+globs: "packages/db/**/*.ts"
+alwaysApply: false
+---
+
+# Database
+
+When working in `packages/db/`, read and follow:
+
+- [.agents/skills/database/SKILL.md](.agents/skills/database/SKILL.md)

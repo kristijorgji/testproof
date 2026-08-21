@@ -1,0 +1,11 @@
+---
+description: Ledger schema and coverage semantics
+globs: "packages/core/**/*.ts"
+alwaysApply: false
+---
+
+# Core library
+
+When working in `packages/core/`, read and follow:
+
+- [.agents/skills/core-library/SKILL.md](.agents/skills/core-library/SKILL.md)

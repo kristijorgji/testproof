@@ -1,0 +1,39 @@
+# .aiignore — source of truth for agent hard-ignore patterns.
+# Tool-specific names are symlinks here:
+# .cursorignore, .codeiumignore, .aiexclude, .clineignore, .geminiignore → .aiignore
+#
+# Do NOT ignore .agents/skills/vendor/ — agents must read skills copied from npm
+# packages on prepare (see scripts/sync-agent-skills.ts). vendor/ is gitignored only.
+
+# Dependencies and caches
+node_modules/
+.turbo/
+*.tsbuildinfo
+
+# Builds
+dist/
+.next/
+storybook-static/
+
+# Tests / coverage
+coverage/
+
+# Generated output
+examples/demo/.generated/
+
+# Secrets and local env
+.env
+.env.*
+!.env.example
+
+# IDE / hooks / CI
+.idea/
+.vscode/
+.husky/
+.github/
+
+# Logs and misc
+*.log
+npm-debug.log*
+pnpm-debug.log*
+.DS_Store

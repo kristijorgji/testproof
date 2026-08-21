@@ -15,3 +15,6 @@ storybook-static
 
 apps/web/AGENTS.md
 apps/web/CLAUDE.md
+
+# Generated copies of skills shipped inside npm packages (see scripts/sync-agent-skills.ts)
+.agents/skills/vendor/

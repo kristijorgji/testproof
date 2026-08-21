@@ -1,0 +1,13 @@
+---
+description: Split oversized React components and hooks flagged by ESLint
+globs: "**/*.{tsx,ts}"
+alwaysApply: false
+---
+
+# Component extraction
+
+When ESLint reports `kj/no-multi-comp`, `max-lines-per-function`, or `max-lines`
+warnings, or when splitting components/hooks, read and follow:
+
+- [.agents/skills/vendor/component-extraction/SKILL.md](.agents/skills/vendor/component-extraction/SKILL.md)
+- [.agents/skills/web-development/SKILL.md](.agents/skills/web-development/SKILL.md)
