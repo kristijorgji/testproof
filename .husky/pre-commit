@@ -1,0 +1,8 @@
+pnpm lint-staged
+pnpm knip
+
+if git rev-parse --verify HEAD >/dev/null 2>&1; then
+  pnpm turbo typecheck test --filter='...[HEAD]'
+else
+  pnpm turbo typecheck test
+fi

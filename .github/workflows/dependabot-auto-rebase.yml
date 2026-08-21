@@ -22,7 +22,10 @@ jobs:
     steps:
       - name: Request a rebase of stale Dependabot PRs
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # github-actions[bot] comments are rejected by Dependabot. A PAT
+          # (contents + pull-requests write) stored as DEPENDABOT_REBASE_TOKEN
+          # is required for the comment to trigger a rebase.
+          GH_TOKEN: ${{ secrets.DEPENDABOT_REBASE_TOKEN || secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
           gh pr list \

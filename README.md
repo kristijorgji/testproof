@@ -611,14 +611,21 @@ Or call the CLI directly:
 
 ```bash
 pnpm install
-pnpm build
-pnpm test
 pnpm lint
+pnpm knip
 pnpm typecheck
+pnpm test
+pnpm build
 pnpm --filter @testproof/web storybook
 ```
 
 Node ≥ 22, pnpm 9.15.4. Storybook lives in `apps/web`.
+
+A Husky pre-commit hook runs `lint-staged`, `knip`, and an incremental
+`typecheck`/`test` on affected packages. `git commit --no-verify` still
+bypasses the hook. The unbypassable gate is the `ci-ok` required status
+check on protected `main`, which runs Prettier, typecheck, lint, knip,
+tests, build, Storybook, and the demo CLI checks.
 
 ## Releasing
 

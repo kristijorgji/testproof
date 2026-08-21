@@ -1,4 +1,3 @@
-import { applyPatches, type LedgerPatch, openLedgerDocument, serializeLedgerDocument } from '@testproof/core';
 import type { Octokit } from 'octokit';
 import { RequestError } from 'octokit';
 
@@ -54,12 +53,6 @@ export async function publishCommit(
         }
         throw error;
     }
-}
-
-export function replayPatches(source: string, patches: LedgerPatch[]): string {
-    const doc = openLedgerDocument(source);
-    applyPatches(doc, patches);
-    return serializeLedgerDocument(doc);
 }
 
 export async function publishPullRequest(

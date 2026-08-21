@@ -1,0 +1,4 @@
+head -n1 "$1" | grep -Eq '^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9._/-]+\))?!?: .+' || {
+  echo "commit message must follow Conventional Commits, e.g. 'fix(core): drop the scope model'" >&2
+  exit 1
+}

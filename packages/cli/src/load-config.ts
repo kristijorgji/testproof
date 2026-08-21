@@ -17,7 +17,7 @@ function resolveCore(): string {
 
 const NAMES = ['testproof.config.ts', 'testproof.config.js', 'testproof.config.mjs'];
 
-export function findConfigPath(cwd = process.cwd()): string | undefined {
+function findConfigPath(cwd = process.cwd()): string | undefined {
     for (const name of NAMES) {
         const full = path.join(cwd, name);
         if (fs.existsSync(full)) return full;

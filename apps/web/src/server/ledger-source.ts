@@ -13,7 +13,7 @@ import { publishCommit, PublishConflictError, publishPullRequest } from './githu
 import { readLedger } from './github/read';
 import { getGithubAccessToken } from './session';
 
-export const EMPTY_LEDGER_YAML = `version: 2
+const EMPTY_LEDGER_YAML = `version: 2
 areas:
   - id: HOME
     title: HOME
@@ -24,13 +24,13 @@ areas:
             title: Page opens
 `;
 
-export interface LedgerRead {
+interface LedgerRead {
     content: string;
     sha: string;
     revision: number;
 }
 
-export interface LedgerWriteOpts {
+interface LedgerWriteOpts {
     message: string;
     pullRequest?: boolean;
     baseRevision?: number;
@@ -219,7 +219,7 @@ function STORAGE_OR_DEFAULT(value: string): StorageMode {
     return 'git';
 }
 
-export async function seedDbLedger(projectId: string, yaml: string): Promise<void> {
+async function seedDbLedger(projectId: string, yaml: string): Promise<void> {
     const db = getDb();
     const [existing] = await db.select().from(ledgerDocuments).where(eq(ledgerDocuments.projectId, projectId)).limit(1);
     if (existing) {
@@ -282,7 +282,7 @@ export async function saveProjectStorage(projectId: string, userId: string, form
     await markDraftsStale(projectId);
 }
 
-export async function markDraftsStale(projectId: string): Promise<void> {
+async function markDraftsStale(projectId: string): Promise<void> {
     await getDb()
         .update(drafts)
         .set({ status: 'stale', updatedAt: new Date() })
