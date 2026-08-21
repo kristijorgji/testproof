@@ -34,7 +34,7 @@
         "@types/node": "^22.15.0",
         "drizzle-kit": "^0.31.10",
         "eslint": "^10.8.1",
-        "typescript": "^5.9.3",
+        "typescript": "^7.0.2",
         "vitest": "^3.2.4"
     }
 }
