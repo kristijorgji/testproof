@@ -13,8 +13,8 @@ function hand(files) {
     return files.filter((file) => !isGenerated(file));
 }
 
-/** Function form so lint-staged does not append staged paths to the pnpm command. */
-const regenerateDemoDocs = () => 'pnpm build && node packages/cli/dist/index.js generate';
+/** Function form so lint-staged does not append staged paths. Two commands avoid `&&` without a shell. */
+const regenerateDemoDocs = () => ['pnpm build', 'node packages/cli/dist/index.js generate'];
 
 const ESLINT_PACKAGE_PREFIXES = [
     ['apps/web/', 'apps/web'],

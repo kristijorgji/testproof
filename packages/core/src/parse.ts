@@ -1,18 +1,11 @@
 import { parse as parseYaml } from 'yaml';
 
-import {
-    findPlatform,
-    inferAreaScope,
-    ledgerPlatforms,
-    scopeToTargets,
-    targetDimensions,
-    targetPlatformId,
-} from './platforms.js';
+import { findPlatform, ledgerPlatforms, rootPlatformIds, targetDimensions, targetPlatformId } from './platforms.js';
 import {
     DEFAULT_PLATFORMS,
     type Flow,
     FLOW_ID_RE,
-    type FlowArea,
+    type FlowTarget,
     type Ledger,
     ledgerSchema,
     type PlatformNode,
@@ -37,24 +30,29 @@ export function flattenFlowIds(ledger: Ledger): string[] {
 }
 
 export function attachImplicitTargets(ledger: Ledger): Ledger {
-    const walk = (flows: Flow[], area: FlowArea): Flow[] =>
+    const fallback: FlowTarget[] = rootPlatformIds(ledger);
+
+    const walk = (flows: Flow[], areaTargets: FlowTarget[]): Flow[] =>
         flows.map((flow) => ({
             ...flow,
-            targets: flow.targets ?? (area.scope ? scopeToTargets(area.scope) : ['web', 'mobile']),
-            children: flow.children?.length ? walk(flow.children, area) : flow.children,
+            targets: flow.targets ?? areaTargets,
+            children: flow.children?.length ? walk(flow.children, areaTargets) : flow.children,
         }));
 
     return {
         ...ledger,
         platforms: ledger.platforms?.length ? ledger.platforms : DEFAULT_PLATFORMS,
-        areas: ledger.areas.map((area) => ({
-            ...area,
-            scope: inferAreaScope(area, ledgerPlatforms(ledger)),
-            groups: area.groups.map((group) => ({
-                ...group,
-                flows: walk(group.flows, area),
-            })),
-        })),
+        areas: ledger.areas.map((area) => {
+            const areaTargets = area.targets ?? fallback;
+            return {
+                ...area,
+                targets: areaTargets,
+                groups: area.groups.map((group) => ({
+                    ...group,
+                    flows: walk(group.flows, areaTargets),
+                })),
+            };
+        }),
     };
 }
 
@@ -64,7 +62,7 @@ function assertRefs(ledger: Ledger): void {
     const shared = new Set((ledger.sharedSteps ?? []).map((s) => s.id));
     const params = new Set((ledger.parameters ?? []).map((p) => p.id));
 
-    const checkFlow = (flow: Flow, area: FlowArea): void => {
+    const checkFlow = (flow: Flow): void => {
         if (!FLOW_ID_RE.test(flow.id)) {
             throw new Error(`flows ledger: invalid FLOW id "${flow.id}"`);
         }
@@ -105,13 +103,18 @@ function assertRefs(ledger: Ledger): void {
                 throw new Error(`flows ledger: unknown parameter "${paramId}" on ${flow.id}`);
             }
         }
-        void area;
-        for (const child of flow.children ?? []) checkFlow(child, area);
+        for (const child of flow.children ?? []) checkFlow(child);
     };
 
     for (const area of ledger.areas) {
+        for (const target of area.targets ?? []) {
+            const platformId = targetPlatformId(target);
+            if (!findPlatform(platforms, platformId)) {
+                throw new Error(`flows ledger: unknown platform "${platformId}" on area ${area.id}`);
+            }
+        }
         for (const group of area.groups) {
-            for (const flow of group.flows) checkFlow(flow, area);
+            for (const flow of group.flows) checkFlow(flow);
         }
     }
 
@@ -140,8 +143,7 @@ export function parseLedger(yamlSource: string): Ledger {
             : undefined;
     if (rawVersion !== 2) {
         throw new Error(
-            `flows ledger: unsupported version ${String(rawVersion ?? '(missing)')}. ` +
-                'Only version 2 is supported. Convert with testproof@0.1.x `testproof migrate`, then upgrade.',
+            `flows ledger: unsupported version ${String(rawVersion ?? '(missing)')}. Only version 2 is supported.`,
         );
     }
     let parsed;
@@ -151,9 +153,6 @@ export function parseLedger(yamlSource: string): Ledger {
         const message = error instanceof Error ? error.message : String(error);
         if (/invalid_format|FLOW_ID_RE|regex/i.test(message) || message.includes('FLOW')) {
             throw new Error(`flows ledger: invalid FLOW id ${message}`, { cause: error });
-        }
-        if (/scope/.test(message)) {
-            throw new Error(`flows ledger: areas[].scope must be common|web|mobile`, { cause: error });
         }
         throw new Error(`flows ledger: ${message}`, { cause: error });
     }

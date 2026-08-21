@@ -8,7 +8,7 @@ version: 2
 areas:
   - id: HOME
     title: HOME
-    scope: common
+    targets: [web, mobile]
     groups:
       - title: Home
         flows:
@@ -23,7 +23,7 @@ describe('parseLedger', () => {
     it('parses nested flows and flattens ids', () => {
         const ledger = parseLedger(MINIMAL);
         expect(flattenFlowIds(ledger)).toEqual(['FLOW-HOME-OPENS', 'FLOW-HOME-SEARCH']);
-        expect(ledger.areas[0]?.scope).toBe('common');
+        expect(ledger.areas[0]?.targets).toEqual(['web', 'mobile']);
         expect(ledger.areas[0]?.groups[0]?.flows[0]?.targets).toEqual(['web', 'mobile']);
     });
 
@@ -34,7 +34,7 @@ version: 2
 areas:
   - id: A
     title: A
-    scope: web
+    targets: [web]
     groups:
       - title: G
         flows:
@@ -53,7 +53,7 @@ version: 2
 areas:
   - id: A
     title: A
-    scope: web
+    targets: [web]
     groups:
       - title: G
         flows:
@@ -63,38 +63,38 @@ areas:
         ).toThrow(/invalid FLOW id/);
     });
 
-    it('rejects bad scope', () => {
+    it('rejects unknown platform on area targets', () => {
         expect(() =>
             parseLedger(`
 version: 2
 areas:
   - id: A
     title: A
-    scope: desktop
+    targets: [desktop]
     groups:
       - title: G
         flows:
           - id: FLOW-WEB-A
             title: one
 `),
-        ).toThrow(/scope must be/);
+        ).toThrow(/unknown platform "desktop" on area A/);
     });
 
-    it('rejects unsupported ledger versions with a conversion hint', () => {
+    it('rejects unsupported ledger versions', () => {
         expect(() =>
             parseLedger(`
 version: 1
 areas:
   - id: A
     title: A
-    scope: web
+    targets: [web]
     groups:
       - title: G
         flows:
           - id: FLOW-WEB-A
             title: one
 `),
-        ).toThrow(/unsupported version 1.*testproof@0\.1\.x/);
+        ).toThrow(/unsupported version 1.*Only version 2 is supported/);
         expect(() => parseLedger('areas: []\n')).toThrow(/unsupported version \(missing\)/);
     });
 

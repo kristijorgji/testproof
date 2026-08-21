@@ -10,7 +10,7 @@ const meta = {
             id: 'FLOW-PUSH-PERMISSION-RUNTIME',
             title: 'Android 13+ runtime notification permission prompt',
             targets: [{ platform: 'mobile.android' }],
-            note: 'iOS is not a gap',
+            notes: 'iOS is not a gap',
         },
         platforms: [
             { id: 'web', title: 'Web' },

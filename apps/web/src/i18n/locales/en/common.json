@@ -14,7 +14,7 @@
     "publish": "Publish",
     "changes": "Changes",
     "targets": "Targets",
-    "note": "Note",
+    "notes": "Notes",
     "title": "Title",
     "platformWhole": "Leaving a dimension untouched means the platform as a whole.",
     "pullRequest": "Open pull request",

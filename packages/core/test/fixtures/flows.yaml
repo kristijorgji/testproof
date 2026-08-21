@@ -24,4 +24,3 @@ areas:
           - id: FLOW-AUTH-LOGIN-INVALID
             title: Invalid credentials
             targets: [web]
-            note: Shown as a field error, not a toast.

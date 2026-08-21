@@ -7,7 +7,7 @@ import {
     caseStatusSchema,
     caseTypeSchema,
     type Flow,
-    type FlowScope,
+    type FlowTarget,
     layerSchema,
     prioritySchema,
     severitySchema,
@@ -15,7 +15,7 @@ import {
 
 export type FlowParent = { areaId: string; groupIndex: number; parentFlowId?: string };
 
-export type FlowStringField = 'title' | 'note' | 'notes' | 'owner' | 'preconditions' | 'postconditions';
+export type FlowStringField = 'title' | 'notes' | 'owner' | 'preconditions' | 'postconditions';
 export type FlowEnumField = 'priority' | 'severity' | 'type' | 'layer' | 'behavior' | 'status' | 'automation';
 export type FlowFlagField = 'manual' | 'flaky' | 'muted';
 export type FlowListField = 'tags' | 'parameters' | 'refs';
@@ -36,8 +36,6 @@ export type LedgerPatch =
     | { op: 'set-flow-flag'; flowId: string; field: FlowFlagField; value: boolean }
     | { op: 'set-flow-number'; flowId: string; field: 'estimateMinutes'; value: number | null }
     | { op: 'set-flow-list'; flowId: string; field: FlowListField; value: string[] }
-    | { op: 'set-flow-manual'; flowId: string; value: boolean }
-    | { op: 'set-flow-refs'; flowId: string; value: string[] }
     | {
           op: 'set-flow-targets';
           flowId: string;
@@ -56,8 +54,13 @@ export type LedgerPatch =
     | { op: 'add-group'; areaId: string; title: string; index: number }
     | { op: 'remove-group'; areaId: string; groupIndex: number }
     | { op: 'move-group'; areaId: string; from: number; to: number }
-    | { op: 'set-area-field'; areaId: string; field: 'title' | 'scope' | 'intro'; value: string }
-    | { op: 'add-area'; area: { id: string; title: string; scope?: FlowScope }; index: number }
+    | { op: 'set-area-field'; areaId: string; field: 'title' | 'intro'; value: string }
+    | {
+          op: 'set-area-targets';
+          areaId: string;
+          value: Array<string | { platform: string; dimensions?: Record<string, string[]> }>;
+      }
+    | { op: 'add-area'; area: { id: string; title: string; targets?: FlowTarget[] }; index: number }
     | { op: 'remove-area'; areaId: string }
     | { op: 'move-area'; from: number; to: number }
     | { op: 'set-root-seq'; key: 'platforms' | 'dimensions'; value: unknown };
@@ -165,7 +168,7 @@ function flowToNode(flow: Flow): YAMLMap {
     const map = new YAMLMap();
     map.set('id', flow.id);
     map.set('title', flow.title);
-    if (flow.note) map.set('note', scalar(flow.note, true));
+    if (flow.notes) map.set('notes', scalar(flow.notes, true));
     if (flow.manual !== undefined) map.set('manual', flow.manual);
     if (flow.refs) map.set('refs', flow.refs);
     if (flow.targets) map.set('targets', flow.targets);
@@ -182,10 +185,7 @@ export function applyPatch(doc: LedgerDocument, patch: LedgerPatch): void {
         case 'set-flow-field': {
             const { map } = findFlow(doc, patch.flowId);
             const block =
-                patch.field === 'note' ||
-                patch.field === 'notes' ||
-                patch.field === 'preconditions' ||
-                patch.field === 'postconditions';
+                patch.field === 'notes' || patch.field === 'preconditions' || patch.field === 'postconditions';
             setOrDelete(map, patch.field, patch.value, block);
             return;
         }
@@ -206,14 +206,6 @@ export function applyPatch(doc: LedgerDocument, patch: LedgerPatch): void {
         case 'set-flow-number': {
             const { map } = findFlow(doc, patch.flowId);
             setOrDelete(map, patch.field, patch.value);
-            return;
-        }
-        case 'set-flow-manual': {
-            applyPatch(doc, { op: 'set-flow-flag', flowId: patch.flowId, field: 'manual', value: patch.value });
-            return;
-        }
-        case 'set-flow-refs': {
-            applyPatch(doc, { op: 'set-flow-list', flowId: patch.flowId, field: 'refs', value: patch.value });
             return;
         }
         case 'set-flow-targets': {
@@ -267,11 +259,15 @@ export function applyPatch(doc: LedgerDocument, patch: LedgerPatch): void {
             area.set(patch.field, scalar(patch.value, patch.field === 'intro'));
             return;
         }
+        case 'set-area-targets': {
+            areaMapById(doc, patch.areaId).set('targets', patch.value);
+            return;
+        }
         case 'add-area': {
             const area = new YAMLMap();
             area.set('id', patch.area.id);
             area.set('title', patch.area.title);
-            if (patch.area.scope) area.set('scope', patch.area.scope);
+            if (patch.area.targets?.length) area.set('targets', patch.area.targets);
             const groups = new YAMLSeq();
             const group = new YAMLMap();
             group.set('title', patch.area.title);
