@@ -49,7 +49,7 @@ Work in **your product repository**. That is where `docs/testing/flows.yaml`,
 `testproof.config.ts`, and every `npx testproof …` command live.
 
 You do **not** clone this repository to run the CLI or the web UI. Pull the
-published image (`ghcr.io/kristijorgji/testproof:0.4.0`) from a compose file
+published image (`ghcr.io/kristijorgji/testproof:0.4.1`) from a compose file
 in the product repo. Clone this repo only when you are [developing the
 image](#develop-the-image).
 
@@ -118,7 +118,7 @@ services:
       timeout: 5s
       retries: 10
   web:
-    image: ghcr.io/kristijorgji/testproof:0.4.0
+    image: ghcr.io/kristijorgji/testproof:0.4.1
     ports:
       - '${TESTPROOF_PORT:-3100}:3100'
     volumes:
@@ -430,7 +430,7 @@ export default defineConfig({
 
 ## CLI reference
 
-Program name `testproof`, version `0.4.0`. Unhandled errors print to stderr and
+Program name `testproof`, version `0.4.1`. Unhandled errors print to stderr and
 exit `1`.
 
 | Command       | Flags                         | Exit codes                                                                                                                                                                    |
@@ -600,7 +600,7 @@ Default `platform` argument: `'mobile'`.
 
 The default path is [Track B](#track-b--web-ui-in-docker-editing-your-own-yaml-file-mode):
 a compose file **in the product repo** that pulls
-`ghcr.io/kristijorgji/testproof:0.4.0` (linux/amd64 and linux/arm64). Do not
+`ghcr.io/kristijorgji/testproof:0.4.1` (linux/amd64 and linux/arm64). Do not
 copy this repository’s `.env.example` into the product repo.
 
 This repo’s [`docker-compose.yml`](docker-compose.yml) is for contributors. It
