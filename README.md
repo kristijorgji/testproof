@@ -6,17 +6,13 @@ Git-native test case management. Flow **definitions** stay in YAML in your repo.
 [![CI](https://github.com/kristijorgji/testproof/actions/workflows/ci.yml/badge.svg)](https://github.com/kristijorgji/testproof/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/testproof)](https://www.npmjs.com/package/testproof)
 
-```bash
-pnpm add -D testproof @testproof/core
-npx testproof init
-npx testproof validate
-npx testproof generate
-```
+Install the CLI, write a `flows.yaml` ledger, and optionally run the web UI
+against that file. Start with [Get started](#get-started).
 
 ## Table of contents
 
 - [Install](#install)
-- [Quick start](#quick-start)
+- [Get started](#get-started)
 - [Concepts](#concepts)
 - [Ledger schema (v2)](#ledger-schema-v2)
 - [`testproof.config.ts`](#testproofconfigts)
@@ -46,14 +42,32 @@ pnpm add -D testproof @testproof/core
 The CLI (`testproof`) depends on `@testproof/core`. Install both so `testproof.config.ts`
 can import `defineConfig` from the library.
 
-## Quick start
+## Get started
+
+Pick how the web UI stores the ledger. The CLI works in every mode.
+
+| Mode   | Source of truth                          | Pick it when                                                     |
+| ------ | ---------------------------------------- | ---------------------------------------------------------------- |
+| `git`  | `flows.yaml` in a connected GitHub repo  | You want every ledger edit to arrive as a commit or pull request |
+| `file` | An absolute YAML path on the server host | You run the UI locally against your own working tree             |
+| `db`   | A `ledger_documents` row in Postgres     | You want the UI to be authoritative and pull YAML out on demand  |
+
+### Track A — CLI only, no server, no Docker
 
 ```bash
+pnpm add -D testproof @testproof/core
 npx testproof init
+```
+
+Edit `docs/testing/flows.yaml`, tag your specs with `FLOW-…` ids, then:
+
+```bash
 npx testproof validate
 npx testproof generate
 npx testproof report --open
 ```
+
+In CI, run `testproof validate` and `testproof generate --check`.
 
 | Command         | Reads                                                     | Writes                                                                                                  | Exit                                                                                                                                                                                 |
 | --------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -65,18 +79,62 @@ npx testproof report --open
 | `ledger pull`   | server ledger via `GET /api/v1/ledger`                    | `config.ledger`                                                                                         | `1` if local file changed (unless `--force`)                                                                                                                                         |
 | `ledger push`   | local `config.ledger`                                     | `PUT /api/v1/ledger`                                                                                    | `1` on stale revision unless `--force`                                                                                                                                               |
 
+### Track B — web UI in Docker, editing your own YAML (`file` mode)
+
+1. `cp .env.example .env` and set `BETTER_AUTH_SECRET` to at least 32 characters.
+2. Mount your ledger into the `web` service in `docker-compose.yml`:
+
+```yaml
+volumes:
+  - /absolute/path/on/your/machine/docs/testing/flows.yaml:/data/flows.yaml
+```
+
+3. `docker compose up -d`. The image entrypoint runs `node packages/db/dist/migrate.js` before the app starts.
+4. Open `http://localhost:3100` and sign up with email and password.
+5. Create a project.
+6. Settings → Storage → `file`, and enter **`/data/flows.yaml`** — the path inside the container, not the host path. Save.
+7. Flows → edit → Publish. The container writes through the mount to your file on disk.
+8. `git diff docs/testing/flows.yaml`, then `npx testproof generate` and commit.
+9. Alternative without a mount: create a project API token in Settings, then:
+
+```bash
+TESTPROOF_URL=http://localhost:3100 TESTPROOF_TOKEN=… TESTPROOF_PROJECT=… npx testproof ledger pull
+TESTPROOF_URL=http://localhost:3100 TESTPROOF_TOKEN=… TESTPROOF_PROJECT=… npx testproof ledger push
+```
+
+To iterate on the image itself, comment out `image:` on the `web` service and uncomment:
+
+```yaml
+build:
+  context: .
+```
+
+### Track C — `git` mode
+
+1. Set `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` in `.env`.
+2. `docker compose up -d` (or `pnpm --filter @testproof/web dev` against a local Postgres).
+3. Sign in with GitHub.
+4. Settings → connect owner/repo, set `ledgerPath` (for example `docs/testing/flows.yaml`).
+5. Publish as a commit or a pull request.
+
+### Track D — `db` mode
+
+1. Open an existing project and switch Storage to `db`. That seeds `ledger_documents` from the current source.
+2. Edit in the UI. Postgres is now authoritative.
+3. Export YAML from Settings, or `npx testproof ledger pull`.
+
 ## Concepts
 
-| Term          | Meaning                                                                               |
-| ------------- | ------------------------------------------------------------------------------------- |
-| Ledger        | The YAML file of areas, groups and flows. Source of truth for **what must work**.     |
-| Area          | A product slice (`AUTH`, `HOME`, …). Optional `scope` of `common`, `web` or `mobile`. |
-| Group         | A titled bucket of flows inside an area.                                              |
-| Flow          | One case. Id must match `FLOW-[A-Z0-9-]+`.                                            |
-| Platform tree | Nested platforms (`web` → `web.chrome`). Parent ids expand to their leaves.           |
-| Dimension     | Orthogonal axis (`theme`, `locale`, …) that can apply to a subset of platforms.       |
-| Target        | A platform (and optional dimension values) a flow is demanded on.                     |
-| Cell          | One `{ platform, dimensions }` combination used for coverage.                         |
+| Term          | Meaning                                                                                       |
+| ------------- | --------------------------------------------------------------------------------------------- |
+| Ledger        | The YAML file of areas, groups and flows. Source of truth for **what must work**.             |
+| Area          | A product slice (`AUTH`, `HOME`, …). Optional `targets` inherited by flows that declare none. |
+| Group         | A titled bucket of flows inside an area.                                                      |
+| Flow          | One case. Id must match `FLOW-[A-Z0-9-]+`.                                                    |
+| Platform tree | Nested platforms (`web` → `web.chrome`). Parent ids expand to their leaves.                   |
+| Dimension     | Orthogonal axis (`theme`, `locale`, …) that can apply to a subset of platforms.               |
+| Target        | A platform (and optional dimension values) a flow is demanded on.                             |
+| Cell          | One `{ platform, dimensions }` combination used for coverage.                                 |
 
 Coverage status is derived in `@testproof/core` (`packages/core/src/coverage.ts`):
 
@@ -147,13 +205,13 @@ Ids:
 
 ### `areas[]`
 
-| Field    | Required | Notes                                                                  |
-| -------- | -------- | ---------------------------------------------------------------------- |
-| `id`     | yes      |                                                                        |
-| `title`  | yes      |                                                                        |
-| `scope`  | no       | `common` \| `web` \| `mobile`. If omitted, inferred from flow targets. |
-| `intro`  | no       |                                                                        |
-| `groups` | yes      |                                                                        |
+| Field     | Required | Notes                                                                  |
+| --------- | -------- | ---------------------------------------------------------------------- |
+| `id`      | yes      |                                                                        |
+| `title`   | yes      |                                                                        |
+| `targets` | no       | Inherited by flows that declare none. Defaults to every root platform. |
+| `intro`   | no       |                                                                        |
+| `groups`  | yes      |                                                                        |
 
 ### `groups[]`
 
@@ -170,7 +228,6 @@ Ids:
 | ----------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `id`              | yes      | `FLOW-[A-Z0-9-]+`                                                                                                                   |
 | `title`           | yes      |                                                                                                                                     |
-| `note`            | no       | Single note (legacy)                                                                                                                |
 | `notes`           | no       |                                                                                                                                     |
 | `manual`          | no       | `true` → coverage `manual`                                                                                                          |
 | `refs`            | no       | String array                                                                                                                        |
@@ -212,8 +269,8 @@ Dimension arrays expand to a cartesian product of cells.
 
 **Implicit targets** when a flow has none:
 
-- `scopeToTargets(area.scope)` if the area has a scope (`common` → `['web','mobile']`)
-- otherwise `['web', 'mobile']`
+- the area's `targets`, if set
+- otherwise every root platform id (`web` and `mobile` when `platforms` is omitted)
 
 ```yaml
 version: 2
@@ -317,7 +374,7 @@ exit `1`.
 `validate` success log:
 
 ```text
-testproof validate: ok (maestro=N web=N ledger=N)
+testproof validate: ok (web=N mobile=N ledger=N)
 ```
 
 `push` reads `GITHUB_SHA` / `GITHUB_REF_NAME` for `commitSha` / `branch`, falling
@@ -336,21 +393,7 @@ always writes back to that source.
 
 `git` is the default. `file` requires an **absolute** path that exists and is
 writable when you save Settings. In Docker, mount the host file into the
-container at that same path — the container filesystem is not your working
-tree.
-
-```yaml
-services:
-  web:
-    image: ghcr.io/kristijorgji/testproof:latest
-    volumes:
-      - /absolute/path/to/your/docs/testing/flows.yaml:/data/flows.yaml
-    environment:
-      # deprecated fallback used only when a project has no per-project path yet
-      LOCAL_LEDGER_PATH: /data/flows.yaml
-```
-
-`LOCAL_LEDGER_PATH` is deprecated. New projects should set the path in Settings.
+container and set that container path in Settings — see [Track B](#track-b--web-ui-in-docker-editing-your-own-yaml-file-mode).
 
 `GET` / `PUT /api/v1/ledger` (Bearer project token) round-trip YAML for `file`
 and `db` modes. Git mode returns `400` — commit to the repo instead. `PUT`
@@ -500,15 +543,14 @@ is computed in CI by the CLI and posted to `POST /api/v1/coverage`.
 
 Environment (from `.env.example`):
 
-| Variable                                                  | Purpose                                                                               |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `DATABASE_URL`                                            | Postgres                                                                              |
-| `BETTER_AUTH_SECRET`                                      | Session secret (≥ 32 characters)                                                      |
-| `BETTER_AUTH_URL` / `NEXT_PUBLIC_BETTER_AUTH_URL`         | Public origin                                                                         |
-| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`               | OAuth                                                                                 |
-| `GITHUB_WEBHOOK_SECRET`                                   | HMAC for `POST /api/webhooks/github`                                                  |
-| `LOCAL_LEDGER_PATH`                                       | **Deprecated.** Fallback file path when a `file`-mode project has no per-project path |
-| `TESTPROOF_URL` / `TESTPROOF_TOKEN` / `TESTPROOF_PROJECT` | CLI `push`                                                                            |
+| Variable                                                  | Purpose                                      |
+| --------------------------------------------------------- | -------------------------------------------- |
+| `DATABASE_URL`                                            | Postgres                                     |
+| `BETTER_AUTH_SECRET`                                      | Session secret (≥ 32 characters)             |
+| `BETTER_AUTH_URL` / `NEXT_PUBLIC_BETTER_AUTH_URL`         | Public origin                                |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`               | OAuth                                        |
+| `GITHUB_WEBHOOK_SECRET`                                   | HMAC for `POST /api/webhooks/github`         |
+| `TESTPROOF_URL` / `TESTPROOF_TOKEN` / `TESTPROOF_PROJECT` | CLI `push` and `ledger pull` / `ledger push` |
 
 ## HTTP API
 
@@ -543,7 +585,6 @@ must match the token's project (403 otherwise).
   "flows": [
     {
       "id": "FLOW-AUTH-LOGIN-SUCCESS",
-      "scope": "common",
       "status": "automated",
       "demanded": [{ "platform": "web", "dimensions": {} }],
       "covered": [{ "platform": "web", "dimensions": {} }],
