@@ -34,7 +34,7 @@
         "octokit": "^5.0.5",
         "react": "19.2.8",
         "react-dom": "19.2.8",
-        "react-i18next": "^15.6.1",
+        "react-i18next": "^17.0.11",
         "tailwind-merge": "^3.5.0",
         "zod": "^4.4.3"
     },
