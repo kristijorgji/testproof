@@ -120,18 +120,22 @@ services:
   web:
     image: ghcr.io/kristijorgji/testproof:0.4.0
     ports:
-      - '3100:3100'
+      - '${TESTPROOF_PORT:-3100}:3100'
     volumes:
       - ./docs/testing/flows.yaml:/data/flows.yaml
     environment:
       DATABASE_URL: postgres://testproof:testproof@postgres:5432/testproof
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      BETTER_AUTH_URL: http://localhost:3100
-      NEXT_PUBLIC_BETTER_AUTH_URL: http://localhost:3100
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3100}
     depends_on:
       postgres:
         condition: service_healthy
 ```
+
+The container listens on 3100. Publish a different host port with
+`TESTPROOF_PORT`. `BETTER_AUTH_URL` is the public origin of this web UI
+(Better Auth is served from the same app) and must match the URL you open,
+for example `http://localhost:3200` when `TESTPROOF_PORT=3200`.
 
 Create an env file next to that compose (not this repo’s `.env.example`) and
 set `BETTER_AUTH_SECRET` to at least 32 characters. Then from the product
@@ -611,21 +615,23 @@ cp .env.example .env
 docker compose up
 ```
 
-Open http://localhost:3100. Sign up, create a project, connect a GitHub
+Open http://localhost:3100 (or `http://localhost:$TESTPROOF_PORT` if you
+changed the host port). Sign up, create a project, connect a GitHub
 repository in Settings (owner + repo name) and mint a project API token. The
 web UI commits ledger edits back to GitHub when a repo is connected. Coverage
 is computed in CI by the CLI and posted to `POST /api/v1/coverage`.
 
 Environment (from `.env.example`):
 
-| Variable                                                  | Purpose                                      |
-| --------------------------------------------------------- | -------------------------------------------- |
-| `DATABASE_URL`                                            | Postgres                                     |
-| `BETTER_AUTH_SECRET`                                      | Session secret (≥ 32 characters)             |
-| `BETTER_AUTH_URL` / `NEXT_PUBLIC_BETTER_AUTH_URL`         | Public origin                                |
-| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`               | OAuth                                        |
-| `GITHUB_WEBHOOK_SECRET`                                   | HMAC for `POST /api/webhooks/github`         |
-| `TESTPROOF_URL` / `TESTPROOF_TOKEN` / `TESTPROOF_PROJECT` | CLI `push` and `ledger pull` / `ledger push` |
+| Variable                                                  | Purpose                                                   |
+| --------------------------------------------------------- | --------------------------------------------------------- |
+| `DATABASE_URL`                                            | Postgres                                                  |
+| `BETTER_AUTH_SECRET`                                      | Session secret (≥ 32 characters)                          |
+| `TESTPROOF_PORT`                                          | Host port mapped to the container’s 3100 (default 3100)   |
+| `BETTER_AUTH_URL`                                         | Public origin of this web UI; must match the URL you open |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`               | OAuth                                                     |
+| `GITHUB_WEBHOOK_SECRET`                                   | HMAC for `POST /api/webhooks/github`                      |
+| `TESTPROOF_URL` / `TESTPROOF_TOKEN` / `TESTPROOF_PROJECT` | CLI `push` and `ledger pull` / `ledger push`              |
 
 ## HTTP API
 

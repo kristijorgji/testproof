@@ -28,6 +28,8 @@ body {
     color: var(--fg);
 }
 
-a {
-    color: var(--accent);
+@layer base {
+    a {
+        color: var(--accent);
+    }
 }
