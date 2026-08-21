@@ -45,6 +45,23 @@ can import `defineConfig` from the library.
 
 ## Get started
 
+Two working trees. Do not mix their files.
+
+| Checkout     | What it is                                                 | Owns                                                                                            | Typical commands                                           |
+| ------------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| **Server**   | A clone of `github.com/kristijorgji/testproof` (this repo) | [`.env.example`](.env.example) → `.env`, [`docker-compose.yml`](docker-compose.yml), the web UI | `cp .env.example .env`, `docker compose up`                |
+| **Consumer** | Your product repo                                          | `docs/testing/flows.yaml`, `testproof.config.ts`                                                | `pnpm add -D testproof @testproof/core`, `npx testproof …` |
+
+`.env.example` exists **only** at the root of this repository. Copying it into
+the consumer is wrong. Optional consumer vars `TESTPROOF_URL` /
+`TESTPROOF_TOKEN` / `TESTPROOF_PROJECT` tell the CLI how to reach a running
+server — they are not a copy of the server `.env`.
+
+| Track   | Where you work                                                                                                                                    |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **A**   | Consumer only. No clone of this repo, no `.env`.                                                                                                  |
+| **B–D** | Start the server (clone this repo, or pull the published image from a compose file in the consumer). The ledger YAML still lives in the consumer. |
+
 Pick how the web UI stores the ledger. The CLI works in every mode.
 
 | Mode   | Source of truth                          | Pick it when                                                     |
@@ -54,6 +71,9 @@ Pick how the web UI stores the ledger. The CLI works in every mode.
 | `db`   | A `ledger_documents` row in Postgres     | You want the UI to be authoritative and pull YAML out on demand  |
 
 ### Track A — CLI only, no server, no Docker
+
+Run these in the **consumer** repository (your product), not in a clone of
+this repo.
 
 ```bash
 pnpm add -D testproof @testproof/core
@@ -82,47 +102,97 @@ In CI, run `testproof validate` and `testproof generate --check`.
 
 ### Track B — web UI in Docker, editing your own YAML (`file` mode)
 
-1. `cp .env.example .env` and set `BETTER_AUTH_SECRET` to at least 32 characters.
-2. Mount your ledger into the `web` service in `docker-compose.yml`:
+You need a running server **and** the consumer ledger. Clone this repo only if
+you want the compose file from here. To host the UI from the product repo
+instead, skip to [Consumer-hosted image](#consumer-hosted-image-no-clone).
+
+#### In this repository (server)
+
+```bash
+git clone https://github.com/kristijorgji/testproof.git
+cd testproof
+cp .env.example .env
+```
+
+Set `BETTER_AUTH_SECRET` to at least 32 characters in **this** `.env` (repo
+root). Then edit **this** repo’s `docker-compose.yml` `web` service — compose
+does not mount a ledger until you add:
 
 ```yaml
 volumes:
-  - /absolute/path/on/your/machine/docs/testing/flows.yaml:/data/flows.yaml
+  # host path = consumer ledger; container path is what Settings uses
+  - /absolute/path/to/your-app/docs/testing/flows.yaml:/data/flows.yaml
 ```
 
-3. `docker compose up -d`. The image entrypoint runs `node packages/db/dist/migrate.js` before the app starts.
-4. Open `http://localhost:3100` and sign up with email and password.
-5. Create a project.
-6. Settings → Storage → `file`, and enter **`/data/flows.yaml`** — the path inside the container, not the host path. Save.
-7. Flows → edit → Publish. The container writes through the mount to your file on disk.
-8. `git diff docs/testing/flows.yaml`, then `npx testproof generate` and commit.
-9. Alternative without a mount: create a project API token in Settings, then:
+From the same directory:
 
 ```bash
-TESTPROOF_URL=http://localhost:3100 TESTPROOF_TOKEN=… TESTPROOF_PROJECT=… npx testproof ledger pull
-TESTPROOF_URL=http://localhost:3100 TESTPROOF_TOKEN=… TESTPROOF_PROJECT=… npx testproof ledger push
+docker compose up -d
 ```
 
-To iterate on the image itself, comment out `image:` on the `web` service and uncomment:
+The image entrypoint runs `node packages/db/dist/migrate.js` before the app
+starts. Open http://localhost:3100 and sign up with email and password. Create
+a project. Settings → Storage → `file`, and enter **`/data/flows.yaml`** — the
+path **inside the container**, not the host path. Save.
+
+Flows → edit → Publish. The container writes through the mount to the consumer
+file on disk.
+
+To iterate on the image itself, comment out `image:` on the `web` service and
+uncomment:
 
 ```yaml
 build:
   context: .
 ```
 
+#### In the consumer repository (your product)
+
+Do not copy this repo’s `.env.example`. After Publish:
+
+```bash
+git diff docs/testing/flows.yaml
+npx testproof generate
+```
+
+**Alternative without a bind mount:** still start Docker from the **testproof**
+clone. In the UI, mint a project API token. Then from the **consumer** cwd:
+
+```bash
+TESTPROOF_URL=http://localhost:3100 TESTPROOF_TOKEN=… TESTPROOF_PROJECT=… npx testproof ledger pull
+TESTPROOF_URL=http://localhost:3100 TESTPROOF_TOKEN=… TESTPROOF_PROJECT=… npx testproof ledger push
+```
+
+#### Consumer-hosted image (no clone)
+
+Pull `ghcr.io/kristijorgji/testproof:<version>` from a compose file **in the
+product repo**. Mount that repo’s `flows.yaml` at `/data/flows.yaml`. Keep
+server secrets (`BETTER_AUTH_SECRET`, …) in a consumer env file used only by
+that compose file — not this repo’s `.env.example`. Clone this repository only
+when you are developing the image itself.
+
 ### Track C — `git` mode
 
-1. Set `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` in `.env`.
-2. `docker compose up -d` (or `pnpm --filter @testproof/web dev` against a local Postgres).
+1. In the **testproof** clone, set `GITHUB_CLIENT_ID` and
+   `GITHUB_CLIENT_SECRET` in `.env` (created from `.env.example` at **this**
+   repo root).
+2. From the same clone: `docker compose up -d` (or
+   `pnpm --filter @testproof/web dev` against a local Postgres).
 3. Sign in with GitHub.
-4. Settings → connect owner/repo, set `ledgerPath` (for example `docs/testing/flows.yaml`).
+4. Settings → connect owner/repo, set `ledgerPath` (for example
+   `docs/testing/flows.yaml`). That path is **in the connected GitHub consumer
+   repo**, not a file on the server disk.
 5. Publish as a commit or a pull request.
 
 ### Track D — `db` mode
 
-1. Open an existing project and switch Storage to `db`. That seeds `ledger_documents` from the current source.
+Requires a project already created on a running server (Track B or C).
+
+1. Open that project and switch Storage to `db`. That seeds `ledger_documents`
+   from the current source.
 2. Edit in the UI. Postgres is now authoritative.
-3. Export YAML from Settings, or `npx testproof ledger pull`.
+3. Export YAML from Settings, or from the **consumer** cwd:
+   `npx testproof ledger pull`.
 
 ## Concepts
 
@@ -527,12 +597,17 @@ Default `platform` argument: `'mobile'`.
 
 ## Self-hosting the server
 
+Do this from a **clone of this repository**, at the repo root. A consumer
+product repo does not need this `.env` unless it is also hosting the UI (see
+[Consumer-hosted image](#consumer-hosted-image-no-clone)).
+
 `docker-compose.yml` pulls `ghcr.io/kristijorgji/testproof:latest` (published on
 each `v*` tag). Uncomment `build: .` if you are iterating on the image locally.
 The image is not a Next.js standalone build — it ships the monorepo and runs
 `next start` on port 3100.
 
 ```bash
+cd /path/to/testproof
 cp .env.example .env
 docker compose up
 ```
