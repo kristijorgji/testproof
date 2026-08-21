@@ -16,14 +16,18 @@
     "db:seed": "pnpm --filter @testproof/db build && pnpm --filter @testproof/db db:seed",
     "storybook": "pnpm --filter @testproof/web storybook",
     "set-version": "node scripts/set-version.mjs",
+    "knip": "knip",
+    "prepare": "husky",
     "clean": "turbo clean && rm -rf node_modules"
   },
   "devDependencies": {
     "eslint": "^9.39.0",
+    "husky": "^9.1.7",
+    "knip": "^6.32.2",
+    "lint-staged": "^17.3.0",
     "prettier": "^3.8.1",
     "turbo": "^2.6.4",
-    "typescript": "^7.0.2",
-    "vitest": "^4.1.10"
+    "typescript": "^7.0.2"
   },
   "packageManager": "pnpm@9.15.4",
   "engines": {

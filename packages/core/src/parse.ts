@@ -161,6 +161,3 @@ export function parseLedger(yamlSource: string): Ledger {
     assertRefs(normalized);
     return normalized;
 }
-
-/** Alias kept for existing consumer configs. */
-export const parseFlowsLedger = parseLedger;

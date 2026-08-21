@@ -10,7 +10,6 @@
   "dependencies": {
     "@kristijorgji/eslint-config-react-typescript": "^2.2.1",
     "@kristijorgji/eslint-config-typescript": "^1.2.3",
-    "@kristijorgji/eslint-plugin": "^0.2.0",
     "@next/eslint-plugin-next": "^16",
     "eslint-plugin-i18next": "^6.1.5",
     "eslint-plugin-jsx-a11y": "^6",

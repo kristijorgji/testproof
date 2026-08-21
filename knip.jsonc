@@ -1,0 +1,41 @@
+{
+    "$schema": "https://unpkg.com/knip@5/schema.json",
+    "ignoreExportsUsedInFile": false,
+    "workspaces": {
+        ".": {
+            "entry": ["scripts/**/*.{ts,mjs,js}", "testproof.config.ts"],
+            "project": ["scripts/**/*.{ts,mjs,js}"],
+            "ignoreDependencies": [
+                // Invoked by turbo tasks and lint-staged, never imported
+                "eslint",
+            ],
+        },
+        "apps/web": {
+            "entry": [
+                "src/app/**/{page,layout,route,loading,error,not-found,default,template}.{ts,tsx}",
+                ".storybook/**/*.{ts,tsx}",
+            ],
+            "project": ["src/**/*.{ts,tsx}", ".storybook/**/*.{ts,tsx}"],
+            "ignoreDependencies": [
+                // Loaded by the PostCSS pipeline, not imported from source
+                "tailwindcss",
+            ],
+        },
+        "packages/core": {
+            // package.json `exports` already registers ., ./parse, ./platforms, ./schema
+            "project": ["src/**/*.ts", "test/**/*.ts"],
+        },
+        "packages/cli": {
+            "entry": ["src/index.ts"],
+            "project": ["src/**/*.ts", "test/**/*.ts"],
+        },
+        "packages/db": {
+            "entry": ["src/index.ts", "src/migrate.ts", "src/seed.ts", "src/import-markdown.ts"],
+            "project": ["src/**/*.ts"],
+        },
+        "packages/eslint-config": {
+            // package.json `exports` registers ./package.js and ./translations.js
+            "project": ["*.js"],
+        },
+    },
+}
