@@ -3,8 +3,13 @@ import { defineConfig } from '@testproof/core';
 export default defineConfig({
     ledger: 'examples/demo/flows.yaml',
     platforms: [
-        { name: 'web', dir: 'examples/demo/web-specs', extractor: 'regex-tag' },
-        { name: 'mobile', dir: 'examples/demo/mobile-flows', extractor: 'maestro-tags' },
+        { name: 'web', dir: 'examples/demo/web-specs', extractor: 'regex-tag', linkPrefix: 'examples/demo/web-specs' },
+        {
+            name: 'mobile',
+            dir: 'examples/demo/mobile-flows',
+            extractor: 'maestro-tags',
+            linkPrefix: 'examples/demo/mobile-flows',
+        },
     ],
     coreAreaIds: ['AUTH'],
     output: {

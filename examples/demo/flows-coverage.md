@@ -49,11 +49,11 @@ Flows below apply to **both** web and the native app unless noted.
 
 - [x] `FLOW-AUTH-LOGIN-SUCCESS` Correct credentials open the dashboard
   - **web:** [x]
-    [`login.spec.ts`](/Users/kristi.jorgji/Desktop/libs/testproof/examples/demo/web-specs/login.spec.ts)
+    [`login.spec.ts`](examples/demo/web-specs/login.spec.ts)
   - **mobile:** [x]
-    [`login.yaml`](/Users/kristi.jorgji/Desktop/libs/testproof/examples/demo/mobile-flows/login.yaml)
+    [`login.yaml`](examples/demo/mobile-flows/login.yaml)
 - [ ] `FLOW-AUTH-LOGIN-INVALID` Invalid credentials show an error `Partial`
   - **web:** [x]
-    [`login.spec.ts`](/Users/kristi.jorgji/Desktop/libs/testproof/examples/demo/web-specs/login.spec.ts)
+    [`login.spec.ts`](examples/demo/web-specs/login.spec.ts)
   - **mobile:** [ ] `todo`
 

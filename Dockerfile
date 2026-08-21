@@ -5,8 +5,9 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml* ./
 COPY packages/core/package.json packages/core/package.json
 COPY packages/cli/package.json packages/cli/package.json
 COPY packages/db/package.json packages/db/package.json
+COPY packages/eslint-config/package.json packages/eslint-config/package.json
 COPY apps/web/package.json apps/web/package.json
-RUN pnpm install --frozen-lockfile || pnpm install
+RUN pnpm install --frozen-lockfile --ignore-scripts || pnpm install --ignore-scripts
 
 FROM node:22-alpine AS build
 WORKDIR /app
