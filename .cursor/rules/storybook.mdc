@@ -1,0 +1,11 @@
+---
+description: Storybook conventions — Pages/Flows titles, factories, MSW
+globs: "**/*.stories.{ts,tsx}"
+alwaysApply: false
+---
+
+# Storybook
+
+When writing or editing Storybook stories, read and follow:
+
+- [.agents/skills/storybook/SKILL.md](.agents/skills/storybook/SKILL.md)

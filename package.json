@@ -17,7 +17,7 @@
     "storybook": "pnpm --filter @testproof/web storybook",
     "set-version": "node scripts/set-version.mjs",
     "knip": "knip",
-    "prepare": "husky",
+    "prepare": "husky && tsx scripts/sync-agent-skills.ts",
     "clean": "turbo clean && rm -rf node_modules"
   },
   "devDependencies": {
@@ -26,6 +26,7 @@
     "knip": "^6.32.2",
     "lint-staged": "^17.3.0",
     "prettier": "^3.8.1",
+    "tsx": "^4.23.12",
     "turbo": "^2.6.4",
     "typescript": "^7.0.2"
   },

@@ -1,0 +1,12 @@
+---
+description: Next.js web app conventions
+globs: "apps/web/**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Web Development
+
+When working in `apps/web/`, read and follow:
+
+- [.agents/skills/web-development/SKILL.md](.agents/skills/web-development/SKILL.md)
+- [.agents/skills/i18n-management/SKILL.md](.agents/skills/i18n-management/SKILL.md) — when adding or changing user-facing strings

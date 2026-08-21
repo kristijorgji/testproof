@@ -1,0 +1,10 @@
+---
+description: Enforces running verification commands after every set of planned changes
+alwaysApply: true
+---
+
+# Post-Change Verification
+
+After completing ALL planned changes, read and follow:
+
+- [.agents/skills/code-quality/SKILL.md](.agents/skills/code-quality/SKILL.md)

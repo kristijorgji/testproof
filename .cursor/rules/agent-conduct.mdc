@@ -1,0 +1,9 @@
+---
+description: Agent interaction defaults
+alwaysApply: true
+---
+
+# Agent conduct
+
+When asking the user a clarifying question, always include your recommended option and a brief rationale.
+Prefer making reasonable assumptions over blocking on minor ambiguity.
