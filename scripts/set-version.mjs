@@ -28,4 +28,7 @@ if (nextIndex === cliIndex) {
     process.exit(1);
 }
 fs.writeFileSync(cliIndexPath, nextIndex);
+
+const { execFileSync } = await import('node:child_process');
+execFileSync('pnpm', ['install', '--lockfile-only'], { cwd: root, stdio: 'inherit' });
 console.log(`Set @testproof/core and testproof to ${version}`);
