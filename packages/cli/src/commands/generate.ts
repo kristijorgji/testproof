@@ -13,6 +13,24 @@ import {
     type TestproofConfig,
 } from '@testproof/core';
 
+async function openPath(filePath: string): Promise<void> {
+    const { execFileSync } = await import('node:child_process');
+    const attempts: Array<[string, string[]]> = [
+        ['open', [filePath]],
+        ['xdg-open', [filePath]],
+        ['start', [filePath]],
+    ];
+    for (const [cmd, args] of attempts) {
+        try {
+            execFileSync(cmd, args, { stdio: 'ignore' });
+            return;
+        } catch {
+            // try the next platform opener
+        }
+    }
+    console.warn(`Could not open ${filePath}; open it manually.`);
+}
+
 function derive(config: TestproofConfig, cwd: string): { ledger: Ledger; coverage: Map<string, FlowCoverage> } {
     const yamlSource = fs.readFileSync(path.resolve(cwd, config.ledger), 'utf8');
     const ledger = parseLedger(yamlSource);
@@ -61,12 +79,7 @@ export async function reportCommand(config: TestproofConfig, cwd: string, open =
     fs.writeFileSync(htmlOut, html);
     console.log(`Wrote ${path.relative(cwd, htmlOut)}`);
     if (open) {
-        const { execFileSync } = await import('node:child_process');
-        try {
-            execFileSync('open', [htmlOut], { stdio: 'ignore' });
-        } catch {
-            console.warn(`Could not open ${htmlOut}; open it manually.`);
-        }
+        await openPath(htmlOut);
     }
     return 0;
 }

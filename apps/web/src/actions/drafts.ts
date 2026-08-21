@@ -1,27 +1,18 @@
 'use server';
 
-import fs from 'node:fs';
-
 import type { LedgerPatch } from '@testproof/core';
 import { drafts } from '@testproof/db';
 import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 import { getDb } from '@/server/db';
-import { createOctokit } from '@/server/github/client';
-import { publishCommit, PublishConflictError, publishPullRequest } from '@/server/github/publish';
-import {
-    applyDraft,
-    getOpenDraft,
-    getProject,
-    getProjectRepo,
-    readProjectLedger,
-    resolveLocalLedgerPath,
-} from '@/server/project';
-import { getGithubAccessToken, requireUser } from '@/server/session';
+import { getLedgerSource, PublishConflictError } from '@/server/ledger-source';
+import { applyDraft, getOpenDraft, getProject, readProjectLedger } from '@/server/project';
+import { requireUser } from '@/server/session';
 
 function revalidateFlows(projectId: string): void {
     revalidatePath(`/projects/${projectId}/flows`);
+    revalidatePath(`/projects/${projectId}/coverage`);
 }
 
 export async function appendDraftPatch(projectId: string, patch: LedgerPatch): Promise<void> {
@@ -56,48 +47,14 @@ export async function publishDraft(projectId: string, input: { message: string; 
     const patches = (draft?.patches as LedgerPatch[] | undefined) ?? [];
     const yaml = applyDraft(ledger.content, patches);
     const project = await getProject(projectId);
-    const repo = await getProjectRepo(projectId);
     if (!project) throw new Error('Project not found');
 
-    if (!repo) {
-        const dest = resolveLocalLedgerPath();
-        fs.writeFileSync(dest, yaml);
-        if (draft) {
-            await getDb()
-                .update(drafts)
-                .set({ status: 'published', updatedAt: new Date() })
-                .where(eq(drafts.id, draft.id));
-        }
-        revalidateFlows(projectId);
-        return;
+    const source = await getLedgerSource(projectId, user.id);
+    if (input.pullRequest && !source.canPullRequest) {
+        throw new Error('Pull requests are only available for git storage');
     }
-
-    const token = await getGithubAccessToken(user.id);
-    if (!token) throw new Error('Connect a GitHub account to publish');
-    const octokit = createOctokit(token);
     try {
-        if (input.pullRequest) {
-            await publishPullRequest(octokit, {
-                owner: repo.owner,
-                repo: repo.name,
-                path: project.ledgerPath,
-                baseBranch: project.defaultBranch,
-                headBranch: `testproof/${Date.now()}`,
-                message: input.message,
-                yaml,
-                baseBlobSha: draft?.baseBlobSha ?? ledger.sha,
-            });
-        } else {
-            await publishCommit(octokit, {
-                owner: repo.owner,
-                repo: repo.name,
-                path: project.ledgerPath,
-                branch: project.defaultBranch,
-                message: input.message,
-                baseBlobSha: draft?.baseBlobSha ?? ledger.sha,
-                yaml,
-            });
-        }
+        await source.write(yaml, { message: input.message, pullRequest: input.pullRequest });
         if (draft) {
             await getDb()
                 .update(drafts)

@@ -7,7 +7,6 @@ export * from './patch.js';
 export * from './config.js';
 export * from './coverage.js';
 export * from './validate.js';
-export * from './migrate.js';
 export * from './scan/web.js';
 export * from './scan/maestro.js';
 export * from './render/markdown.js';

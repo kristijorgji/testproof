@@ -1,15 +1,9 @@
-import { createHash } from 'node:crypto';
-import fs from 'node:fs';
-import path from 'node:path';
-
 import { applyPatches, type LedgerPatch, openLedgerDocument, serializeLedgerDocument } from '@testproof/core';
 import { drafts, projects, repos } from '@testproof/db';
 import { and, desc, eq } from 'drizzle-orm';
 
 import { getDb } from './db';
-import { createOctokit } from './github/client';
-import { readLedger } from './github/read';
-import { getGithubAccessToken } from './session';
+import { getLedgerSource } from './ledger-source';
 
 export async function getProject(projectId: string): Promise<typeof projects.$inferSelect | undefined> {
     const [project] = await getDb().select().from(projects).where(eq(projects.id, projectId)).limit(1);
@@ -42,43 +36,10 @@ export async function getOpenDraft(projectId: string, userId: string): Promise<t
 export async function readProjectLedger(
     projectId: string,
     userId: string,
-): Promise<{ content: string; sha: string; fromGithub: boolean }> {
-    const project = await getProject(projectId);
-    if (!project) throw new Error('Project not found');
-    const repo = await getProjectRepo(projectId);
-    const token = await getGithubAccessToken(userId);
-    if (repo && token) {
-        const file = await readLedger(createOctokit(token), {
-            owner: repo.owner,
-            repo: repo.name,
-            path: project.ledgerPath,
-            ref: project.defaultBranch,
-        });
-        return { ...file, fromGithub: true };
-    }
-    const content = fs.readFileSync(/* turbopackIgnore: true */ resolveLocalLedgerPath(), 'utf8');
-    return { content, sha: createHash('sha1').update(content).digest('hex'), fromGithub: false };
-}
-
-/** Next starts from `apps/web`; Docker and CLI start from the repo root. */
-export function resolveLocalLedgerPath(): string {
-    const raw = process.env.LOCAL_LEDGER_PATH ?? 'examples/demo/flows.yaml';
-    if (path.isAbsolute(raw)) {
-        return raw;
-    }
-    let dir = process.cwd();
-    for (let i = 0; i < 6; i += 1) {
-        const candidate = path.join(/* turbopackIgnore: true */ dir, raw);
-        if (fs.existsSync(/* turbopackIgnore: true */ candidate)) {
-            return candidate;
-        }
-        const parent = path.dirname(dir);
-        if (parent === dir) {
-            break;
-        }
-        dir = parent;
-    }
-    return path.resolve(/* turbopackIgnore: true */ process.cwd(), raw);
+): Promise<{ content: string; sha: string; fromGithub: boolean; revision: number }> {
+    const source = await getLedgerSource(projectId, userId);
+    const file = await source.read();
+    return { ...file, fromGithub: source.kind === 'git' };
 }
 
 export function applyDraft(source: string, patches: LedgerPatch[]): string {

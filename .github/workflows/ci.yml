@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   quality:
     runs-on: ubuntu-latest
@@ -22,8 +26,32 @@ jobs:
       - run: pnpm lint
       - run: pnpm test
       - run: pnpm build
+
+  ledger:
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
       - run: pnpm --filter @testproof/web storybook:build
       - name: Validate demo ledger
-        run: pnpm --filter testproof exec node dist/index.js validate
+        run: node packages/cli/dist/index.js validate
       - name: Check generated coverage docs
-        run: pnpm --filter testproof exec node dist/index.js generate --check
+        run: node packages/cli/dist/index.js generate --check
+
+  ci-ok:
+    if: always()
+    needs: [quality, ledger]
+    runs-on: ubuntu-latest
+    steps:
+      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
+      - run: echo "all required jobs passed"

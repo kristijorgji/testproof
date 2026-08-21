@@ -1,7 +1,7 @@
 # testproof
 
 CLI for [Testproof](https://github.com/kristijorgji/testproof): `init`,
-`validate`, `generate`, `report`, `push` and `migrate`.
+`validate`, `generate`, `report`, `push`, `ledger pull` and `ledger push`.
 
 ```bash
 pnpm add -D testproof @testproof/core

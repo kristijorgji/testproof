@@ -19,4 +19,13 @@ cli.version = version;
 cli.dependencies['@testproof/core'] = `^${version}`;
 fs.writeFileSync(corePath, `${JSON.stringify(core, null, 4)}\n`);
 fs.writeFileSync(cliPath, `${JSON.stringify(cli, null, 4)}\n`);
+
+const cliIndexPath = path.join(root, 'packages/cli/src/index.ts');
+const cliIndex = fs.readFileSync(cliIndexPath, 'utf8');
+const nextIndex = cliIndex.replace(/\.version\('(?:\d+\.\d+\.\d+)'\)/, `.version('${version}')`);
+if (nextIndex === cliIndex) {
+    console.error('Could not update CLI program version in packages/cli/src/index.ts');
+    process.exit(1);
+}
+fs.writeFileSync(cliIndexPath, nextIndex);
 console.log(`Set @testproof/core and testproof to ${version}`);

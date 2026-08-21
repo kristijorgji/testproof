@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { saveRepo } from '@/actions/settings';
 import { ProjectNav } from '@/components/layout/ProjectNav';
+import { StorageForm } from '@/components/settings/StorageForm';
 import { TokenForm } from '@/components/settings/TokenForm';
 import { getLocaleFromCookie } from '@/i18n/get-locale';
 import { getServerTranslation } from '@/i18n/server';
@@ -21,6 +22,15 @@ export default async function SettingsPage({ params }: { params: Promise<{ proje
             <ProjectNav name={project.name} projectId={projectId} />
             <main className="mx-auto max-w-2xl p-6">
                 <h1 className="mb-4 text-2xl font-semibold">{t('settings.title')}</h1>
+                <section className="mb-6 grid gap-2 rounded border border-[var(--border)] p-4">
+                    <h2 className="font-medium">{t('settings.storage')}</h2>
+                    <StorageForm
+                        projectId={projectId}
+                        storage={project.storage}
+                        ledgerPath={project.ledgerPath}
+                        ledgerFilePath={project.ledgerFilePath}
+                    />
+                </section>
                 <section className="mb-6 grid gap-2 rounded border border-[var(--border)] p-4">
                     <h2 className="font-medium">{t('settings.repo')}</h2>
                     <form action={save} className="grid gap-2">

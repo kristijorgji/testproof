@@ -110,9 +110,6 @@ function assertRefs(ledger: Ledger): void {
     };
 
     for (const area of ledger.areas) {
-        if (ledger.version === 1 && !area.scope) {
-            throw new Error(`flows ledger: areas[].scope must be common|web|mobile (got "${String(area.scope)}")`);
-        }
         for (const group of area.groups) {
             for (const flow of group.flows) checkFlow(flow, area);
         }
@@ -137,6 +134,16 @@ function assertRefs(ledger: Ledger): void {
 
 export function parseLedger(yamlSource: string): Ledger {
     const raw = parseYaml(yamlSource) as unknown;
+    const rawVersion =
+        raw !== null && typeof raw === 'object' && 'version' in raw
+            ? (raw as { version?: unknown }).version
+            : undefined;
+    if (rawVersion !== 2) {
+        throw new Error(
+            `flows ledger: unsupported version ${String(rawVersion ?? '(missing)')}. ` +
+                'Only version 2 is supported. Convert with testproof@0.1.x `testproof migrate`, then upgrade.',
+        );
+    }
     let parsed;
     try {
         parsed = ledgerSchema.parse(raw);
@@ -149,9 +156,6 @@ export function parseLedger(yamlSource: string): Ledger {
             throw new Error(`flows ledger: areas[].scope must be common|web|mobile`, { cause: error });
         }
         throw new Error(`flows ledger: ${message}`, { cause: error });
-    }
-    if (parsed.version === 1 && parsed.areas.some((a) => !a.scope)) {
-        throw new Error('flows ledger: areas[].scope must be common|web|mobile');
     }
     const normalized = attachImplicitTargets(parsed);
     assertRefs(normalized);

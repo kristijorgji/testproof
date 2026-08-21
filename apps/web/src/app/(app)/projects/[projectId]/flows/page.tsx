@@ -1,4 +1,4 @@
-import type { CoverageCell, LedgerPatch } from '@testproof/core';
+import type { LedgerPatch } from '@testproof/core';
 import {
     applyPatches,
     ledgerPlatforms,
@@ -6,14 +6,12 @@ import {
     parseLedger,
     serializeLedgerDocument,
 } from '@testproof/core';
-import { coverageSnapshots, flowCoverage } from '@testproof/db';
-import { desc, eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 
 import { appendDraftPatch, discardDraft, publishDraft, replayDraft } from '@/actions/drafts';
 import { FlowEditor } from '@/components/flow-tree/FlowEditor';
 import { ProjectNav } from '@/components/layout/ProjectNav';
-import { getDb } from '@/server/db';
+import { getLatestCoverage } from '@/server/coverage';
 import { getOpenDraft, getProject, readProjectLedger } from '@/server/project';
 import { requireUser } from '@/server/session';
 
@@ -32,31 +30,7 @@ export default async function FlowsPage({ params }: { params: Promise<{ projectI
         return serializeLedgerDocument(doc);
     })();
     const ledger = parseLedger(after);
-
-    const coverage: Record<
-        string,
-        { status: 'automated' | 'partial' | 'todo' | 'manual'; demanded: CoverageCell[]; covered: CoverageCell[] }
-    > = {};
-    try {
-        const [snapshot] = await getDb()
-            .select()
-            .from(coverageSnapshots)
-            .where(eq(coverageSnapshots.projectId, projectId))
-            .orderBy(desc(coverageSnapshots.createdAt))
-            .limit(1);
-        if (snapshot) {
-            const rows = await getDb().select().from(flowCoverage).where(eq(flowCoverage.snapshotId, snapshot.id));
-            for (const row of rows) {
-                coverage[row.flowId] = {
-                    status: row.status as 'automated' | 'partial' | 'todo' | 'manual',
-                    demanded: (row.demandedCells as CoverageCell[]) ?? [],
-                    covered: (row.coveredCells as CoverageCell[]) ?? [],
-                };
-            }
-        }
-    } catch {
-        /* empty */
-    }
+    const coverage = await getLatestCoverage(projectId);
 
     const conflict = draft?.status === 'stale' ? { remote: ledgerFile.content, draft: after } : undefined;
 

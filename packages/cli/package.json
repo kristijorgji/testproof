@@ -1,13 +1,17 @@
 {
     "name": "testproof",
-    "version": "0.1.0",
+    "version": "0.3.0",
     "description": "Testproof CLI — validate, generate, report and push flow coverage",
     "license": "MIT",
     "type": "module",
     "bin": {
         "testproof": "./dist/index.js"
     },
-    "files": ["dist", "README.md", "LICENSE"],
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
     "publishConfig": {
         "access": "public"
     },
@@ -20,7 +24,15 @@
     "bugs": {
         "url": "https://github.com/kristijorgji/testproof/issues"
     },
-    "keywords": ["testing", "test-management", "coverage", "playwright", "maestro", "e2e", "cli"],
+    "keywords": [
+        "testing",
+        "test-management",
+        "coverage",
+        "playwright",
+        "maestro",
+        "e2e",
+        "cli"
+    ],
     "scripts": {
         "prepare": "tsc -p tsconfig.build.json",
         "build": "tsc -p tsconfig.build.json",
@@ -31,7 +43,7 @@
         "clean": "rm -rf dist"
     },
     "dependencies": {
-        "@testproof/core": "^0.1.0",
+        "@testproof/core": "^0.3.0",
         "commander": "^15.0.0",
         "jiti": "^2.6.1"
     },

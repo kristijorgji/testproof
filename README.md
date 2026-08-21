@@ -19,9 +19,9 @@ npx testproof generate
 - [Quick start](#quick-start)
 - [Concepts](#concepts)
 - [Ledger schema (v2)](#ledger-schema-v2)
-- [Migrating v1 to v2](#migrating-v1-to-v2)
 - [`testproof.config.ts`](#testproofconfigts)
 - [CLI reference](#cli-reference)
+- [Ledger storage](#ledger-storage)
 - [Integrations](#integrations)
   - [Playwright / web specs (`regex-tag`)](#playwright--web-specs-regex-tag)
   - [Maestro (`maestro-tags`)](#maestro-maestro-tags)
@@ -55,10 +55,15 @@ npx testproof generate
 npx testproof report --open
 ```
 
-`init` writes `testproof.config.ts` and a starter `docs/testing/flows.yaml` if they
-are missing. `validate` checks that every `@FLOW-…` / `FLOW-…` tag in your specs
-exists in the ledger. `generate` writes the markdown coverage table and an HTML
-report. `report --open` writes the HTML report only and opens it.
+| Command | Reads | Writes | Exit |
+| --- | --- | --- | --- |
+| `init` | cwd | `testproof.config.ts` and a starter `docs/testing/flows.yaml` when either is missing | always `0` |
+| `validate` | `testproof.config.ts`, the ledger YAML, and scanner dirs | nothing | `1` when a scanned `FLOW-…` is missing from the ledger; `1` under `--strict` when a `coreAreaIds` flow is not fully automated; `0` otherwise (non-strict incomplete core → warnings) |
+| `generate` | same as `validate` | `docs/testing/flows-coverage.md` and `docs/testing/.generated/flows.html` (paths overridable in config) | `1` if `--check` and the markdown drifted; `--check` compares **markdown only**, never the HTML |
+| `report --open` | same as `validate` | the HTML report only | `0`; `--open` tries `open`, then `xdg-open`, then `start`, and warns if none work |
+| `push` | same as `validate`, plus `GITHUB_SHA` / `GITHUB_REF_NAME` | `POST /api/v1/coverage` | `0` and skip when `server.url` is unset; `1` when url is set but token/project are missing or the HTTP call fails |
+| `ledger pull` | server ledger via `GET /api/v1/ledger` | `config.ledger` | `1` if local file changed (unless `--force`) |
+| `ledger push` | local `config.ledger` | `PUT /api/v1/ledger` | `1` on stale revision unless `--force` |
 
 ## Concepts
 
@@ -101,7 +106,7 @@ Ids:
 
 | Field | Required | Notes |
 | --- | --- | --- |
-| `version` | yes | `1` or `2` |
+| `version` | yes | `2` |
 | `platforms` | no | If omitted, defaults to `web` and `mobile` |
 | `dimensions` | no | |
 | `sharedSteps` | no | Reusable step lists |
@@ -146,7 +151,7 @@ Ids:
 | --- | --- | --- |
 | `id` | yes | |
 | `title` | yes | |
-| `scope` | v1 required; v2 optional | `common` \| `web` \| `mobile`. If omitted, inferred from flow targets. |
+| `scope` | no | `common` \| `web` \| `mobile`. If omitted, inferred from flow targets. |
 | `intro` | no | |
 | `groups` | yes | |
 
@@ -234,20 +239,6 @@ areas:
             targets: [mobile.android]
 ```
 
-## Migrating v1 to v2
-
-`version: 1` files (the original `scope: common|web|mobile` format) still parse.
-Every v1 area **must** have `scope`.
-
-`testproof migrate` rewrites the ledger in place:
-
-- sets `version: 2`
-- adds a default platform tree if missing: `web` (`web.chrome`, `web.safari`) and
-  `mobile` (`mobile.ios`, `mobile.android`)
-- adds default dimensions if missing: `viewport`, `theme`, `locale`, `role`
-
-Already-v2 files with both `platforms` and `dimensions` are a no-op.
-
 ## `testproof.config.ts`
 
 `defineConfig` is a typing helper. Config is discovered as `testproof.config.ts`,
@@ -310,7 +301,7 @@ export default defineConfig({
 
 ## CLI reference
 
-Program name `testproof`, version `0.1.0`. Unhandled errors print to stderr and
+Program name `testproof`, version `0.3.0`. Unhandled errors print to stderr and
 exit `1`.
 
 | Command | Flags | Exit codes |
@@ -318,9 +309,10 @@ exit `1`.
 | `init` | none | Always `0` |
 | `validate` | `--strict`, `--config <path>` | `1` if a scanned FLOW id is missing from the ledger; `1` if `--strict` and a `coreAreaIds` flow is not fully automated; `0` otherwise (non-strict incomplete core → warnings) |
 | `generate` | `--check`, `--config <path>` | `1` if `--check` and markdown drifted; `0` otherwise. `--check` compares **markdown only**, not HTML. |
-| `report` | `--open`, `--config <path>` | `0` (warns if `open` fails) |
+| `report` | `--open`, `--config <path>` | `0` (warns if `open` / `xdg-open` / `start` all fail) |
 | `push` | `--config <path>` | `0` and skip when `server.url` is unset; `1` when url is set but token/project are missing or the HTTP call fails; `0` on success |
-| `migrate` | `--config <path>` | `0` (already v2 or after write) |
+| `ledger pull` | `--force`, `--config <path>` | `1` if the server call fails or the local file has unsaved changes (unless `--force`); `0` on write |
+| `ledger push` | `--force`, `--config <path>` | `1` on HTTP error or stale revision (retry with `--force`); `0` on success |
 
 `validate` success log:
 
@@ -330,6 +322,49 @@ testproof validate: ok (maestro=N web=N ledger=N)
 
 `push` reads `GITHUB_SHA` / `GITHUB_REF_NAME` for `commitSha` / `branch`, falling
 back to `'local'`.
+
+## Ledger storage
+
+Each project picks one source of truth in Settings. Publishing from the web UI
+always writes back to that source.
+
+| Mode | Source of truth | Sync-back from the UI | How it reaches your machine |
+| --- | --- | --- | --- |
+| `git` | `flows.yaml` in the connected GitHub repo | Commit or pull request | GitHub |
+| `file` | Per-project absolute YAML path | Direct write | Volume-mount the file into the server, or `testproof ledger pull` |
+| `db` | `ledger_documents.yaml` row | n/a (Postgres is authoritative) | Settings export, or `testproof ledger pull` |
+
+`git` is the default. `file` requires an **absolute** path that exists and is
+writable when you save Settings. In Docker, mount the host file into the
+container at that same path — the container filesystem is not your working
+tree.
+
+```yaml
+services:
+  web:
+    image: ghcr.io/kristijorgji/testproof:latest
+    volumes:
+      - /absolute/path/to/your/docs/testing/flows.yaml:/data/flows.yaml
+    environment:
+      # deprecated fallback used only when a project has no per-project path yet
+      LOCAL_LEDGER_PATH: /data/flows.yaml
+```
+
+`LOCAL_LEDGER_PATH` is deprecated. New projects should set the path in Settings.
+
+`GET` / `PUT /api/v1/ledger` (Bearer project token) round-trip YAML for `file`
+and `db` modes. Git mode returns `400` — commit to the repo instead. `PUT`
+sends `{ yaml, baseRevision, message }` and returns `409` when `baseRevision`
+is stale.
+
+```bash
+npx testproof ledger pull
+npx testproof ledger push
+```
+
+The web UI can create, rename, move and delete flows, groups and areas, and
+edit the modelled fields (priority, severity, type, owner, …). Drafts stay in
+Postgres until you publish.
 
 ## Integrations
 
@@ -448,6 +483,11 @@ Default `platform` argument: `'mobile'`.
 
 ## Self-hosting the server
 
+`docker-compose.yml` pulls `ghcr.io/kristijorgji/testproof:latest` (published on
+each `v*` tag). Uncomment `build: .` if you are iterating on the image locally.
+The image is not a Next.js standalone build — it ships the monorepo and runs
+`next start` on port 3100.
+
 ```bash
 cp .env.example .env
 docker compose up
@@ -467,7 +507,7 @@ Environment (from `.env.example`):
 | `BETTER_AUTH_URL` / `NEXT_PUBLIC_BETTER_AUTH_URL` | Public origin |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | OAuth |
 | `GITHUB_WEBHOOK_SECRET` | HMAC for `POST /api/webhooks/github` |
-| `LOCAL_LEDGER_PATH` | Fallback ledger when no GitHub repo is connected |
+| `LOCAL_LEDGER_PATH` | **Deprecated.** Fallback file path when a `file`-mode project has no per-project path |
 | `TESTPROOF_URL` / `TESTPROOF_TOKEN` / `TESTPROOF_PROJECT` | CLI `push` |
 
 ## HTTP API
@@ -486,6 +526,8 @@ must match the token's project (403 otherwise).
 | --- | --- | --- | --- |
 | `GET` | `/api/v1/openapi.json` | none | OpenAPI 3.1 spec |
 | `POST` | `/api/v1/coverage` | Bearer project token | Ingest a coverage snapshot |
+| `GET` | `/api/v1/ledger` | Bearer project token | Read the current ledger (`file`/`db`; `400` in `git` mode) |
+| `PUT` | `/api/v1/ledger` | Bearer project token | Replace the ledger (`file`/`db`; `409` on stale revision) |
 | `POST` | `/api/v1/runs` | Bearer project token | Ingest a test run |
 | `POST` | `/api/webhooks/github` | `x-hub-signature-256` HMAC | Mark open drafts stale when the ledger path is pushed |
 | `GET`/`POST` | `/api/auth/*` | better-auth session | Sign-in / sign-up (separate Next handler) |
@@ -563,7 +605,7 @@ Or call the CLI directly:
 | Package | Role | Published |
 | --- | --- | --- |
 | `@testproof/core` | Zod schema, YAML document editing, coverage, markdown/HTML renderers, result ingest | yes |
-| `testproof` | CLI: `init`, `validate`, `generate`, `report`, `push`, `migrate` | yes |
+| `testproof` | CLI: `init`, `validate`, `generate`, `report`, `push`, `ledger pull`, `ledger push` | yes |
 | `@testproof/db` | Drizzle schema + migrations | no (private) |
 | `@testproof/web` | Next.js 16 app (Hono API, GitHub sync, editor, coverage, runs, sessions) | no (private) |
 
@@ -584,12 +626,14 @@ Node ≥ 22, pnpm 9.15.4. Storybook lives in `apps/web`.
 
 `@testproof/core` and `testproof` publish in lockstep from GitHub Actions on
 `v*` tags via [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/)
-(OIDC, no `NPM_TOKEN`).
+(OIDC, no `NPM_TOKEN`). The same tag also creates a GitHub Release and pushes
+`ghcr.io/kristijorgji/testproof:<version>` plus `:latest`. The workflow fails if
+the tag does not match `packages/core/package.json` version.
 
 ```bash
-pnpm set-version 0.1.1
-git commit -am "chore(release): 0.1.1"
-git tag v0.1.1
+pnpm set-version 0.2.0
+git commit -am "chore(release): 0.2.0"
+git tag v0.2.0
 git push --follow-tags
 ```
 

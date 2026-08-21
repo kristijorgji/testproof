@@ -165,7 +165,7 @@ export const areaSchema = z.object({
 export type FlowArea = z.infer<typeof areaSchema>;
 
 export const ledgerSchema = z.object({
-    version: z.union([z.literal(1), z.literal(2)]),
+    version: z.literal(2),
     platforms: z.array(platformNodeSchema).optional(),
     dimensions: z.array(dimensionSchema).optional(),
     sharedSteps: z.array(sharedStepSchema).optional(),
@@ -234,3 +234,20 @@ export const runPushBodySchema = z.object({
     results: z.array(runResultSchema),
 });
 export type RunPushBody = z.infer<typeof runPushBodySchema>;
+
+export const storageModeSchema = z.enum(['git', 'file', 'db']);
+export type StorageMode = z.infer<typeof storageModeSchema>;
+
+export const ledgerGetResponseSchema = z.object({
+    yaml: z.string(),
+    revision: z.number().int(),
+    storage: storageModeSchema,
+});
+export type LedgerGetResponse = z.infer<typeof ledgerGetResponseSchema>;
+
+export const ledgerPutBodySchema = z.object({
+    yaml: z.string().min(1),
+    baseRevision: z.number().int(),
+    message: z.string().min(1).optional(),
+});
+export type LedgerPutBody = z.infer<typeof ledgerPutBodySchema>;

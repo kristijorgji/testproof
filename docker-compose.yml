@@ -16,7 +16,8 @@ services:
       retries: 10
 
   web:
-    build: .
+    image: ghcr.io/kristijorgji/testproof:latest
+    # build: . # local-dev alternative when iterating on the image
     ports:
       - '3100:3100'
     environment:

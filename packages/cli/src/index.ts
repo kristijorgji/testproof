@@ -3,13 +3,13 @@ import { Command } from 'commander';
 
 import { generateCommand, reportCommand } from './commands/generate.js';
 import { initCommand } from './commands/init.js';
-import { migrateCommand } from './commands/migrate.js';
+import { ledgerPullCommand, ledgerPushCommand } from './commands/ledger.js';
 import { pushCommand } from './commands/push.js';
 import { validateCommand } from './commands/validate.js';
 import { loadConfig } from './load-config.js';
 
 async function main(): Promise<void> {
-    const program = new Command('testproof').description('Git-native test case management').version('0.1.0');
+    const program = new Command('testproof').description('Git-native test case management').version('0.3.0');
 
     program
         .command('init')
@@ -53,13 +53,26 @@ async function main(): Promise<void> {
             process.exitCode = await pushCommand(config, process.cwd());
         });
 
-    program
-        .command('migrate')
-        .description('Rewrite a v1 ledger to v2 in place')
+    const ledger = program.command('ledger').description('Pull or push ledger YAML against a Testproof server');
+
+    ledger
+        .command('pull')
+        .description('Download the server ledger into config.ledger')
+        .option('--force', 'Overwrite local changes')
         .option('--config <path>', 'Path to testproof.config.ts')
-        .action(async (opts: { config?: string }) => {
+        .action(async (opts: { force?: boolean; config?: string }) => {
             const config = await loadConfig(process.cwd(), opts.config);
-            process.exitCode = migrateCommand(config, process.cwd());
+            process.exitCode = await ledgerPullCommand(config, process.cwd(), Boolean(opts.force));
+        });
+
+    ledger
+        .command('push')
+        .description('Upload config.ledger to the server')
+        .option('--force', 'Overwrite a stale remote revision')
+        .option('--config <path>', 'Path to testproof.config.ts')
+        .action(async (opts: { force?: boolean; config?: string }) => {
+            const config = await loadConfig(process.cwd(), opts.config);
+            process.exitCode = await ledgerPushCommand(config, process.cwd(), Boolean(opts.force));
         });
 
     await program.parseAsync(process.argv);

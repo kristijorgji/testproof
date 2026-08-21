@@ -4,7 +4,7 @@ import { flattenFlowIds, parseLedger } from '../src/parse.js';
 import { resolveTargets } from '../src/targets.js';
 
 const MINIMAL = `
-version: 1
+version: 2
 areas:
   - id: HOME
     title: HOME
@@ -30,7 +30,7 @@ describe('parseLedger', () => {
     it('rejects duplicate FLOW ids', () => {
         expect(() =>
             parseLedger(`
-version: 1
+version: 2
 areas:
   - id: A
     title: A
@@ -49,7 +49,7 @@ areas:
     it('rejects invalid FLOW id shape', () => {
         expect(() =>
             parseLedger(`
-version: 1
+version: 2
 areas:
   - id: A
     title: A
@@ -66,7 +66,7 @@ areas:
     it('rejects bad scope', () => {
         expect(() =>
             parseLedger(`
-version: 1
+version: 2
 areas:
   - id: A
     title: A
@@ -78,6 +78,24 @@ areas:
             title: one
 `),
         ).toThrow(/scope must be/);
+    });
+
+    it('rejects unsupported ledger versions with a conversion hint', () => {
+        expect(() =>
+            parseLedger(`
+version: 1
+areas:
+  - id: A
+    title: A
+    scope: web
+    groups:
+      - title: G
+        flows:
+          - id: FLOW-WEB-A
+            title: one
+`),
+        ).toThrow(/unsupported version 1.*testproof@0\.1\.x/);
+        expect(() => parseLedger('areas: []\n')).toThrow(/unsupported version \(missing\)/);
     });
 
     it('parses v2 platform tree, dimensions and optional case fields', () => {

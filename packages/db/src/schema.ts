@@ -1,4 +1,19 @@
-import { boolean, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import {
+    boolean,
+    check,
+    index,
+    integer,
+    jsonb,
+    pgTable,
+    text,
+    timestamp,
+    uniqueIndex,
+    uuid,
+} from 'drizzle-orm/pg-core';
+
+export const STORAGE_MODES = ['git', 'file', 'db'] as const;
+export type StorageMode = (typeof STORAGE_MODES)[number];
 
 const timestamps = {
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
@@ -56,15 +71,31 @@ export const verification = pgTable('verification', {
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
-export const projects = pgTable('projects', {
+export const projects = pgTable(
+    'projects',
+    {
+        id: uuid('id').primaryKey().defaultRandom(),
+        name: text('name').notNull(),
+        slug: text('slug').notNull().unique(),
+        storage: text('storage').notNull().default('git'),
+        ledgerPath: text('ledger_path').notNull().default('docs/testing/flows.yaml'),
+        ledgerFilePath: text('ledger_file_path'),
+        defaultBranch: text('default_branch').notNull().default('main'),
+        coreAreaIds: text('core_area_ids').array().notNull().default([]),
+        shareToken: text('share_token'),
+        ...timestamps,
+    },
+    (table) => [check('projects_storage_check', sql`${table.storage} in ('git', 'file', 'db')`)],
+);
+
+export const ledgerDocuments = pgTable('ledger_documents', {
     id: uuid('id').primaryKey().defaultRandom(),
-    name: text('name').notNull(),
-    slug: text('slug').notNull().unique(),
-    storage: text('storage').notNull().default('git'),
-    ledgerPath: text('ledger_path').notNull().default('docs/testing/flows.yaml'),
-    defaultBranch: text('default_branch').notNull().default('main'),
-    coreAreaIds: text('core_area_ids').array().notNull().default([]),
-    shareToken: text('share_token'),
+    projectId: uuid('project_id')
+        .notNull()
+        .references(() => projects.id, { onDelete: 'cascade' })
+        .unique(),
+    yaml: text('yaml').notNull(),
+    revision: integer('revision').notNull().default(1),
     ...timestamps,
 });
 

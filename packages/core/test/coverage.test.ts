@@ -46,7 +46,7 @@ describe('deriveCoverage', () => {
             `test('home', { tag: ['@FLOW-HOME-OPENS'] }, async () => {});\n`,
         );
         const ledger = parseLedger(`
-version: 1
+version: 2
 areas:
   - id: HOME
     title: HOME

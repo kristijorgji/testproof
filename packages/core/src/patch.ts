@@ -1,12 +1,41 @@
 import { isMap, isSeq, Scalar, YAMLMap, YAMLSeq } from 'yaml';
 
 import type { LedgerDocument } from './document.js';
-import type { Flow, FlowScope } from './schema.js';
+import {
+    automationOverrideSchema,
+    behaviorSchema,
+    caseStatusSchema,
+    caseTypeSchema,
+    type Flow,
+    type FlowScope,
+    layerSchema,
+    prioritySchema,
+    severitySchema,
+} from './schema.js';
 
 export type FlowParent = { areaId: string; groupIndex: number; parentFlowId?: string };
 
+export type FlowStringField = 'title' | 'note' | 'notes' | 'owner' | 'preconditions' | 'postconditions';
+export type FlowEnumField = 'priority' | 'severity' | 'type' | 'layer' | 'behavior' | 'status' | 'automation';
+export type FlowFlagField = 'manual' | 'flaky' | 'muted';
+export type FlowListField = 'tags' | 'parameters' | 'refs';
+
+const FLOW_ENUM_SCHEMAS = {
+    priority: prioritySchema,
+    severity: severitySchema,
+    type: caseTypeSchema,
+    layer: layerSchema,
+    behavior: behaviorSchema,
+    status: caseStatusSchema,
+    automation: automationOverrideSchema,
+} as const;
+
 export type LedgerPatch =
-    | { op: 'set-flow-field'; flowId: string; field: 'title' | 'note'; value: string }
+    | { op: 'set-flow-field'; flowId: string; field: FlowStringField; value: string | null }
+    | { op: 'set-flow-enum'; flowId: string; field: FlowEnumField; value: string | null }
+    | { op: 'set-flow-flag'; flowId: string; field: FlowFlagField; value: boolean }
+    | { op: 'set-flow-number'; flowId: string; field: 'estimateMinutes'; value: number | null }
+    | { op: 'set-flow-list'; flowId: string; field: FlowListField; value: string[] }
     | { op: 'set-flow-manual'; flowId: string; value: boolean }
     | { op: 'set-flow-refs'; flowId: string; value: string[] }
     | {
@@ -31,7 +60,6 @@ export type LedgerPatch =
     | { op: 'add-area'; area: { id: string; title: string; scope?: FlowScope }; index: number }
     | { op: 'remove-area'; areaId: string }
     | { op: 'move-area'; from: number; to: number }
-    | { op: 'set-version'; value: 1 | 2 }
     | { op: 'set-root-seq'; key: 'platforms' | 'dimensions'; value: unknown };
 
 function asMap(node: unknown): YAMLMap | undefined {
@@ -46,6 +74,18 @@ function scalar(value: string, block = false): Scalar {
     const s = new Scalar(value);
     if (block || value.includes('\n')) s.type = Scalar.BLOCK_LITERAL;
     return s;
+}
+
+function setOrDelete(map: YAMLMap, key: string, value: unknown, block = false): void {
+    if (value === null) {
+        map.delete(key);
+        return;
+    }
+    if (typeof value === 'string') {
+        map.set(key, scalar(value, block));
+        return;
+    }
+    map.set(key, value);
 }
 
 function areasSeq(doc: LedgerDocument): YAMLSeq {
@@ -141,17 +181,39 @@ export function applyPatch(doc: LedgerDocument, patch: LedgerPatch): void {
     switch (patch.op) {
         case 'set-flow-field': {
             const { map } = findFlow(doc, patch.flowId);
-            map.set(patch.field, scalar(patch.value, patch.field === 'note'));
+            const block =
+                patch.field === 'note' ||
+                patch.field === 'notes' ||
+                patch.field === 'preconditions' ||
+                patch.field === 'postconditions';
+            setOrDelete(map, patch.field, patch.value, block);
+            return;
+        }
+        case 'set-flow-enum': {
+            const { map } = findFlow(doc, patch.flowId);
+            if (patch.value !== null) {
+                FLOW_ENUM_SCHEMAS[patch.field].parse(patch.value);
+            }
+            setOrDelete(map, patch.field, patch.value);
+            return;
+        }
+        case 'set-flow-flag':
+        case 'set-flow-list': {
+            const { map } = findFlow(doc, patch.flowId);
+            map.set(patch.field, patch.value);
+            return;
+        }
+        case 'set-flow-number': {
+            const { map } = findFlow(doc, patch.flowId);
+            setOrDelete(map, patch.field, patch.value);
             return;
         }
         case 'set-flow-manual': {
-            const { map } = findFlow(doc, patch.flowId);
-            map.set('manual', patch.value);
+            applyPatch(doc, { op: 'set-flow-flag', flowId: patch.flowId, field: 'manual', value: patch.value });
             return;
         }
         case 'set-flow-refs': {
-            const { map } = findFlow(doc, patch.flowId);
-            map.set('refs', patch.value);
+            applyPatch(doc, { op: 'set-flow-list', flowId: patch.flowId, field: 'refs', value: patch.value });
             return;
         }
         case 'set-flow-targets': {
@@ -229,10 +291,6 @@ export function applyPatch(doc: LedgerDocument, patch: LedgerPatch): void {
             const areas = areasSeq(doc);
             const [item] = areas.items.splice(patch.from, 1);
             if (item) areas.items.splice(patch.to, 0, item);
-            return;
-        }
-        case 'set-version': {
-            doc.set('version', patch.value);
             return;
         }
         case 'set-root-seq': {
