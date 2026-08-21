@@ -1,6 +1,6 @@
 {
     "name": "@testproof/core",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "Testproof ledger schema, YAML round-trip editing, coverage derivation and renderers",
     "license": "MIT",
     "type": "module",
