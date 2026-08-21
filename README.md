@@ -45,22 +45,18 @@ can import `defineConfig` from the library.
 
 ## Get started
 
-Two working trees. Do not mix their files.
+Work in **your product repository**. That is where `docs/testing/flows.yaml`,
+`testproof.config.ts`, and every `npx testproof …` command live.
 
-| Checkout     | What it is                                                 | Owns                                                                                            | Typical commands                                           |
-| ------------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| **Server**   | A clone of `github.com/kristijorgji/testproof` (this repo) | [`.env.example`](.env.example) → `.env`, [`docker-compose.yml`](docker-compose.yml), the web UI | `cp .env.example .env`, `docker compose up`                |
-| **Consumer** | Your product repo                                          | `docs/testing/flows.yaml`, `testproof.config.ts`                                                | `pnpm add -D testproof @testproof/core`, `npx testproof …` |
+You do **not** clone this repository to run the CLI or the web UI. Pull the
+published image (`ghcr.io/kristijorgji/testproof:0.4.0`) from a compose file
+in the product repo. Clone this repo only when you are [developing the
+image](#develop-the-image).
 
-`.env.example` exists **only** at the root of this repository. Copying it into
-the consumer is wrong. Optional consumer vars `TESTPROOF_URL` /
-`TESTPROOF_TOKEN` / `TESTPROOF_PROJECT` tell the CLI how to reach a running
-server — they are not a copy of the server `.env`.
-
-| Track   | Where you work                                                                                                                                    |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **A**   | Consumer only. No clone of this repo, no `.env`.                                                                                                  |
-| **B–D** | Start the server (clone this repo, or pull the published image from a compose file in the consumer). The ledger YAML still lives in the consumer. |
+[`.env.example`](.env.example) is only for this repository’s in-tree compose.
+A product repo uses its own env file for `BETTER_AUTH_SECRET`. Optional
+`TESTPROOF_URL` / `TESTPROOF_TOKEN` / `TESTPROOF_PROJECT` tell the CLI how to
+reach a running server — they are not a copy of this repo’s `.env`.
 
 Pick how the web UI stores the ledger. The CLI works in every mode.
 
@@ -72,8 +68,7 @@ Pick how the web UI stores the ledger. The CLI works in every mode.
 
 ### Track A — CLI only, no server, no Docker
 
-Run these in the **consumer** repository (your product), not in a clone of
-this repo.
+Run these in your **product** repository.
 
 ```bash
 pnpm add -D testproof @testproof/core
@@ -102,32 +97,48 @@ In CI, run `testproof validate` and `testproof generate --check`.
 
 ### Track B — web UI in Docker, editing your own YAML (`file` mode)
 
-You need a running server **and** the consumer ledger. Clone this repo only if
-you want the compose file from here. To host the UI from the product repo
-instead, skip to [Consumer-hosted image](#consumer-hosted-image-no-clone).
-
-#### In this repository (server)
-
-```bash
-git clone https://github.com/kristijorgji/testproof.git
-cd testproof
-cp .env.example .env
-```
-
-Set `BETTER_AUTH_SECRET` to at least 32 characters in **this** `.env` (repo
-root). Then edit **this** repo’s `docker-compose.yml` `web` service — compose
-does not mount a ledger until you add:
+In the **product** repo, add a compose file that pulls the pinned image and
+mounts your ledger. Pin the version in the `image:` line. Do not use
+`:latest` in copy-paste — a breaking ledger release would apply without you
+choosing it.
+`:latest` is still published on each `v*` tag if you want a floating tag.
 
 ```yaml
-volumes:
-  # host path = consumer ledger; container path is what Settings uses
-  - /absolute/path/to/your-app/docs/testing/flows.yaml:/data/flows.yaml
+name: testproof
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: testproof
+      POSTGRES_PASSWORD: testproof
+      POSTGRES_DB: testproof
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U testproof']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  web:
+    image: ghcr.io/kristijorgji/testproof:0.4.0
+    ports:
+      - '3100:3100'
+    volumes:
+      - ./docs/testing/flows.yaml:/data/flows.yaml
+    environment:
+      DATABASE_URL: postgres://testproof:testproof@postgres:5432/testproof
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: http://localhost:3100
+      NEXT_PUBLIC_BETTER_AUTH_URL: http://localhost:3100
+    depends_on:
+      postgres:
+        condition: service_healthy
 ```
 
-From the same directory:
+Create an env file next to that compose (not this repo’s `.env.example`) and
+set `BETTER_AUTH_SECRET` to at least 32 characters. Then from the product
+repo:
 
 ```bash
-docker compose up -d
+docker compose --env-file .env.testproof up -d
 ```
 
 The image entrypoint runs `node packages/db/dist/migrate.js` before the app
@@ -135,54 +146,40 @@ starts. Open http://localhost:3100 and sign up with email and password. Create
 a project. Settings → Storage → `file`, and enter **`/data/flows.yaml`** — the
 path **inside the container**, not the host path. Save.
 
-Flows → edit → Publish. The container writes through the mount to the consumer
-file on disk.
-
-To iterate on the image itself, comment out `image:` on the `web` service and
-uncomment:
-
-```yaml
-build:
-  context: .
-```
-
-#### In the consumer repository (your product)
-
-Do not copy this repo’s `.env.example`. After Publish:
+Flows → edit → Publish. The container writes through the mount into
+`docs/testing/flows.yaml`. Then:
 
 ```bash
 git diff docs/testing/flows.yaml
 npx testproof generate
 ```
 
-**Alternative without a bind mount:** still start Docker from the **testproof**
-clone. In the UI, mint a project API token. Then from the **consumer** cwd:
+**Without a bind mount:** mint a project API token in Settings. From the
+product cwd:
 
 ```bash
 TESTPROOF_URL=http://localhost:3100 TESTPROOF_TOKEN=… TESTPROOF_PROJECT=… npx testproof ledger pull
 TESTPROOF_URL=http://localhost:3100 TESTPROOF_TOKEN=… TESTPROOF_PROJECT=… npx testproof ledger push
 ```
 
-#### Consumer-hosted image (no clone)
+#### Develop the image
 
-Pull `ghcr.io/kristijorgji/testproof:<version>` from a compose file **in the
-product repo**. Mount that repo’s `flows.yaml` at `/data/flows.yaml`. Keep
-server secrets (`BETTER_AUTH_SECRET`, …) in a consumer env file used only by
-that compose file — not this repo’s `.env.example`. Clone this repository only
-when you are developing the image itself.
+Clone this repository only to change the image. At this repo root,
+`cp .env.example .env`, then in [`docker-compose.yml`](docker-compose.yml)
+comment out `image:` and uncomment `build: { context: . }`.
+`docker compose up --build` is single-arch for the machine you are on.
 
 ### Track C — `git` mode
 
-1. In the **testproof** clone, set `GITHUB_CLIENT_ID` and
-   `GITHUB_CLIENT_SECRET` in `.env` (created from `.env.example` at **this**
-   repo root).
-2. From the same clone: `docker compose up -d` (or
-   `pnpm --filter @testproof/web dev` against a local Postgres).
-3. Sign in with GitHub.
-4. Settings → connect owner/repo, set `ledgerPath` (for example
-   `docs/testing/flows.yaml`). That path is **in the connected GitHub consumer
+Same compose as Track B, in the product repo. Add `GITHUB_CLIENT_ID` and
+`GITHUB_CLIENT_SECRET` to that env file.
+
+1. `docker compose --env-file .env.testproof up -d`
+2. Sign in with GitHub.
+3. Settings → connect owner/repo, set `ledgerPath` (for example
+   `docs/testing/flows.yaml`). That path is **in the connected GitHub product
    repo**, not a file on the server disk.
-5. Publish as a commit or a pull request.
+4. Publish as a commit or a pull request.
 
 ### Track D — `db` mode
 
@@ -191,7 +188,7 @@ Requires a project already created on a running server (Track B or C).
 1. Open that project and switch Storage to `db`. That seeds `ledger_documents`
    from the current source.
 2. Edit in the UI. Postgres is now authoritative.
-3. Export YAML from Settings, or from the **consumer** cwd:
+3. Export YAML from Settings, or from the **product** cwd:
    `npx testproof ledger pull`.
 
 ## Concepts
@@ -429,7 +426,7 @@ export default defineConfig({
 
 ## CLI reference
 
-Program name `testproof`, version `0.3.0`. Unhandled errors print to stderr and
+Program name `testproof`, version `0.4.0`. Unhandled errors print to stderr and
 exit `1`.
 
 | Command       | Flags                         | Exit codes                                                                                                                                                                    |
@@ -597,14 +594,16 @@ Default `platform` argument: `'mobile'`.
 
 ## Self-hosting the server
 
-Do this from a **clone of this repository**, at the repo root. A consumer
-product repo does not need this `.env` unless it is also hosting the UI (see
-[Consumer-hosted image](#consumer-hosted-image-no-clone)).
+The default path is [Track B](#track-b--web-ui-in-docker-editing-your-own-yaml-file-mode):
+a compose file **in the product repo** that pulls
+`ghcr.io/kristijorgji/testproof:0.4.0` (linux/amd64 and linux/arm64). Do not
+copy this repository’s `.env.example` into the product repo.
 
-`docker-compose.yml` pulls `ghcr.io/kristijorgji/testproof:latest` (published on
-each `v*` tag). Uncomment `build: .` if you are iterating on the image locally.
-The image is not a Next.js standalone build — it ships the monorepo and runs
-`next start` on port 3100.
+This repo’s [`docker-compose.yml`](docker-compose.yml) is for contributors. It
+pins the same image tag as the snippet above. Uncomment `build: .` only when
+iterating on the image locally ([Develop the image](#develop-the-image)).
+The image is not a Next.js standalone build — it ships the monorepo and
+runs `next start` on port 3100.
 
 ```bash
 cd /path/to/testproof
