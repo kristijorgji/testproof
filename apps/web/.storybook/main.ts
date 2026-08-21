@@ -23,6 +23,7 @@ const config: StorybookConfig = {
             ...viteConfig.resolve.alias,
             '@/env': path.resolve(storybookDir, './mocks/env.ts'),
             '@': path.resolve(storybookDir, '../src'),
+            '@test': path.resolve(storybookDir, '../test'),
             'next/navigation': path.resolve(storybookDir, './mocks/next-navigation.ts'),
             'next/cache': path.resolve(storybookDir, './mocks/next-cache.ts'),
             'next/image': path.resolve(storybookDir, './mocks/next-image.tsx'),

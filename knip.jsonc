@@ -14,8 +14,9 @@
             "entry": [
                 "src/app/**/{page,layout,route,loading,error,not-found,default,template}.{ts,tsx}",
                 ".storybook/**/*.{ts,tsx}",
+                "test/**/*.{ts,tsx}",
             ],
-            "project": ["src/**/*.{ts,tsx}", ".storybook/**/*.{ts,tsx}"],
+            "project": ["src/**/*.{ts,tsx}", ".storybook/**/*.{ts,tsx}", "test/**/*.{ts,tsx}"],
             "ignoreDependencies": [
                 // Loaded by the PostCSS pipeline, not imported from source
                 "tailwindcss",

@@ -1,5 +1,9 @@
 /** Generated artifacts — keep in sync with .prettierignore. */
-const GENERATED_PATH_SUFFIXES = ['examples/demo/flows-coverage.md', 'apps/web/next-env.d.ts'];
+const GENERATED_PATH_SUFFIXES = [
+    'examples/demo/flows-coverage.md',
+    'apps/web/next-env.d.ts',
+    'apps/web/public/mockServiceWorker.js',
+];
 
 function isGenerated(file) {
     const normalized = file.replaceAll('\\', '/');
