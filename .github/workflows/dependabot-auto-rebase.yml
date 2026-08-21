@@ -1,0 +1,42 @@
+name: Dependabot auto-rebase
+
+# rebase-strategy: auto only fires on conflicts, not when a PR is merely behind.
+# With strict required status checks, behind PRs can never merge, so nudge them
+# whenever main advances. Commenting is deliberate: a GITHUB_TOKEN update-branch
+# push would not re-trigger CI, but a Dependabot force-push does.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: dependabot-auto-rebase
+  cancel-in-progress: true
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request a rebase of stale Dependabot PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh pr list \
+            --state open \
+            --base main \
+            --author 'app/dependabot' \
+            --json number,mergeStateStatus \
+            --jq '.[] | select(.mergeStateStatus == "BEHIND" or .mergeStateStatus == "DIRTY" or .mergeStateStatus == "UNKNOWN") | .number' \
+          > stale.txt
+          if [ ! -s stale.txt ]; then
+            echo "No stale Dependabot PRs"
+            exit 0
+          fi
+          while read -r pr; do
+            echo "Requesting rebase of #${pr}"
+            gh pr comment "$pr" --body "@dependabot rebase"
+          done < stale.txt
