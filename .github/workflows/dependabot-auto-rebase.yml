@@ -20,12 +20,17 @@ jobs:
   rebase:
     runs-on: ubuntu-latest
     steps:
+      - name: Require DEPENDABOT_REBASE_TOKEN
+        if: ${{ secrets.DEPENDABOT_REBASE_TOKEN == '' }}
+        run: |
+          echo "::error::DEPENDABOT_REBASE_TOKEN is unset; github-actions[bot] comments are rejected by Dependabot"
+          exit 1
       - name: Request a rebase of stale Dependabot PRs
         env:
           # github-actions[bot] comments are rejected by Dependabot. A PAT
           # (contents + pull-requests write) stored as DEPENDABOT_REBASE_TOKEN
           # is required for the comment to trigger a rebase.
-          GH_TOKEN: ${{ secrets.DEPENDABOT_REBASE_TOKEN || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.DEPENDABOT_REBASE_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
           gh pr list \

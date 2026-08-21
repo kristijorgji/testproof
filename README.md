@@ -30,6 +30,7 @@ against that file. Start with [Get started](#get-started).
 - [CI integration](#ci-integration)
 - [Packages](#packages)
 - [Contributing](#contributing)
+- [Maintaining](docs/maintaining.md)
 - [Releasing](#releasing)
 - [Licence](#licence)
 
@@ -664,9 +665,9 @@ Node ≥ 22, pnpm 9.15.4. Storybook lives in `apps/web`.
 
 A Husky pre-commit hook runs `lint-staged`, `knip`, and an incremental
 `typecheck`/`test` on affected packages. `git commit --no-verify` still
-bypasses the hook. The unbypassable gate is the `ci-ok` required status
-check on protected `main`, which runs Prettier, typecheck, lint, knip,
-tests, build, Storybook, and the demo CLI checks.
+bypasses the hook. Protected `main` requires `quality`, `ledger`, and the
+`ci-ok` rollup. Owner and maintainer gates (ruleset, Dependabot rebase token,
+auto-merge, releases) are in [docs/maintaining.md](docs/maintaining.md).
 
 ## Releasing
 
