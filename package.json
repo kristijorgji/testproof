@@ -1,32 +1,32 @@
 {
-    "name": "testproof-workspace",
-    "private": true,
-    "type": "module",
-    "description": "Git-native test case management",
-    "license": "MIT",
-    "scripts": {
-        "dev": "turbo dev",
-        "build": "turbo build",
-        "lint": "turbo lint",
-        "typecheck": "turbo typecheck",
-        "test": "turbo test",
-        "fix": "turbo fix && prettier --write .",
-        "db:generate": "pnpm --filter @testproof/db db:generate",
-        "db:migrate": "pnpm --filter @testproof/db db:migrate",
-        "db:seed": "pnpm --filter @testproof/db build && pnpm --filter @testproof/db db:seed",
-        "storybook": "pnpm --filter @testproof/web storybook",
-        "set-version": "node scripts/set-version.mjs",
-        "clean": "turbo clean && rm -rf node_modules"
-    },
-    "devDependencies": {
-        "eslint": "^9.39.0",
-        "prettier": "^3.8.1",
-        "turbo": "^2.6.4",
-        "typescript": "^7.0.2",
-        "vitest": "^4.1.10"
-    },
-    "packageManager": "pnpm@9.15.4",
-    "engines": {
-        "node": ">=22"
-    }
+  "name": "testproof-workspace",
+  "private": true,
+  "type": "module",
+  "description": "Git-native test case management",
+  "license": "MIT",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "fix": "turbo fix && prettier --write .",
+    "db:generate": "pnpm --filter @testproof/db db:generate",
+    "db:migrate": "pnpm --filter @testproof/db db:migrate",
+    "db:seed": "pnpm --filter @testproof/db build && pnpm --filter @testproof/db db:seed",
+    "storybook": "pnpm --filter @testproof/web storybook",
+    "set-version": "node scripts/set-version.mjs",
+    "clean": "turbo clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.0",
+    "prettier": "^3.8.1",
+    "turbo": "^2.6.4",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=22"
+  }
 }

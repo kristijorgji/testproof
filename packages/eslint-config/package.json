@@ -1,26 +1,26 @@
 {
-    "name": "@testproof/eslint-config",
-    "version": "0.1.0",
-    "private": true,
-    "type": "module",
-    "exports": {
-        ".": "./package.js",
-        "./translations": "./translations.js"
-    },
-    "dependencies": {
-        "@kristijorgji/eslint-config-react-typescript": "^2.2.1",
-        "@kristijorgji/eslint-config-typescript": "^1.2.3",
-        "@kristijorgji/eslint-plugin": "^0.2.0",
-        "@next/eslint-plugin-next": "^16",
-        "eslint-plugin-i18next": "^6.1.5",
-        "eslint-plugin-jsx-a11y": "^6",
-        "eslint-plugin-react": "^7",
-        "eslint-plugin-react-dom": "^5",
-        "eslint-plugin-react-x": "^5",
-        "eslint-plugin-storybook": "^10"
-    },
-    "peerDependencies": {
-        "eslint": "^9",
-        "typescript": "^5"
-    }
+  "name": "@testproof/eslint-config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./package.js",
+    "./translations": "./translations.js"
+  },
+  "dependencies": {
+    "@kristijorgji/eslint-config-react-typescript": "^2.2.1",
+    "@kristijorgji/eslint-config-typescript": "^1.2.3",
+    "@kristijorgji/eslint-plugin": "^0.2.0",
+    "@next/eslint-plugin-next": "^16",
+    "eslint-plugin-i18next": "^6.1.5",
+    "eslint-plugin-jsx-a11y": "^6",
+    "eslint-plugin-react": "^7",
+    "eslint-plugin-react-dom": "^5",
+    "eslint-plugin-react-x": "^5",
+    "eslint-plugin-storybook": "^10"
+  },
+  "peerDependencies": {
+    "eslint": "^9",
+    "typescript": "^5"
+  }
 }

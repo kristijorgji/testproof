@@ -1,25 +1,25 @@
 {
-    "$schema": "https://turbo.build/schema.json",
-    "tasks": {
-        "build": {
-            "dependsOn": ["^build"],
-            "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
-            "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"]
-        },
-        "typecheck": {
-            "dependsOn": ["^build"]
-        },
-        "lint": {},
-        "test": {
-            "dependsOn": ["^build"]
-        },
-        "fix": {},
-        "dev": {
-            "cache": false,
-            "persistent": true
-        },
-        "clean": {
-            "cache": false
-        }
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"]
+    },
+    "lint": {},
+    "test": {
+      "dependsOn": ["^build"]
+    },
+    "fix": {},
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "clean": {
+      "cache": false
     }
+  }
 }
