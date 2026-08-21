@@ -22,24 +22,24 @@ export function SignInForm({ nextPath }: { nextPath: string }) {
                 setPassword={setPassword}
             />
             {error ? <p className="text-sm text-red-600">{error}</p> : null}
-            <div className="flex flex-wrap gap-2">
+            <div className="grid gap-2">
                 <button
                     type="button"
-                    className="rounded bg-[var(--accent)] px-3 py-2 text-white"
+                    className="w-full rounded bg-[var(--accent)] px-3 py-2 text-white"
                     onClick={() => void signInEmail()}
                 >
                     {t('auth.signIn')}
                 </button>
                 <button
                     type="button"
-                    className="rounded border border-[var(--border)] px-3 py-2"
+                    className="w-full rounded border border-[var(--border)] px-3 py-2"
                     onClick={() => void signUpEmail()}
                 >
                     {t('auth.signUp')}
                 </button>
                 <button
                     type="button"
-                    className="rounded border border-[var(--border)] px-3 py-2"
+                    className="w-full rounded border border-[var(--border)] px-3 py-2"
                     onClick={() => void signInGithub()}
                 >
                     {t('auth.github')}
