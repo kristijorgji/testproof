@@ -1,40 +1,40 @@
 {
-    "name": "@testproof/db",
-    "version": "0.1.0",
-    "private": true,
-    "license": "MIT",
-    "type": "module",
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.js",
-            "default": "./dist/index.js"
-        }
-    },
-    "scripts": {
-        "build": "tsc -p tsconfig.build.json",
-        "typecheck": "tsc --noEmit",
-        "lint": "eslint src",
-        "fix": "eslint src --fix",
-        "test": "vitest run --passWithNoTests",
-        "db:generate": "drizzle-kit generate",
-        "db:migrate": "node dist/migrate.js",
-        "db:seed": "node dist/seed.js",
-        "db:import-markdown": "node dist/import-markdown.js",
-        "clean": "rm -rf dist"
-    },
-    "dependencies": {
-        "drizzle-orm": "^0.45.2",
-        "postgres": "^3.4.9"
-    },
-    "devDependencies": {
-        "@testproof/eslint-config": "workspace:*",
-        "@types/node": "^26.2.0",
-        "drizzle-kit": "^0.31.10",
-        "eslint": "^9.39.0",
-        "typescript": "^7.0.2",
-        "vitest": "^4.1.10"
+  "name": "@testproof/db",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "fix": "eslint src --fix",
+    "test": "vitest run --passWithNoTests",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node dist/migrate.js",
+    "db:seed": "node dist/seed.js",
+    "db:import-markdown": "node dist/import-markdown.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.2",
+    "postgres": "^3.4.9"
+  },
+  "devDependencies": {
+    "@testproof/eslint-config": "workspace:*",
+    "@types/node": "^26.2.0",
+    "drizzle-kit": "^0.31.10",
+    "eslint": "^9.39.0",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  }
 }

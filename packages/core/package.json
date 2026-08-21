@@ -1,78 +1,78 @@
 {
-    "name": "@testproof/core",
-    "version": "0.3.2",
-    "description": "Testproof ledger schema, YAML round-trip editing, coverage derivation and renderers",
-    "license": "MIT",
-    "type": "module",
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.js",
-            "default": "./dist/index.js"
-        },
-        "./parse": {
-            "types": "./dist/parse.d.ts",
-            "import": "./dist/parse.js",
-            "default": "./dist/parse.js"
-        },
-        "./platforms": {
-            "types": "./dist/platforms.d.ts",
-            "import": "./dist/platforms.js",
-            "default": "./dist/platforms.js"
-        },
-        "./schema": {
-            "types": "./dist/schema.d.ts",
-            "import": "./dist/schema.js",
-            "default": "./dist/schema.js"
-        }
+  "name": "@testproof/core",
+  "version": "0.3.2",
+  "description": "Testproof ledger schema, YAML round-trip editing, coverage derivation and renderers",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
-    "files": [
-        "dist",
-        "README.md",
-        "LICENSE"
-    ],
-    "publishConfig": {
-        "access": "public"
+    "./parse": {
+      "types": "./dist/parse.d.ts",
+      "import": "./dist/parse.js",
+      "default": "./dist/parse.js"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/kristijorgji/testproof.git",
-        "directory": "packages/core"
+    "./platforms": {
+      "types": "./dist/platforms.d.ts",
+      "import": "./dist/platforms.js",
+      "default": "./dist/platforms.js"
     },
-    "homepage": "https://github.com/kristijorgji/testproof#readme",
-    "bugs": {
-        "url": "https://github.com/kristijorgji/testproof/issues"
-    },
-    "keywords": [
-        "testing",
-        "test-management",
-        "coverage",
-        "playwright",
-        "maestro",
-        "e2e",
-        "ledger"
-    ],
-    "scripts": {
-        "prepare": "tsc -p tsconfig.build.json",
-        "build": "tsc -p tsconfig.build.json",
-        "typecheck": "tsc --noEmit",
-        "lint": "eslint src test",
-        "fix": "eslint src test --fix",
-        "test": "vitest run",
-        "test:watch": "vitest",
-        "clean": "rm -rf dist"
-    },
-    "dependencies": {
-        "yaml": "^2.9.0",
-        "zod": "^4.4.3"
-    },
-    "devDependencies": {
-        "@testproof/eslint-config": "workspace:*",
-        "@types/node": "^26.2.0",
-        "eslint": "^9.39.0",
-        "typescript": "^7.0.2",
-        "vitest": "^4.1.10"
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "import": "./dist/schema.js",
+      "default": "./dist/schema.js"
     }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kristijorgji/testproof.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/kristijorgji/testproof#readme",
+  "bugs": {
+    "url": "https://github.com/kristijorgji/testproof/issues"
+  },
+  "keywords": [
+    "testing",
+    "test-management",
+    "coverage",
+    "playwright",
+    "maestro",
+    "e2e",
+    "ledger"
+  ],
+  "scripts": {
+    "prepare": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src test",
+    "fix": "eslint src test --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "yaml": "^2.9.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@testproof/eslint-config": "workspace:*",
+    "@types/node": "^26.2.0",
+    "eslint": "^9.39.0",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  }
 }
