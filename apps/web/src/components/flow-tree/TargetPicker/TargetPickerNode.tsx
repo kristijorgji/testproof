@@ -1,13 +1,8 @@
 'use client';
 
-import type { FlowTarget, PlatformNode } from '@testproof/core';
-import { targetPlatformId } from '@testproof/core/platforms';
+import type { PlatformNode } from '@testproof/core';
 
-function selectedIds(targets: FlowTarget[]): Set<string> {
-    return new Set(targets.map(targetPlatformId));
-}
-
-function NodeRow({
+export function TargetPickerNode({
     node,
     selected,
     onToggle,
@@ -40,34 +35,13 @@ function NodeRow({
                 <code className="text-xs text-[var(--muted)]">{node.id}</code>
             </label>
             {(node.children ?? []).map((child) => (
-                <NodeRow key={child.id} node={child} selected={selected} depth={depth + 1} onToggle={onToggle} />
-            ))}
-        </div>
-    );
-}
-
-export function TargetPicker({
-    platforms,
-    targets,
-    onChange,
-}: {
-    platforms: PlatformNode[];
-    targets: FlowTarget[];
-    onChange: (next: FlowTarget[]) => void;
-}) {
-    const selected = selectedIds(targets);
-
-    const toggle = (id: string): void => {
-        const next = new Set(selected);
-        if (next.has(id)) next.delete(id);
-        else next.add(id);
-        onChange([...next].map((platform) => ({ platform })));
-    };
-
-    return (
-        <div className="rounded-md border border-[var(--border)] p-3">
-            {platforms.map((node) => (
-                <NodeRow key={node.id} node={node} selected={selected} depth={0} onToggle={toggle} />
+                <TargetPickerNode
+                    key={child.id}
+                    node={child}
+                    selected={selected}
+                    depth={depth + 1}
+                    onToggle={onToggle}
+                />
             ))}
         </div>
     );

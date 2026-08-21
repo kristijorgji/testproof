@@ -2,8 +2,8 @@ import { parseLedger } from '@testproof/core';
 import { flattenFlows } from '@testproof/core/parse';
 import { notFound } from 'next/navigation';
 
-import { ProjectNav } from '@/components/layout/ProjectNav';
-import { StatusBadge } from '@/components/status/StatusBadge';
+import { ProjectNav } from '@/components/layout/ProjectNav/ProjectNav';
+import { StatusBadge } from '@/components/status/StatusBadge/StatusBadge';
 import { getLocaleFromCookie } from '@/i18n/get-locale';
 import { getServerTranslation } from '@/i18n/server';
 import { getLatestCoverage } from '@/server/coverage';

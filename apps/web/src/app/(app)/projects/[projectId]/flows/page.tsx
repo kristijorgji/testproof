@@ -9,8 +9,8 @@ import {
 import { notFound } from 'next/navigation';
 
 import { appendDraftPatch, discardDraft, publishDraft, replayDraft } from '@/actions/drafts';
-import { FlowEditor } from '@/components/flow-tree/FlowEditor';
-import { ProjectNav } from '@/components/layout/ProjectNav';
+import { FlowEditor } from '@/components/flow-tree/FlowEditor/FlowEditor';
+import { ProjectNav } from '@/components/layout/ProjectNav/ProjectNav';
 import { getLatestCoverage } from '@/server/coverage';
 import { readProjectLedger } from '@/server/ledger-source';
 import { getOpenDraft, getProject } from '@/server/project';

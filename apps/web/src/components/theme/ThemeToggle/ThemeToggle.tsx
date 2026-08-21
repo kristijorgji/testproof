@@ -4,7 +4,8 @@ import { Check, Monitor, Moon, Sun } from 'lucide-react';
 import { type ReactElement, useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { type ThemeMode, useTheme } from './ThemeProvider';
+import type { ThemeMode } from '../ThemeProvider/theme-context';
+import { useTheme } from '../ThemeProvider/useTheme';
 
 const options: Array<{ mode: ThemeMode; icon: typeof Sun }> = [
     { mode: 'light', icon: Sun },

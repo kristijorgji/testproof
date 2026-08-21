@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 
-import { SignOutButton } from '../auth/SignOutButton';
-import { LocaleSwitcher } from '../i18n/LocaleSwitcher';
-import { ThemeToggle } from '../theme/ThemeToggle';
+import { SignOutButton } from '../../auth/SignOutButton/SignOutButton';
+import { LocaleSwitcher } from '../../i18n/LocaleSwitcher/LocaleSwitcher';
+import { ThemeToggle } from '../../theme/ThemeToggle/ThemeToggle';
 
 export function ProjectNav({ projectId, name }: { projectId: string; name: string }) {
     const { t } = useTranslation();

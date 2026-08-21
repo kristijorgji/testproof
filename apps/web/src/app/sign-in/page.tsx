@@ -1,6 +1,6 @@
-import { SignInForm } from '@/components/auth/SignInForm';
-import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
-import { ThemeToggle } from '@/components/theme/ThemeToggle';
+import { SignInForm } from '@/components/auth/SignInForm/SignInForm';
+import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher/LocaleSwitcher';
+import { ThemeToggle } from '@/components/theme/ThemeToggle/ThemeToggle';
 
 export default async function SignInPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
     const { next } = await searchParams;

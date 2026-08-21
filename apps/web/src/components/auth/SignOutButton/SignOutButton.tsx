@@ -1,11 +1,13 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 
 import { authClient } from '@/lib/auth-client';
 
 export function SignOutButton() {
     const { t } = useTranslation();
+    const router = useRouter();
     return (
         <button
             type="button"
@@ -14,7 +16,8 @@ export function SignOutButton() {
                 void authClient.signOut({
                     fetchOptions: {
                         onSuccess: () => {
-                            window.location.href = '/sign-in';
+                            router.push('/sign-in');
+                            router.refresh();
                         },
                     },
                 });

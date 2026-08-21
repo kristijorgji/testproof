@@ -38,7 +38,8 @@ function eslintFixCommands(files) {
         groups.set(dir, list);
     }
     return [...groups.entries()].map(
-        ([dir, list]) => `eslint --config ${dir}/eslint.config.js --no-warn-ignored --fix ${list.join(' ')}`,
+        ([dir, list]) =>
+            `eslint --config ${dir}/eslint.config.js --no-warn-ignored --fix --max-warnings 0 ${list.join(' ')}`,
     );
 }
 

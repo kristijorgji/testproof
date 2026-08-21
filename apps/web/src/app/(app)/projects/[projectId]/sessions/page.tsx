@@ -3,8 +3,8 @@ import { desc, eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 
 import { createSession } from '@/actions/sessions';
-import { ProjectNav } from '@/components/layout/ProjectNav';
-import { SessionFields } from '@/components/sessions/SessionFields';
+import { ProjectNav } from '@/components/layout/ProjectNav/ProjectNav';
+import { SessionFields } from '@/components/sessions/SessionFields/SessionFields';
 import { getLocaleFromCookie } from '@/i18n/get-locale';
 import { getServerTranslation } from '@/i18n/server';
 import { getDb } from '@/server/db';
