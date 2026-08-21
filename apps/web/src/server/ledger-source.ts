@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import 'server-only';
+
 import { drafts, ledgerDocuments, projects, repos, type StorageMode } from '@testproof/db';
 import { and, eq } from 'drizzle-orm';
 
@@ -228,6 +230,56 @@ export async function seedDbLedger(projectId: string, yaml: string): Promise<voi
         return;
     }
     await db.insert(ledgerDocuments).values({ projectId, yaml, revision: 1 });
+}
+
+export async function readProjectLedger(
+    projectId: string,
+    userId: string,
+): Promise<{ content: string; sha: string; fromGithub: boolean; revision: number }> {
+    const source = await getLedgerSource(projectId, userId);
+    const file = await source.read();
+    return { ...file, fromGithub: source.kind === 'git' };
+}
+
+function isStorageMode(value: string): value is StorageMode {
+    return value === 'git' || value === 'file' || value === 'db';
+}
+
+export async function saveProjectStorage(projectId: string, userId: string, formData: FormData): Promise<void> {
+    const storage = String(formData.get('storage') ?? '').trim();
+    if (!isStorageMode(storage)) throw new Error('Invalid storage mode');
+    const ledgerPath = String(formData.get('ledgerPath') ?? '').trim() || 'docs/testing/flows.yaml';
+    const ledgerFilePath = String(formData.get('ledgerFilePath') ?? '').trim();
+
+    if (storage === 'file') {
+        if (!path.isAbsolute(ledgerFilePath)) throw new Error('File storage requires an absolute path');
+        if (!fs.existsSync(/* turbopackIgnore: true */ ledgerFilePath)) {
+            throw new Error('Ledger file does not exist');
+        }
+        fs.accessSync(/* turbopackIgnore: true */ ledgerFilePath, fs.constants.W_OK);
+    }
+
+    let yaml = EMPTY_LEDGER_YAML;
+    try {
+        yaml = (await getLedgerSource(projectId, userId).then((source) => source.read())).content;
+    } catch {
+        // new or unreadable source — seed db mode from the empty ledger
+    }
+
+    await getDb()
+        .update(projects)
+        .set({
+            storage,
+            ledgerPath,
+            ledgerFilePath: storage === 'file' ? ledgerFilePath : null,
+            updatedAt: new Date(),
+        })
+        .where(eq(projects.id, projectId));
+
+    if (storage === 'db') {
+        await seedDbLedger(projectId, yaml);
+    }
+    await markDraftsStale(projectId);
 }
 
 export async function markDraftsStale(projectId: string): Promise<void> {

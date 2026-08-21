@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { exportLedger, saveStorage } from '@/actions/settings';
+import { exportLedger, saveStorage } from '@/actions/storage';
 
 export function StorageForm({
     projectId,

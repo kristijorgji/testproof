@@ -7,7 +7,8 @@ import { StatusBadge } from '@/components/status/StatusBadge';
 import { getLocaleFromCookie } from '@/i18n/get-locale';
 import { getServerTranslation } from '@/i18n/server';
 import { getLatestCoverage } from '@/server/coverage';
-import { getProject, readProjectLedger } from '@/server/project';
+import { readProjectLedger } from '@/server/ledger-source';
+import { getProject } from '@/server/project';
 import { requireUser } from '@/server/session';
 
 export default async function CoveragePage({ params }: { params: Promise<{ projectId: string }> }) {

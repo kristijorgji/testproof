@@ -1,15 +1,8 @@
 'use client';
 
-import {
-    type CoverageCell,
-    type Flow,
-    FLOW_ID_RE,
-    type FlowParent,
-    type Ledger,
-    type LedgerPatch,
-    type PlatformNode,
-} from '@testproof/core';
+import type { CoverageCell, Flow, FlowParent, Ledger, LedgerPatch, PlatformNode } from '@testproof/core';
 import { flattenFlowIds, flattenFlows } from '@testproof/core/parse';
+import { FLOW_ID_RE } from '@testproof/core/schema';
 import { useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 

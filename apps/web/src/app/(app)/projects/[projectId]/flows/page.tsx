@@ -12,7 +12,8 @@ import { appendDraftPatch, discardDraft, publishDraft, replayDraft } from '@/act
 import { FlowEditor } from '@/components/flow-tree/FlowEditor';
 import { ProjectNav } from '@/components/layout/ProjectNav';
 import { getLatestCoverage } from '@/server/coverage';
-import { getOpenDraft, getProject, readProjectLedger } from '@/server/project';
+import { readProjectLedger } from '@/server/ledger-source';
+import { getOpenDraft, getProject } from '@/server/project';
 import { requireUser } from '@/server/session';
 
 export default async function FlowsPage({ params }: { params: Promise<{ projectId: string }> }) {
@@ -44,22 +45,10 @@ export default async function FlowsPage({ params }: { params: Promise<{ projectI
                 beforeYaml={ledgerFile.content}
                 afterYaml={after}
                 conflict={conflict}
-                onPatch={async (patch) => {
-                    'use server';
-                    await appendDraftPatch(projectId, patch);
-                }}
-                onPublish={async (input) => {
-                    'use server';
-                    await publishDraft(projectId, input);
-                }}
-                onReplay={async () => {
-                    'use server';
-                    await replayDraft(projectId);
-                }}
-                onDiscard={async () => {
-                    'use server';
-                    await discardDraft(projectId);
-                }}
+                onPatch={appendDraftPatch.bind(null, projectId)}
+                onPublish={publishDraft.bind(null, projectId)}
+                onReplay={replayDraft.bind(null, projectId)}
+                onDiscard={discardDraft.bind(null, projectId)}
             />
         </>
     );

@@ -6,9 +6,16 @@ import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 import { getDb } from '@/server/db';
-import { getLedgerSource, PublishConflictError } from '@/server/ledger-source';
-import { applyDraft, getOpenDraft, getProject, readProjectLedger } from '@/server/project';
+import { applyDraft, getOpenDraft, getProject } from '@/server/project';
 import { requireUser } from '@/server/session';
+
+async function loadLedger(
+    projectId: string,
+    userId: string,
+): Promise<{ content: string; sha: string; fromGithub: boolean; revision: number }> {
+    const { readProjectLedger } = await import('@/server/ledger-source');
+    return readProjectLedger(projectId, userId);
+}
 
 function revalidateFlows(projectId: string): void {
     revalidatePath(`/projects/${projectId}/flows`);
@@ -19,7 +26,7 @@ export async function appendDraftPatch(projectId: string, patch: LedgerPatch): P
     const user = await requireUser();
     const db = getDb();
     const existing = await getOpenDraft(projectId, user.id);
-    const ledger = await readProjectLedger(projectId, user.id);
+    const ledger = await loadLedger(projectId, user.id);
     const project = await getProject(projectId);
     if (!existing) {
         await db.insert(drafts).values({
@@ -43,12 +50,13 @@ export async function appendDraftPatch(projectId: string, patch: LedgerPatch): P
 export async function publishDraft(projectId: string, input: { message: string; pullRequest: boolean }): Promise<void> {
     const user = await requireUser();
     const draft = await getOpenDraft(projectId, user.id);
-    const ledger = await readProjectLedger(projectId, user.id);
+    const ledger = await loadLedger(projectId, user.id);
     const patches = (draft?.patches as LedgerPatch[] | undefined) ?? [];
     const yaml = applyDraft(ledger.content, patches);
     const project = await getProject(projectId);
     if (!project) throw new Error('Project not found');
 
+    const { getLedgerSource, PublishConflictError } = await import('@/server/ledger-source');
     const source = await getLedgerSource(projectId, user.id);
     if (input.pullRequest && !source.canPullRequest) {
         throw new Error('Pull requests are only available for git storage');
@@ -75,7 +83,7 @@ export async function replayDraft(projectId: string): Promise<void> {
     const user = await requireUser();
     const draft = await getOpenDraft(projectId, user.id);
     if (!draft) return;
-    const ledger = await readProjectLedger(projectId, user.id);
+    const ledger = await loadLedger(projectId, user.id);
     applyDraft(ledger.content, (draft.patches as LedgerPatch[]) ?? []);
     await getDb()
         .update(drafts)

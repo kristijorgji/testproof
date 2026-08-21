@@ -3,7 +3,6 @@ import { drafts, projects, repos } from '@testproof/db';
 import { and, desc, eq } from 'drizzle-orm';
 
 import { getDb } from './db';
-import { getLedgerSource } from './ledger-source';
 
 export async function getProject(projectId: string): Promise<typeof projects.$inferSelect | undefined> {
     const [project] = await getDb().select().from(projects).where(eq(projects.id, projectId)).limit(1);
@@ -31,15 +30,6 @@ export async function getOpenDraft(projectId: string, userId: string): Promise<t
               .orderBy(desc(drafts.updatedAt))
               .limit(1);
     return draft ?? stale;
-}
-
-export async function readProjectLedger(
-    projectId: string,
-    userId: string,
-): Promise<{ content: string; sha: string; fromGithub: boolean; revision: number }> {
-    const source = await getLedgerSource(projectId, userId);
-    const file = await source.read();
-    return { ...file, fromGithub: source.kind === 'git' };
 }
 
 export function applyDraft(source: string, patches: LedgerPatch[]): string {

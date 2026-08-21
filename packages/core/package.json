@@ -21,6 +21,11 @@
             "types": "./dist/platforms.d.ts",
             "import": "./dist/platforms.js",
             "default": "./dist/platforms.js"
+        },
+        "./schema": {
+            "types": "./dist/schema.d.ts",
+            "import": "./dist/schema.js",
+            "default": "./dist/schema.js"
         }
     },
     "files": [
