@@ -14,7 +14,12 @@ export default await createEslintConfig({
             },
         },
         {
-            files: ['src/**/*.stories.{ts,tsx}', '.storybook/**/*.{ts,tsx}', '**/*.test.{ts,tsx}'],
+            files: [
+                'src/**/*.stories.{ts,tsx}',
+                '.storybook/**/*.{ts,tsx}',
+                'test/**/*.{ts,tsx}',
+                '**/*.test.{ts,tsx}',
+            ],
             rules: {
                 'i18next/no-literal-string': 'off',
                 '@typescript-eslint/explicit-function-return-type': 'off',

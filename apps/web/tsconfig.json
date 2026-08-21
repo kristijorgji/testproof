@@ -7,12 +7,21 @@
     "moduleResolution": "bundler",
     "noEmit": true,
     "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./src/*"] },
+    "paths": { "@/*": ["./src/*"], "@test/*": ["./test/*"] },
     "allowJs": false,
     "incremental": true,
     "resolveJsonModule": true,
     "types": ["msw-storybook-addon/csf3"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", ".storybook/**/*.ts", ".storybook/**/*.tsx", "next-env.d.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "test/**/*.ts",
+    "test/**/*.tsx",
+    ".storybook/**/*.ts",
+    ".storybook/**/*.tsx",
+    "next-env.d.ts",
+    "vitest.config.ts"
+  ],
   "exclude": ["node_modules"]
 }
