@@ -47,8 +47,8 @@ runs on every push to `main` and comments `@dependabot rebase` on open
 Dependabot PRs whose merge state is `BEHIND`, `DIRTY`, or `UNKNOWN`.
 
 `github-actions[bot]` comments are rejected (`Sorry, only users with push access
-can use that command.`). The workflow therefore requires the Actions secret
-`DEPENDABOT_REBASE_TOKEN` and fails if it is missing.
+can use that command.`). The workflow therefore uses the Actions secret
+`DEPENDABOT_REBASE_TOKEN` and fails the job if that value is empty.
 
 That secret is a **fine-grained PAT** for a user who can push to this repo:
 
