@@ -2,8 +2,8 @@ import { projects } from '@testproof/db';
 import Link from 'next/link';
 
 import { createProject } from '@/actions/projects';
-import { SignOutButton } from '@/components/auth/SignOutButton';
-import { CreateProjectFields } from '@/components/projects/CreateProjectFields';
+import { SignOutButton } from '@/components/auth/SignOutButton/SignOutButton';
+import { CreateProjectFields } from '@/components/projects/CreateProjectFields/CreateProjectFields';
 import { getLocaleFromCookie } from '@/i18n/get-locale';
 import { getServerTranslation } from '@/i18n/server';
 import { getDb } from '@/server/db';

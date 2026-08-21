@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { createReactConfig } from '@kristijorgji/eslint-config-react-typescript';
 import { createTypescriptConfig } from '@kristijorgji/eslint-config-typescript';
 
-import { baseConfig, ignores, importOrderOptions } from './base.js';
+import { baseConfig, ignores, importOrderOptions, nextAppRouterConfig } from './base.js';
 
 /**
  * @param {object} options
@@ -27,7 +27,7 @@ export async function createEslintConfig({ importMetaUrl, preset = 'base', ignor
             explicitTypes: true,
             jsxProps: { type: 'unsorted' },
         });
-        return [...ignoreBlocks, ...factory, ...baseConfig, ...configs];
+        return [...ignoreBlocks, ...factory, ...baseConfig, ...nextAppRouterConfig, ...configs];
     }
 
     if (preset !== 'base') {

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { ProjectNav } from '@/components/layout/ProjectNav';
+import { ProjectNav } from '@/components/layout/ProjectNav/ProjectNav';
 import { getLocaleFromCookie } from '@/i18n/get-locale';
 import { getServerTranslation } from '@/i18n/server';
 import { getProject } from '@/server/project';

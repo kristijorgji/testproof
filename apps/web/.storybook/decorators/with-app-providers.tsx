@@ -1,27 +1,12 @@
 import type { Decorator } from '@storybook/react-vite';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { type ReactElement, type ReactNode, useEffect, useMemo } from 'react';
 
-import { I18nProvider } from '../../src/components/i18n/I18nProvider';
-import { ThemeProvider, useTheme } from '../../src/components/theme/ThemeProvider';
+import { I18nProvider } from '../../src/components/i18n/I18nProvider/I18nProvider';
+import { ThemeProvider } from '../../src/components/theme/ThemeProvider/ThemeProvider';
 import { setPathname } from '../mocks/next-navigation';
 import { resolveStorybookLocaleForDecorator } from '../resolve-storybook-locale';
 
-function QueryProvider({ children }: { children: ReactNode }): ReactElement {
-    const client = useMemo(
-        () => new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } }),
-        [],
-    );
-    return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
-}
-
-function ThemeSync({ children, sbTheme }: { children: ReactNode; sbTheme: 'light' | 'dark' | 'system' }): ReactElement {
-    const { setMode } = useTheme();
-    useEffect(() => {
-        setMode(sbTheme);
-    }, [sbTheme, setMode]);
-    return <>{children}</>;
-}
+import { QueryProvider } from './QueryProvider';
+import { ThemeSync } from './ThemeSync';
 
 export const withAppProviders: Decorator = (Story, context) => {
     const locale = resolveStorybookLocaleForDecorator(context.globals.locale);

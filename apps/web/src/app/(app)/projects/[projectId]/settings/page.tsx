@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
 
 import { saveRepo } from '@/actions/settings';
-import { ProjectNav } from '@/components/layout/ProjectNav';
-import { StorageForm } from '@/components/settings/StorageForm';
-import { TokenForm } from '@/components/settings/TokenForm';
+import { ProjectNav } from '@/components/layout/ProjectNav/ProjectNav';
+import { StorageForm } from '@/components/settings/StorageForm/StorageForm';
+import { TokenForm } from '@/components/settings/TokenForm/TokenForm';
 import { getLocaleFromCookie } from '@/i18n/get-locale';
 import { getServerTranslation } from '@/i18n/server';
 import { getProject, getProjectRepo } from '@/server/project';

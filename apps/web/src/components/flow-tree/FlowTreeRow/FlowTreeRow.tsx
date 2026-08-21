@@ -2,7 +2,7 @@
 
 import type { CoverageStatus, Flow } from '@testproof/core';
 
-import { StatusBadge } from '../status/StatusBadge';
+import { StatusBadge } from '../../status/StatusBadge/StatusBadge';
 
 export function FlowTreeRow({
     flow,

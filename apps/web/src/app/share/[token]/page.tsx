@@ -1,7 +1,7 @@
 import { coverageSnapshots, flowCoverage, projects } from '@testproof/db';
 import { desc, eq } from 'drizzle-orm';
 
-import { StatusBadge } from '@/components/status/StatusBadge';
+import { StatusBadge } from '@/components/status/StatusBadge/StatusBadge';
 import { getLocaleFromCookie } from '@/i18n/get-locale';
 import { getServerTranslation } from '@/i18n/server';
 import { getDb } from '@/server/db';

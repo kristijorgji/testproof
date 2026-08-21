@@ -16,7 +16,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src",
+    "lint": "eslint src --max-warnings 0",
     "fix": "eslint src --fix",
     "test": "vitest run --passWithNoTests",
     "db:generate": "drizzle-kit generate",

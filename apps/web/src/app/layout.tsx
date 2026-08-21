@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
-import { I18nProvider } from '@/components/i18n/I18nProvider';
-import { ThemeProvider } from '@/components/theme/ThemeProvider';
+import { I18nProvider } from '@/components/i18n/I18nProvider/I18nProvider';
+import { ThemeProvider } from '@/components/theme/ThemeProvider/ThemeProvider';
 import { getLocaleFromCookie } from '@/i18n/get-locale';
 import { THEME_INIT_SCRIPT } from '@/lib/theme/theme-init';
 

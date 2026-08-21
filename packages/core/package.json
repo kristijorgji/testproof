@@ -58,7 +58,7 @@
     "prepare": "tsc -p tsconfig.build.json",
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src test",
+    "lint": "eslint src test --max-warnings 0",
     "fix": "eslint src test --fix",
     "test": "vitest run",
     "test:watch": "vitest",

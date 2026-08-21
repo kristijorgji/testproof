@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
-import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
-import { ThemeToggle } from '@/components/theme/ThemeToggle';
+import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher/LocaleSwitcher';
+import { ThemeToggle } from '@/components/theme/ThemeToggle/ThemeToggle';
 import { getLocaleFromCookie } from '@/i18n/get-locale';
 import { getServerTranslation } from '@/i18n/server';
 

@@ -23,3 +23,13 @@ export const baseConfig = [
         },
     },
 ];
+
+/** Next App Router files must export `metadata`, `generateMetadata`, `revalidate`, etc. */
+export const nextAppRouterConfig = [
+    {
+        files: ['**/src/app/**/*.{ts,tsx}'],
+        rules: {
+            'react-refresh/only-export-components': 'off',
+        },
+    },
+];
