@@ -50,6 +50,10 @@ jobs:
     needs: [quality, ledger]
     runs-on: ubuntu-latest
     steps:
-      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
-        run: exit 1
-      - run: echo "all required jobs passed"
+      - name: Require quality and ledger
+        run: |
+          echo "quality=${{ needs.quality.result }}"
+          echo "ledger=${{ needs.ledger.result }}"
+          if [ "${{ needs.quality.result }}" != success ] || [ "${{ needs.ledger.result }}" != success ]; then
+            exit 1
+          fi
