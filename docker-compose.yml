@@ -16,7 +16,7 @@ services:
       retries: 10
 
   web:
-    image: ghcr.io/kristijorgji/testproof:0.4.1
+    image: ghcr.io/kristijorgji/testproof:0.4.2
     # Runs the published image. To build from a local checkout instead,
     # comment out `image:` above and uncomment the two lines below.
     # build:
