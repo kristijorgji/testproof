@@ -1,6 +1,7 @@
 'use client';
 
 import type { Ledger, LedgerPatch, PlatformNode } from '@testproof/core';
+import { useSearchParams } from 'next/navigation';
 
 import { FlowDetail } from '../FlowDetail/FlowDetail';
 import { PublishDialog } from '../PublishDialog/PublishDialog';
@@ -34,7 +35,9 @@ export function FlowEditor({
     onReplay: () => Promise<void>;
     onDiscard: () => Promise<void>;
 }) {
-    const actions = useFlowEditorActions({ ledger, coverage, onPatch });
+    const searchParams = useSearchParams();
+    const initialSelectedId = searchParams.get('flow') ?? undefined;
+    const actions = useFlowEditorActions({ ledger, coverage, onPatch, initialSelectedId });
     const { selected, tab, apply } = actions;
 
     return (

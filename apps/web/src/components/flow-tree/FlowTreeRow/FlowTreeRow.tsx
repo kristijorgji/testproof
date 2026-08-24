@@ -7,25 +7,29 @@ import { StatusBadge } from '../../status/StatusBadge/StatusBadge';
 export function FlowTreeRow({
     flow,
     status = 'todo',
+    statusByFlowId,
     depth = 0,
-    selected = false,
+    selectedId,
     onSelect,
 }: {
     flow: Flow;
     status?: CoverageStatus;
+    statusByFlowId?: (id: string) => CoverageStatus;
     depth?: number;
-    selected?: boolean;
+    selectedId?: string;
     onSelect?: (id: string) => void;
 }) {
+    const resolveStatus = (id: string): CoverageStatus => statusByFlowId?.(id) ?? status;
+
     return (
         <div>
             <button
                 type="button"
-                className={`flex w-full items-baseline gap-2 px-3 py-2 text-left ${selected ? 'bg-[var(--border)]' : ''}`}
+                className={`flex w-full items-baseline gap-2 px-3 py-2 text-left ${selectedId === flow.id ? 'bg-[var(--border)]' : ''}`}
                 style={{ paddingLeft: 12 + depth * 16 }}
                 onClick={() => onSelect?.(flow.id)}
             >
-                <StatusBadge status={status} />
+                <StatusBadge status={resolveStatus(flow.id)} />
                 <code className="text-xs">{flow.id}</code>
                 <span className="truncate">{flow.title}</span>
             </button>
@@ -34,8 +38,9 @@ export function FlowTreeRow({
                     key={child.id}
                     flow={child}
                     status={status}
+                    statusByFlowId={statusByFlowId}
                     depth={depth + 1}
-                    selected={selected && child.id === flow.id}
+                    selectedId={selectedId}
                     onSelect={onSelect}
                 />
             ))}

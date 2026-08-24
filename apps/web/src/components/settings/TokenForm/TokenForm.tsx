@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useTokenForm } from './useTokenForm';
 
 import type { ApiTokenListItem } from '@/actions/settings';
+import { CopyableCode } from '@/components/common/CopyableCode/CopyableCode';
 import { ProjectIdField } from '@/components/settings/ProjectIdField/ProjectIdField';
 import { TokenList } from '@/components/settings/TokenList/TokenList';
 
@@ -46,9 +47,14 @@ export function TokenForm({
                     {pending ? workingLabel : t('settings.createToken')}
                 </button>
                 {plaintext ? (
-                    <p className="text-sm">
-                        {t('settings.tokenOnce')} <code className="break-all">{plaintext}</code>
-                    </p>
+                    <div className="grid gap-1 text-sm">
+                        <p>{t('settings.tokenOnce')}</p>
+                        <CopyableCode
+                            value={plaintext}
+                            copyLabel={t('settings.copyToken')}
+                            copiedLabel={t('settings.tokenCopied')}
+                        />
+                    </div>
                 ) : null}
                 {error ? <p className="text-sm text-red-600">{error}</p> : null}
             </form>

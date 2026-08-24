@@ -57,14 +57,16 @@ export function useFlowEditorActions({
     ledger,
     coverage,
     onPatch,
+    initialSelectedId,
 }: {
     ledger: Ledger;
     coverage: FlowCoverageById;
     onPatch: (patch: LedgerPatch) => Promise<void>;
+    initialSelectedId?: string;
 }): FlowEditorActions {
     const { t } = useTranslation();
     const flows = useMemo(() => flattenFlows(ledger), [ledger]);
-    const [selectedId, setSelectedId] = useState(flows[0]?.id);
+    const [selectedId, setSelectedId] = useState(initialSelectedId ?? flows[0]?.id);
     const selected = flows.find((f) => f.id === selectedId);
     const [, start] = useTransition();
     const [tab, setTab] = useState<'edit' | 'changes'>('edit');

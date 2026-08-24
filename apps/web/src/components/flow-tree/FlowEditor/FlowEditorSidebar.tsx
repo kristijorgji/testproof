@@ -29,7 +29,8 @@ export function FlowEditorSidebar({
                                 key={flow.id}
                                 flow={flow}
                                 status={coverage[flow.id]?.status}
-                                selected={selectedId === flow.id}
+                                statusByFlowId={(id) => coverage[id]?.status ?? 'todo'}
+                                selectedId={selectedId}
                                 onSelect={setSelectedId}
                             />
                         )),
