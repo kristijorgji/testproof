@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { resolveAuthRedirectTarget } from './resolve-auth-redirect';
+
 import { authClient } from '@/lib/auth-client';
 
 export function useSignInActions(nextPath: string): {
@@ -31,10 +33,13 @@ export function useSignInActions(nextPath: string): {
         setPending(true);
         try {
             const result = await authClient.signIn.email({ email, password, callbackURL: nextPath });
-            if (result.error) {
-                setError(result.error.message ?? t('auth.failed'));
+            const target = resolveAuthRedirectTarget(result, nextPath);
+            if (!target) {
+                setError(result.error?.message ?? t('auth.failed'));
                 setPending(false);
+                return;
             }
+            window.location.assign(target);
         } catch {
             setError(t('auth.failed'));
             setPending(false);
@@ -52,10 +57,13 @@ export function useSignInActions(nextPath: string): {
                 name: name || email,
                 callbackURL: nextPath,
             });
-            if (result.error) {
-                setError(result.error.message ?? t('auth.failed'));
+            const target = resolveAuthRedirectTarget(result, nextPath);
+            if (!target) {
+                setError(result.error?.message ?? t('auth.failed'));
                 setPending(false);
+                return;
             }
+            window.location.assign(target);
         } catch {
             setError(t('auth.failed'));
             setPending(false);
