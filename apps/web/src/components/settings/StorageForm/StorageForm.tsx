@@ -1,12 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { downloadYaml } from './downloadYaml';
 import { StorageModeFields } from './StorageModeFields';
-
-import { exportLedger, saveStorage } from '@/actions/storage';
+import { useStorageForm } from './useStorageForm';
 
 export function StorageForm({
     projectId,
@@ -20,25 +17,22 @@ export function StorageForm({
     ledgerFilePath: string | null;
 }) {
     const { t } = useTranslation();
-    const [mode, setMode] = useState(storage);
-    const [error, setError] = useState<string | null>(null);
+    const { mode, setMode, error, pending, onSave, onExport, workingLabel } = useStorageForm(projectId, storage);
 
     return (
         <form
             className="grid gap-2"
+            aria-busy={pending}
             onSubmit={(event) => {
                 event.preventDefault();
-                setError(null);
-                const form = new FormData(event.currentTarget);
-                void saveStorage(projectId, form).catch((caught: unknown) => {
-                    setError(caught instanceof Error ? caught.message : String(caught));
-                });
+                onSave(event.currentTarget);
             }}
         >
             <label className="text-sm">{t('settings.storage')}</label>
             <select
                 name="storage"
                 value={mode}
+                disabled={pending}
                 className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
                 onChange={(event) => setMode(event.target.value)}
             >
@@ -47,16 +41,21 @@ export function StorageForm({
                 <option value="db">{t('settings.storageDb')}</option>
             </select>
             <StorageModeFields mode={mode} ledgerPath={ledgerPath} ledgerFilePath={ledgerFilePath} />
-            <button type="submit" className="rounded bg-[var(--accent)] px-3 py-2 text-white">
-                {t('settings.saveStorage')}
+            <button
+                type="submit"
+                disabled={pending}
+                className="rounded bg-[var(--accent)] px-3 py-2 text-white disabled:opacity-60"
+            >
+                {pending ? workingLabel : t('settings.saveStorage')}
             </button>
             {mode === 'db' ? (
                 <button
                     type="button"
-                    className="rounded border border-[var(--border)] px-3 py-2"
-                    onClick={() => void exportLedger(projectId).then(downloadYaml)}
+                    disabled={pending}
+                    className="rounded border border-[var(--border)] px-3 py-2 disabled:opacity-60"
+                    onClick={onExport}
                 >
-                    {t('settings.exportYaml')}
+                    {pending ? workingLabel : t('settings.exportYaml')}
                 </button>
             ) : null}
             {error ? <p className="text-sm text-red-600">{error}</p> : null}

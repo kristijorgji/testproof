@@ -1,6 +1,7 @@
 'use server';
 
 import { sessions } from '@testproof/db';
+import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 import { getDb } from '@/server/db';
@@ -17,5 +18,13 @@ export async function createSession(projectId: string, formData: FormData): Prom
         notes,
         performerId: user.id,
     });
+    revalidatePath(`/projects/${projectId}/sessions`);
+}
+
+export async function deleteSession(projectId: string, sessionId: string): Promise<void> {
+    await requireUser();
+    await getDb()
+        .delete(sessions)
+        .where(and(eq(sessions.id, sessionId), eq(sessions.projectId, projectId)));
     revalidatePath(`/projects/${projectId}/sessions`);
 }

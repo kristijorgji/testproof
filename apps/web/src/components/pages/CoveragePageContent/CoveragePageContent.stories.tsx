@@ -35,3 +35,13 @@ export const Loaded: Story = {
 };
 
 export const Empty: Story = { args: { coverage: {}, flows: [] } };
+
+export const NoSnapshot: Story = {
+    args: {
+        coverage: {},
+        flows: [
+            { id: login.id, title: login.title },
+            { id: extra.id, title: extra.title },
+        ],
+    },
+};
