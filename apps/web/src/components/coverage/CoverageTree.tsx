@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 
 import { FlowTreeRow } from '@/components/flow-tree/FlowTreeRow/FlowTreeRow';
-import type { CoverageRow } from '@/server/coverage';
+import type { CoverageRow } from '@/lib/coverage-types';
 
 export function CoverageTree({
     projectId,

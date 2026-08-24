@@ -1,4 +1,4 @@
-import type { CoverageRow } from '@/server/coverage';
+import type { CoverageRow } from '@/lib/coverage-types';
 
 export function createCoverageRow(overrides: Partial<CoverageRow> = {}): CoverageRow {
     return {

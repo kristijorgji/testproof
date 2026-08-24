@@ -4,24 +4,7 @@ import { desc, eq } from 'drizzle-orm';
 
 import { getDb } from './db';
 
-export type CoverageRow = {
-    status: CoverageStatus;
-    demanded: CoverageCell[];
-    covered: CoverageCell[];
-    files: Record<string, string[]>;
-};
-
-export type CoverageSnapshotMeta = {
-    commitSha: string;
-    branch: string;
-    summary: Record<CoverageStatus, number>;
-    createdAt: Date;
-};
-
-export type LatestCoverageSnapshot = {
-    rows: Record<string, CoverageRow>;
-    snapshot: CoverageSnapshotMeta | null;
-};
+import type { CoverageRow, LatestCoverageSnapshot } from '@/lib/coverage-types';
 
 const emptySummary = (): Record<CoverageStatus, number> => ({
     automated: 0,

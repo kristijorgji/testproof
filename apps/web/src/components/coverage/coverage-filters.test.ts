@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { filterLedgerForCoverage } from './coverage-filters';
 
-import type { CoverageRow } from '@/server/coverage';
+import type { CoverageRow } from '@/lib/coverage-types';
 
 const coverage: Record<string, CoverageRow> = {
     'FLOW-A': {

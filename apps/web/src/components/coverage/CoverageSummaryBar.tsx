@@ -4,7 +4,7 @@ import type { CoverageStatus } from '@testproof/core';
 import { useTranslation } from 'react-i18next';
 
 import { StatusBadge } from '@/components/status/StatusBadge/StatusBadge';
-import type { CoverageSnapshotMeta } from '@/server/coverage';
+import type { CoverageSnapshotMeta } from '@/lib/coverage-types';
 
 const statuses: CoverageStatus[] = ['automated', 'partial', 'todo', 'manual'];
 

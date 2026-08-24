@@ -1,7 +1,7 @@
 'use client';
 
 import type { Ledger } from '@testproof/core';
-import { ledgerPlatforms } from '@testproof/core';
+import { ledgerPlatforms } from '@testproof/core/platforms';
 import { useTranslation } from 'react-i18next';
 
 import { CoverageFlowPanel } from '@/components/coverage/CoverageFlowPanel';
@@ -10,7 +10,7 @@ import { CoverageToolbar } from '@/components/coverage/CoverageToolbar';
 import { CoverageTree } from '@/components/coverage/CoverageTree';
 import { useCoverageFilters } from '@/components/coverage/useCoverageFilters';
 import { ProjectNav } from '@/components/layout/ProjectNav/ProjectNav';
-import type { CoverageRow, CoverageSnapshotMeta } from '@/server/coverage';
+import type { CoverageRow, CoverageSnapshotMeta } from '@/lib/coverage-types';
 
 export function CoveragePageContent({
     projectId,

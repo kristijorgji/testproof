@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 
 import { filterLedgerForCoverage, type CoverageStatusFilter } from './coverage-filters';
 
-import type { CoverageRow } from '@/server/coverage';
+import type { CoverageRow } from '@/lib/coverage-types';
 
 export function useCoverageFilters({ ledger, coverage }: { ledger: Ledger; coverage: Record<string, CoverageRow> }) {
     const [query, setQuery] = useState('');

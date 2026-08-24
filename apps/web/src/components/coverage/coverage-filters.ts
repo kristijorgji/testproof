@@ -1,6 +1,6 @@
 import type { CoverageStatus, Flow, FlowArea, Ledger } from '@testproof/core';
 
-import type { CoverageRow } from '@/server/coverage';
+import type { CoverageRow } from '@/lib/coverage-types';
 
 export type CoverageStatusFilter = CoverageStatus | 'all';
 

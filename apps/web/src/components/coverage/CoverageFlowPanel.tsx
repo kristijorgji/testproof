@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { StatusBadge } from '@/components/status/StatusBadge/StatusBadge';
-import type { CoverageRow } from '@/server/coverage';
+import type { CoverageRow } from '@/lib/coverage-types';
 
 import { formatCoverageCell } from './coverage-filters';
 
