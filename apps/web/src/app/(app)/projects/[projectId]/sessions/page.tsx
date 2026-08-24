@@ -2,7 +2,7 @@ import { sessions } from '@testproof/db';
 import { desc, eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 
-import { createSession } from '@/actions/sessions';
+import { createSession, deleteSession } from '@/actions/sessions';
 import { type SessionListItem, SessionsPageContent } from '@/components/pages/SessionsPageContent/SessionsPageContent';
 import { getDb } from '@/server/db';
 import { getProject } from '@/server/project';
@@ -29,6 +29,7 @@ export default async function SessionsPage({ params }: { params: Promise<{ proje
             projectId={projectId}
             sessions={rows}
             createAction={createSession.bind(null, projectId)}
+            deleteAction={deleteSession.bind(null, projectId)}
         />
     );
 }

@@ -50,7 +50,8 @@
     "areaRequired": "Area id and title are required"
   },
   "coverage": {
-    "empty": "No coverage snapshot yet. Run `testproof push` from CI.",
+    "empty": "No flows in the ledger yet.",
+    "noSnapshot": "No coverage snapshot yet. Mint a project API token in Settings, then run `testproof push` from CI (or locally) to post results.",
     "title": "Coverage",
     "demandedCovered": "demanded {{demanded}} · covered {{covered}}"
   },
@@ -58,7 +59,13 @@
     "new": "New session",
     "title": "Manual sessions",
     "titleField": "Session title",
-    "notes": "Notes"
+    "notes": "Notes",
+    "empty": "No sessions yet. Manual sessions are free-form QA notes (title and notes). They are not linked to FLOW-… ids in the ledger.",
+    "delete": "Delete",
+    "confirmDelete": "Delete this session?"
+  },
+  "common": {
+    "working": "Working…"
   },
   "conflict": {
     "title": "Remote ledger changed",
@@ -115,7 +122,8 @@
   "runs": {
     "title": "Runs",
     "detail": "Run",
-    "untagged": "{{count}} untagged results"
+    "untagged": "{{count}} untagged results",
+    "empty": "No runs yet. Ingest results with POST /api/v1/runs using a project API token from Settings. Result rows can include FLOW-… ids from the ledger."
   },
   "home": {
     "openProjects": "Open projects",

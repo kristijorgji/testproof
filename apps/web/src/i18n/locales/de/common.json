@@ -50,7 +50,8 @@
     "areaRequired": "Bereichs-ID und Titel sind erforderlich"
   },
   "coverage": {
-    "empty": "Noch kein Coverage-Snapshot. Führe `testproof push` in CI aus.",
+    "empty": "Noch keine Flows im Ledger.",
+    "noSnapshot": "Noch kein Coverage-Snapshot. Erstelle in den Einstellungen ein Projekt-API-Token und führe `testproof push` in CI (oder lokal) aus.",
     "title": "Abdeckung",
     "demandedCovered": "gefordert {{demanded}} · abgedeckt {{covered}}"
   },
@@ -58,7 +59,13 @@
     "new": "Neue Sitzung",
     "title": "Manuelle Sitzungen",
     "titleField": "Sitzungstitel",
-    "notes": "Notizen"
+    "notes": "Notizen",
+    "empty": "Noch keine Sitzungen. Manuelle Sitzungen sind freie QA-Notizen (Titel und Notizen). Sie sind nicht mit FLOW-…-IDs im Ledger verknüpft.",
+    "delete": "Löschen",
+    "confirmDelete": "Diese Sitzung löschen?"
+  },
+  "common": {
+    "working": "Wird ausgeführt…"
   },
   "conflict": {
     "title": "Remote-Ledger geändert",
@@ -115,7 +122,8 @@
   "runs": {
     "title": "Läufe",
     "detail": "Lauf",
-    "untagged": "{{count}} ungetaggte Ergebnisse"
+    "untagged": "{{count}} ungetaggte Ergebnisse",
+    "empty": "Noch keine Läufe. Ergebnisse per POST /api/v1/runs mit einem Projekt-API-Token aus den Einstellungen senden. Ergebnisse können FLOW-…-IDs aus dem Ledger enthalten."
   },
   "home": {
     "openProjects": "Projekte öffnen",

@@ -13,7 +13,7 @@ const meta: Meta<typeof SessionsPageContent> = {
     title: 'Pages/SessionsPage',
     component: SessionsPageContent,
     decorators: [withPageProviders],
-    args: { projectId: project.id, name: project.name, createAction: fn() },
+    args: { projectId: project.id, name: project.name, createAction: fn(), deleteAction: fn() },
     parameters: { pathname: `/projects/${project.id}/sessions` },
 };
 
