@@ -73,7 +73,12 @@
     "email": "Email",
     "password": "Password",
     "name": "Name",
-    "failed": "Could not sign in"
+    "failed": "Could not sign in",
+    "working": "Working…"
+  },
+  "ledgerConfig": {
+    "title": "Configure ledger storage",
+    "openSettings": "Open settings"
   },
   "projects": {
     "title": "Projects",

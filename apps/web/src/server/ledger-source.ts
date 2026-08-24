@@ -11,6 +11,7 @@ import { getDb } from './db';
 import { createOctokit } from './github/client';
 import { publishCommit, PublishConflictError, publishPullRequest } from './github/publish';
 import { readLedger } from './github/read';
+import { LedgerConfigError } from './ledger-config-error';
 import { getGithubAccessToken } from './session';
 
 const EMPTY_LEDGER_YAML = `version: 2
@@ -178,18 +179,18 @@ export async function getLedgerSource(projectId: string, userId: string): Promis
     if (storage === 'git') {
         const [repo] = await getDb().select().from(repos).where(eq(repos.projectId, projectId)).limit(1);
         const token = userId ? await getGithubAccessToken(userId) : undefined;
-        if (!repo) throw new Error('Connect a GitHub repository in Settings');
-        if (!token) throw new Error('Connect a GitHub account to read or publish a git ledger');
+        if (!repo) throw new LedgerConfigError('Connect a GitHub repository in Settings');
+        if (!token) throw new LedgerConfigError('Connect a GitHub account to read or publish a git ledger');
         return new GitLedgerSource(repo.owner, repo.name, project.ledgerPath, project.defaultBranch, token);
     }
 
     if (storage === 'file') {
         const raw = project.ledgerFilePath;
         if (!raw) {
-            throw new Error('File storage requires a ledger file path. Set it in project Settings.');
+            throw new LedgerConfigError('File storage requires a ledger file path. Set it in project Settings.');
         }
         if (!path.isAbsolute(raw)) {
-            throw new Error('File storage requires an absolute ledger path');
+            throw new LedgerConfigError('File storage requires an absolute ledger path');
         }
         return new FileLedgerSource(raw);
     }
