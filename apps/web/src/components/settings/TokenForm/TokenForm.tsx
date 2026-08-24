@@ -1,36 +1,57 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { createApiToken } from '@/actions/settings';
+import { useTokenForm } from './useTokenForm';
 
-export function TokenForm({ projectId }: { projectId: string }) {
+import type { ApiTokenListItem } from '@/actions/settings';
+import { ProjectIdField } from '@/components/settings/ProjectIdField/ProjectIdField';
+import { TokenList } from '@/components/settings/TokenList/TokenList';
+
+export function TokenForm({
+    projectId,
+    tokens,
+    deleteAction,
+}: {
+    projectId: string;
+    tokens: ApiTokenListItem[];
+    deleteAction: (tokenId: string) => void | Promise<void>;
+}) {
     const { t } = useTranslation();
-    const [token, setToken] = useState<string | null>(null);
+    const { plaintext, error, pending, workingLabel, onSubmit } = useTokenForm(projectId);
 
     return (
-        <form
-            className="grid gap-2"
-            onSubmit={(event) => {
-                event.preventDefault();
-                const form = new FormData(event.currentTarget);
-                void createApiToken(projectId, form).then((result) => setToken(result.token));
-            }}
-        >
-            <input
-                name="name"
-                placeholder={t('settings.tokenName')}
-                className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
-            />
-            <button type="submit" className="rounded bg-[var(--accent)] px-3 py-2 text-white">
-                {t('settings.createToken')}
-            </button>
-            {token ? (
-                <p className="text-sm">
-                    {t('settings.tokenOnce')} <code className="break-all">{token}</code>
-                </p>
-            ) : null}
-        </form>
+        <div className="grid gap-4">
+            <ProjectIdField projectId={projectId} />
+            <TokenList tokens={tokens} pending={pending} deleteAction={deleteAction} />
+            <form
+                className="grid gap-2"
+                aria-busy={pending}
+                onSubmit={(event) => {
+                    event.preventDefault();
+                    onSubmit(event.currentTarget);
+                }}
+            >
+                <input
+                    name="name"
+                    disabled={pending}
+                    placeholder={t('settings.tokenName')}
+                    className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2 disabled:opacity-60"
+                />
+                <button
+                    type="submit"
+                    disabled={pending}
+                    className="rounded bg-[var(--accent)] px-3 py-2 text-white disabled:opacity-60"
+                >
+                    {pending ? workingLabel : t('settings.createToken')}
+                </button>
+                {plaintext ? (
+                    <p className="text-sm">
+                        {t('settings.tokenOnce')} <code className="break-all">{plaintext}</code>
+                    </p>
+                ) : null}
+                {error ? <p className="text-sm text-red-600">{error}</p> : null}
+            </form>
+        </div>
     );
 }

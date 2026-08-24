@@ -3,11 +3,32 @@
 import { createHash, randomBytes } from 'node:crypto';
 
 import { apiTokens, repos } from '@testproof/db';
-import { eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 import { getDb } from '@/server/db';
 import { requireUser } from '@/server/session';
+
+export type ApiTokenListItem = {
+    id: string;
+    name: string;
+    createdAt: Date;
+    lastUsedAt: Date | null;
+};
+
+export async function listProjectApiTokens(projectId: string): Promise<ApiTokenListItem[]> {
+    await requireUser();
+    return getDb()
+        .select({
+            id: apiTokens.id,
+            name: apiTokens.name,
+            createdAt: apiTokens.createdAt,
+            lastUsedAt: apiTokens.lastUsedAt,
+        })
+        .from(apiTokens)
+        .where(eq(apiTokens.projectId, projectId))
+        .orderBy(desc(apiTokens.createdAt));
+}
 
 export async function saveRepo(projectId: string, formData: FormData): Promise<void> {
     await requireUser();
@@ -32,4 +53,12 @@ export async function createApiToken(projectId: string, formData: FormData): Pro
     await getDb().insert(apiTokens).values({ projectId, name, hash });
     revalidatePath(`/projects/${projectId}/settings`);
     return { token };
+}
+
+export async function deleteApiToken(projectId: string, tokenId: string): Promise<void> {
+    await requireUser();
+    await getDb()
+        .delete(apiTokens)
+        .where(and(eq(apiTokens.id, tokenId), eq(apiTokens.projectId, projectId)));
+    revalidatePath(`/projects/${projectId}/settings`);
 }

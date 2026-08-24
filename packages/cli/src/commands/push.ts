@@ -50,7 +50,13 @@ export async function pushCommand(config: TestproofConfig, cwd: string): Promise
         body: JSON.stringify(body),
     });
     if (!response.ok) {
-        console.error(`testproof push: ${response.status} ${await response.text()}`);
+        const body = await response.text();
+        console.error(`testproof push: ${response.status} ${body}`);
+        if (response.status === 403 && body.includes('project mismatch')) {
+            console.error(
+                'Hint: TESTPROOF_PROJECT must match the project where the token was minted (copy from Settings).',
+            );
+        }
         return 1;
     }
     console.log(`testproof push: ok (${JSON.stringify(await response.json())})`);
