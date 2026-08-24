@@ -1,7 +1,6 @@
 'use client';
 
 import { useTransition } from 'react';
-import { useTranslation } from 'react-i18next';
 
 export function useSessionMutations(
     createAction: (formData: FormData) => void | Promise<void>,
@@ -9,9 +8,8 @@ export function useSessionMutations(
 ): {
     pending: boolean;
     submitCreate: (form: HTMLFormElement) => void;
-    confirmDelete: (sessionId: string) => void;
+    runDelete: (sessionId: string) => void;
 } {
-    const { t } = useTranslation();
     const [pending, startTransition] = useTransition();
 
     function submitCreate(form: HTMLFormElement): void {
@@ -23,13 +21,12 @@ export function useSessionMutations(
         });
     }
 
-    function confirmDelete(sessionId: string): void {
+    function runDelete(sessionId: string): void {
         if (pending) return;
-        if (!window.confirm(t('sessions.confirmDelete'))) return;
         startTransition(async () => {
             await deleteAction(sessionId);
         });
     }
 
-    return { pending, submitCreate, confirmDelete };
+    return { pending, submitCreate, runDelete };
 }

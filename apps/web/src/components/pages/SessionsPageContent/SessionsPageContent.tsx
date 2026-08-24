@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { SessionList } from './SessionList';
 import { useSessionMutations } from './useSessionMutations';
 
+import { useMountedConfirmDialog } from '@/components/common/ConfirmDialog/useMountedConfirmDialog';
 import { ProjectNav } from '@/components/layout/ProjectNav/ProjectNav';
 import { SessionFields } from '@/components/sessions/SessionFields/SessionFields';
 
@@ -24,7 +25,8 @@ export function SessionsPageContent({
     deleteAction: (sessionId: string) => void | Promise<void>;
 }) {
     const { t } = useTranslation();
-    const { pending, submitCreate, confirmDelete } = useSessionMutations(createAction, deleteAction);
+    const { pending, submitCreate, runDelete } = useSessionMutations(createAction, deleteAction);
+    const { requestConfirm, confirmDialog } = useMountedConfirmDialog();
 
     return (
         <>
@@ -47,8 +49,21 @@ export function SessionsPageContent({
                         {pending ? t('common.working') : t('sessions.new')}
                     </button>
                 </form>
-                <SessionList sessions={sessions} pending={pending} onDelete={confirmDelete} />
+                <SessionList
+                    sessions={sessions}
+                    pending={pending}
+                    onDelete={(sessionId) =>
+                        requestConfirm({
+                            title: t('sessions.confirmDelete'),
+                            confirmLabel: t('common.delete'),
+                            cancelLabel: t('common.cancel'),
+                            variant: 'destructive',
+                            onConfirm: () => runDelete(sessionId),
+                        })
+                    }
+                />
             </main>
+            {confirmDialog}
         </>
     );
 }

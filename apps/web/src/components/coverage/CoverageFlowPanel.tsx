@@ -27,7 +27,7 @@ export function CoverageFlowPanel({
 
     if (!flow) {
         return (
-            <div className="rounded border border-[var(--border)] p-4 text-sm text-[var(--muted)]">
+            <div className="flex min-h-[70vh] items-start rounded border border-[var(--border)] p-4 text-sm text-[var(--muted)]">
                 {t('coverage.selectFlow')}
             </div>
         );
@@ -39,62 +39,70 @@ export function CoverageFlowPanel({
     const hasFiles = fileEntries.some(([, files]) => files.length > 0);
 
     return (
-        <section className="grid gap-4 rounded border border-[var(--border)] p-4">
-            <div className="grid gap-1">
+        <section className="flex max-h-[70vh] min-h-0 flex-col overflow-hidden rounded border border-[var(--border)]">
+            <header className="sticky top-0 z-10 border-b border-[var(--border)] bg-[var(--card)] p-4">
                 <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge status={status} />
                     <code className="text-xs">{flow.id}</code>
                 </div>
-                <h2 className="text-lg font-medium">{flow.title}</h2>
-            </div>
-            <div>
-                <h3 className="mb-1 text-sm font-medium">{t('coverage.demanded')}</h3>
-                {row?.demanded.length ? (
-                    <ul className="grid gap-1 text-sm">
-                        {row.demanded.map((cell, index) => (
-                            <li key={`d-${index}`}>{formatCoverageCell(cell)}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-sm text-[var(--muted)]">—</p>
-                )}
-            </div>
-            <div>
-                <h3 className="mb-1 text-sm font-medium">{t('coverage.covered')}</h3>
-                {row?.covered.length ? (
-                    <ul className="grid gap-1 text-sm">
-                        {row.covered.map((cell, index) => (
-                            <li key={`c-${index}`}>{formatCoverageCell(cell)}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-sm text-[var(--muted)]">—</p>
-                )}
-            </div>
-            <div>
-                <h3 className="mb-1 text-sm font-medium">{t('coverage.testFiles')}</h3>
-                {!hasFiles ? (
-                    <p className="text-sm text-[var(--muted)]">{t('coverage.noTestFiles')}</p>
-                ) : (
-                    <div className="grid gap-3 text-sm">
-                        {fileEntries.map(([platform, files]) => (
-                            <div key={platform}>
-                                <div className="font-medium">{platform}</div>
-                                {files.length ? (
-                                    <ul className="grid gap-1 pl-2">
-                                        {files.map((file) => (
-                                            <li key={file}>
-                                                <code className="text-xs">{file}</code>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p className="pl-2 text-[var(--muted)]">—</p>
-                                )}
-                            </div>
-                        ))}
+                <h2 className="mt-1 text-lg font-medium">{flow.title}</h2>
+            </header>
+            <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                <div className="grid gap-4">
+                    <div className="border-b border-[var(--border)] pb-4">
+                        <h3 className="mb-2 text-sm font-medium">{t('coverage.demanded')}</h3>
+                        {row?.demanded.length ? (
+                            <ul className="grid gap-1 text-sm">
+                                {row.demanded.map((cell, index) => (
+                                    <li key={`d-${index}`}>
+                                        <code className="text-xs">{formatCoverageCell(cell)}</code>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-sm text-[var(--muted)]">—</p>
+                        )}
                     </div>
-                )}
+                    <div className="border-b border-[var(--border)] pb-4">
+                        <h3 className="mb-2 text-sm font-medium">{t('coverage.covered')}</h3>
+                        {row?.covered.length ? (
+                            <ul className="grid gap-1 text-sm">
+                                {row.covered.map((cell, index) => (
+                                    <li key={`c-${index}`}>
+                                        <code className="text-xs">{formatCoverageCell(cell)}</code>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-sm text-[var(--muted)]">—</p>
+                        )}
+                    </div>
+                    <div>
+                        <h3 className="mb-2 text-sm font-medium">{t('coverage.testFiles')}</h3>
+                        {!hasFiles ? (
+                            <p className="text-sm text-[var(--muted)]">{t('coverage.noTestFiles')}</p>
+                        ) : (
+                            <div className="grid gap-3 text-sm">
+                                {fileEntries.map(([platform, files]) => (
+                                    <div key={platform}>
+                                        <div className="mb-1 font-medium">{platform}</div>
+                                        {files.length ? (
+                                            <ul className="grid gap-1 border-l-2 border-[var(--border)] pl-3">
+                                                {files.map((file) => (
+                                                    <li key={file}>
+                                                        <code className="break-all text-xs">{file}</code>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <p className="text-[var(--muted)]">—</p>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </section>
     );

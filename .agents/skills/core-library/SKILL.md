@@ -79,4 +79,11 @@ There are no `set-flow-manual`, `set-flow-refs`, or `set-area-scope` aliases. Do
 
 ## Renderers and validate
 
-Markdown and HTML are platform-generic: they loop demanded platforms (plus extra hit platforms) and expose `data-platforms`, not `data-scope`. `validateLedger` returns `idsByScanner`, `ledgerIds`, `missingFromLedger`, and `incompleteCoreIds`.
+`resolveTargets` expands parent targets to **leaf cells** for status math only. **Display** uses `resolveDisplayPlatformLines` in `render/platform-lines.ts`:
+
+- One line per **declared** `flow.targets` entry (parent `web` / `mobile`, not auto-expanded leaves).
+- Files roll up via `platformCovers` from any `filesByPlatform` key.
+- Expand to leaf browsers/OS **only** when `cov.status === 'partial'` for that flow.
+- `[ ] todo` on a line means that display scope is required and not covered.
+
+Markdown and HTML call `resolveDisplayPlatformLines`; HTML exposes `data-platforms` from display lines. `validateLedger` returns `idsByScanner`, `ledgerIds`, `missingFromLedger`, and `incompleteCoreIds`.

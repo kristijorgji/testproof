@@ -46,12 +46,10 @@ is covered. One test may cover **many** `FLOW-…` IDs.
 #### Login
 
 - [x] `FLOW-AUTH-LOGIN-SUCCESS` Correct credentials open the dashboard
-  - **mobile.android:** [ ] `todo`
-  - **mobile.ios:** [ ] `todo`
-  - **web:** [x]
-    [`login.spec.ts`](examples/demo/web-specs/login.spec.ts)
   - **mobile:** [x]
     [`login.yaml`](examples/demo/mobile-flows/login.yaml)
+  - **web:** [x]
+    [`login.spec.ts`](examples/demo/web-specs/login.spec.ts)
 - [x] `FLOW-AUTH-LOGIN-INVALID` Invalid credentials show an error
   - **web:** [x]
     [`login.spec.ts`](examples/demo/web-specs/login.spec.ts)

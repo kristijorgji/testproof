@@ -2,8 +2,7 @@
 
 import type { Ledger } from '@testproof/core';
 
-import { FlowTreeRow } from '../FlowTreeRow/FlowTreeRow';
-
+import { FlowEditorAreaSection } from './FlowEditorAreaSection';
 import { FlowEditorCreateForm } from './FlowEditorCreateForm';
 import type { FlowCoverageById, FlowEditorActions } from './useFlowEditorActions';
 
@@ -11,33 +10,35 @@ export function FlowEditorSidebar({
     ledger,
     coverage,
     actions,
+    onRequestDelete,
+    onAddChild,
 }: {
     ledger: Ledger;
     coverage: FlowCoverageById;
     actions: FlowEditorActions;
+    onRequestDelete: (flowId: string) => void;
+    onAddChild: (flowId: string) => void;
 }) {
-    const { selectedId, setSelectedId } = actions;
+    const { selectedId, setSelectedId, collapsedAreas, toggleArea } = actions;
 
     return (
-        <aside className="w-full border-b border-[var(--border)] md:w-80 md:border-r md:border-b-0">
-            {ledger.areas.map((area) => (
-                <div key={area.id}>
-                    <h2 className="px-3 pt-3 text-xs uppercase text-[var(--muted)]">{area.title}</h2>
-                    {area.groups.flatMap((group) =>
-                        group.flows.map((flow) => (
-                            <FlowTreeRow
-                                key={flow.id}
-                                flow={flow}
-                                status={coverage[flow.id]?.status}
-                                statusByFlowId={(id) => coverage[id]?.status ?? 'todo'}
-                                selectedId={selectedId}
-                                onSelect={setSelectedId}
-                            />
-                        )),
-                    )}
-                </div>
-            ))}
-            <FlowEditorCreateForm actions={actions} />
+        <aside className="flex max-h-[70vh] w-full flex-col border-b border-[var(--border)] md:w-80 md:border-r md:border-b-0">
+            <div className="min-h-0 flex-1 overflow-y-auto">
+                {ledger.areas.map((area) => (
+                    <FlowEditorAreaSection
+                        key={area.id}
+                        area={area}
+                        coverage={coverage}
+                        collapsed={collapsedAreas.has(area.id)}
+                        selectedId={selectedId}
+                        onToggleArea={toggleArea}
+                        onSelect={setSelectedId}
+                        onRequestDelete={onRequestDelete}
+                        onAddChild={onAddChild}
+                    />
+                ))}
+            </div>
+            <FlowEditorCreateForm ledger={ledger} actions={actions} />
         </aside>
     );
 }

@@ -1,4 +1,5 @@
 import type { CoverageStatus, Flow, FlowArea, Ledger } from '@testproof/core';
+import { platformCovers } from '@testproof/core/platforms';
 
 import type { CoverageRow } from '@/lib/coverage-types';
 
@@ -24,8 +25,7 @@ function flowMatchesStatus(
     return flowStatus(flowId, coverage) === statusFilter;
 }
 
-function flowMatchesPlatform(flow: Flow, platformFilter: Set<string>, row: CoverageRow | undefined): boolean {
-    if (platformFilter.size === 0) return true;
+function collectFlowPlatforms(flow: Flow, row: CoverageRow | undefined): Set<string> {
     const platforms = new Set<string>();
     for (const cell of row?.demanded ?? []) platforms.add(cell.platform);
     for (const cell of row?.covered ?? []) platforms.add(cell.platform);
@@ -36,10 +36,21 @@ function flowMatchesPlatform(flow: Flow, platformFilter: Set<string>, row: Cover
         const id = typeof target === 'string' ? target : target.platform;
         platforms.add(id);
     }
-    for (const platform of platformFilter) {
-        if (platforms.has(platform)) return true;
+    return platforms;
+}
+
+function platformSetMatchesFilter(platforms: Set<string>, platformFilter: Set<string>): boolean {
+    for (const filter of platformFilter) {
+        for (const platform of platforms) {
+            if (platformCovers(platform, filter) || platformCovers(filter, platform)) return true;
+        }
     }
     return false;
+}
+
+function flowMatchesPlatform(flow: Flow, platformFilter: Set<string>, row: CoverageRow | undefined): boolean {
+    if (platformFilter.size === 0) return true;
+    return platformSetMatchesFilter(collectFlowPlatforms(flow, row), platformFilter);
 }
 
 function filterFlowTree(
@@ -102,4 +113,9 @@ export function formatCoverageCell(cell: { platform: string; dimensions: Record<
         .map(([key, value]) => `${key}=${value}`)
         .join(', ');
     return dims ? `${cell.platform} (${dims})` : cell.platform;
+}
+
+export function flowTreeContains(flow: Flow, flowId: string): boolean {
+    if (flow.id === flowId) return true;
+    return (flow.children ?? []).some((child) => flowTreeContains(child, flowId));
 }

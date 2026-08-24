@@ -2,15 +2,13 @@
 
 import type { Ledger, LedgerPatch, PlatformNode } from '@testproof/core';
 import { useSearchParams } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 
-import { FlowDetail } from '../FlowDetail/FlowDetail';
-import { PublishDialog } from '../PublishDialog/PublishDialog';
-import { YamlDiff } from '../YamlDiff/YamlDiff';
-
-import { dispatchFlowChange } from './dispatchFlowChange';
+import { FlowEditorMain } from './FlowEditorMain';
 import { FlowEditorSidebar } from './FlowEditorSidebar';
-import { FlowEditorToolbar } from './FlowEditorToolbar';
 import { type FlowCoverageById, useFlowEditorActions } from './useFlowEditorActions';
+
+import { useMountedConfirmDialog } from '@/components/common/ConfirmDialog/useMountedConfirmDialog';
 
 export function FlowEditor({
     ledger,
@@ -35,39 +33,51 @@ export function FlowEditor({
     onReplay: () => Promise<void>;
     onDiscard: () => Promise<void>;
 }) {
+    const { t } = useTranslation();
     const searchParams = useSearchParams();
     const initialSelectedId = searchParams.get('flow') ?? undefined;
     const actions = useFlowEditorActions({ ledger, coverage, onPatch, initialSelectedId });
-    const { selected, tab, apply } = actions;
+    const { selected, setSelectedId, setCreateParentId, getRemoveConfirmFor, removeFlow } = actions;
+    const { requestConfirm, confirmDialog } = useMountedConfirmDialog();
+
+    const requestDeleteForFlow = (flowId: string): void => {
+        const confirm = getRemoveConfirmFor(flowId);
+        if (!confirm) return;
+        requestConfirm({
+            title: confirm.title,
+            description: confirm.description,
+            confirmLabel: t('common.delete'),
+            cancelLabel: t('common.cancel'),
+            variant: 'destructive',
+            onConfirm: () => removeFlow(flowId),
+        });
+    };
 
     return (
         <div className="flex min-h-[70vh] flex-col md:flex-row">
-            <FlowEditorSidebar ledger={ledger} coverage={coverage} actions={actions} />
-            <main className="flex-1 pb-20">
-                <FlowEditorToolbar actions={actions} />
-                {tab === 'changes' ? (
-                    <div className="p-4">
-                        <YamlDiff before={beforeYaml} after={afterYaml} />
-                    </div>
-                ) : selected ? (
-                    <FlowDetail
-                        key={selected.id}
-                        flow={selected}
-                        platforms={platforms}
-                        demanded={coverage[selected.id]?.demanded}
-                        covered={coverage[selected.id]?.covered}
-                        onChange={(partial) => dispatchFlowChange(selected.id, partial, apply)}
-                    />
-                ) : null}
-                <div className="sticky bottom-0 border-t border-[var(--border)] bg-[var(--card)] p-3">
-                    <PublishDialog
-                        conflict={conflict}
-                        onPublish={(input) => void onPublish(input)}
-                        onReplay={() => void onReplay()}
-                        onDiscard={() => void onDiscard()}
-                    />
-                </div>
-            </main>
+            <FlowEditorSidebar
+                ledger={ledger}
+                coverage={coverage}
+                actions={actions}
+                onRequestDelete={requestDeleteForFlow}
+                onAddChild={(flowId) => {
+                    setSelectedId(flowId);
+                    setCreateParentId(flowId);
+                }}
+            />
+            <FlowEditorMain
+                actions={actions}
+                platforms={platforms}
+                coverage={coverage}
+                beforeYaml={beforeYaml}
+                afterYaml={afterYaml}
+                conflict={conflict}
+                onPublish={onPublish}
+                onReplay={onReplay}
+                onDiscard={onDiscard}
+                onRequestDelete={() => selected && requestDeleteForFlow(selected.id)}
+            />
+            {confirmDialog}
         </div>
     );
 }

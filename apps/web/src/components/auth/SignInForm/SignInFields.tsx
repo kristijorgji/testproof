@@ -2,58 +2,76 @@
 
 import { useTranslation } from 'react-i18next';
 
+import type { AuthTab } from './auth-tab';
+import { SignUpNameField } from './SignUpNameField';
+
+import { PasswordInput } from '@/components/common/inputs/PasswordInput/PasswordInput';
+
+const inputClass = 'w-full rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2 disabled:opacity-60';
+
 export function SignInFields({
+    tab,
     name,
     setName,
     email,
     setEmail,
     password,
     setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    passwordError,
     disabled,
 }: {
+    tab: AuthTab;
     name: string;
-    setName: (value: string) => void;
+    setName: (v: string) => void;
     email: string;
-    setEmail: (value: string) => void;
+    setEmail: (v: string) => void;
     password: string;
-    setPassword: (value: string) => void;
+    setPassword: (v: string) => void;
+    confirmPassword: string;
+    setConfirmPassword: (v: string) => void;
+    passwordError?: string;
     disabled?: boolean;
 }) {
     const { t } = useTranslation();
+    const isSignUp = tab === 'signUp';
+
     return (
         <>
-            <input
-                name="name"
-                className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2 disabled:opacity-60"
-                type="text"
-                autoComplete="name"
-                placeholder={t('auth.name')}
-                value={name}
-                disabled={disabled}
-                onChange={(event) => setName(event.target.value)}
-            />
+            {isSignUp ? <SignUpNameField name={name} setName={setName} disabled={disabled} /> : null}
             <input
                 name="email"
-                className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2 disabled:opacity-60"
+                className={inputClass}
                 type="email"
                 autoComplete="email"
                 placeholder={t('auth.email')}
                 value={email}
                 required
                 disabled={disabled}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
             />
-            <input
+            <PasswordInput
                 name="password"
-                className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2 disabled:opacity-60"
-                type="password"
-                autoComplete="current-password"
+                autoComplete={isSignUp ? 'new-password' : 'current-password'}
                 placeholder={t('auth.password')}
                 value={password}
                 required
                 disabled={disabled}
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
             />
+            {isSignUp ? (
+                <PasswordInput
+                    name="confirmPassword"
+                    autoComplete="new-password"
+                    placeholder={t('auth.confirmPassword')}
+                    value={confirmPassword}
+                    required
+                    disabled={disabled}
+                    error={passwordError}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+            ) : null}
         </>
     );
 }

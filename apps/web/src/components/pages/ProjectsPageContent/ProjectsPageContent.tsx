@@ -1,21 +1,27 @@
 'use client';
 
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+
+import { ProjectListRow } from './ProjectListRow';
+import { useProjectDeleteAction } from './useProjectDeleteAction';
 
 import { SignOutButton } from '@/components/auth/SignOutButton/SignOutButton';
 import { CreateProjectFields } from '@/components/projects/CreateProjectFields/CreateProjectFields';
 
-export type ProjectListItem = { id: string; name: string; slug: string };
+export type { ProjectListItem } from './ProjectListRow';
 
 export function ProjectsPageContent({
     projects,
     createAction,
+    deleteAction,
 }: {
-    projects: ProjectListItem[];
+    projects: { id: string; name: string; slug: string }[];
     createAction: (formData: FormData) => void | Promise<void>;
+    deleteAction: (projectId: string) => void | Promise<void>;
 }) {
     const { t } = useTranslation();
+    const { deleting, requestDelete, confirmDialog } = useProjectDeleteAction(deleteAction);
+
     return (
         <main className="mx-auto max-w-3xl p-6">
             <div className="mb-4 flex items-center justify-between">
@@ -31,16 +37,10 @@ export function ProjectsPageContent({
             {projects.length === 0 ? <p className="text-[var(--muted)]">{t('projects.empty')}</p> : null}
             <ul className="grid gap-2">
                 {projects.map((project) => (
-                    <li key={project.id}>
-                        <Link
-                            className="block rounded border border-[var(--border)] p-3"
-                            href={`/projects/${project.id}`}
-                        >
-                            {project.name} <span className="text-[var(--muted)]">/{project.slug}</span>
-                        </Link>
-                    </li>
+                    <ProjectListRow key={project.id} project={project} deleting={deleting} onDelete={requestDelete} />
                 ))}
             </ul>
+            {confirmDialog}
         </main>
     );
 }

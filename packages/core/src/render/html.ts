@@ -2,6 +2,8 @@ import { type FlowCoverage, summarizeCoverage } from '../coverage.js';
 import { flattenPlatformNodes } from '../platforms.js';
 import { type CoverageStatus, DEFAULT_PLATFORMS, type Flow, type Ledger } from '../schema.js';
 
+import { resolveDisplayPlatformLines } from './platform-lines.js';
+
 function escapeHtml(value: string): string {
     return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 }
@@ -16,21 +18,23 @@ function fileLinks(files: string[]): string {
         .join(', ');
 }
 
-function renderFlowHtml(flow: Flow, coverage: Map<string, FlowCoverage>, depth: number): string {
+function renderFlowHtml(flow: Flow, coverage: Map<string, FlowCoverage>, ledger: Ledger, depth: number): string {
     const cov = coverage.get(flow.id);
     const status = cov?.status ?? 'todo';
-    const children = (flow.children ?? []).map((c) => renderFlowHtml(c, coverage, depth + 1)).join('');
+    const children = (flow.children ?? []).map((c) => renderFlowHtml(c, coverage, ledger, depth + 1)).join('');
     const refs = flow.refs?.length ? `<span class="refs">${escapeHtml(flow.refs.join(', '))}</span>` : '';
-    const files = cov?.filesByPlatform ?? {};
-    const demandedPlatforms = [...new Set((cov?.demanded ?? []).map((cell) => cell.platform))].sort();
-    const extraPlatforms = Object.keys(files)
-        .filter((name) => !demandedPlatforms.includes(name))
-        .sort();
-    const platforms = [...demandedPlatforms, ...extraPlatforms].map(
-        (name) => `<div><strong>${escapeHtml(name)}:</strong> ${fileLinks(files[name] ?? [])}</div>`,
-    );
+    const displayLines = cov && status !== 'manual' ? resolveDisplayPlatformLines(flow, cov, ledger) : [];
+    const platformIds = displayLines.map((line) => line.platform);
+    const platforms = displayLines.map((line) => {
+        const dims = Object.entries(line.dimensions)
+            .map(([key, value]) => `${key}=${value}`)
+            .join(', ');
+        const label = dims ? `${line.platform} (${dims})` : line.platform;
+        const files = line.covered ? line.files : [];
+        return `<div><strong>${escapeHtml(label)}:</strong> ${fileLinks(files)}</div>`;
+    });
     return `
-<details class="flow" data-status="${status}" data-platforms="${escapeHtml([...demandedPlatforms, ...extraPlatforms].join(' '))}" data-id="${escapeHtml(flow.id)}" data-title="${escapeHtml(flow.title.toLowerCase())}" open>
+<details class="flow" data-status="${status}" data-platforms="${escapeHtml(platformIds.join(' '))}" data-id="${escapeHtml(flow.id)}" data-title="${escapeHtml(flow.title.toLowerCase())}" open>
   <summary>
     <span class="badge ${status}">${status}</span>
     <code>${escapeHtml(flow.id)}</code>
@@ -60,7 +64,7 @@ export function renderFlowsHtml(
                     const heading = group.subtitle
                         ? `${escapeHtml(group.title)} — ${escapeHtml(group.subtitle)}`
                         : escapeHtml(group.title);
-                    const flows = group.flows.map((f) => renderFlowHtml(f, coverage, 0)).join('');
+                    const flows = group.flows.map((f) => renderFlowHtml(f, coverage, ledger, 0)).join('');
                     const notes = group.notes ? `<p class="notes">${escapeHtml(group.notes.trim())}</p>` : '';
                     return `<section class="group"><h3>${heading}</h3>${notes}${flows}</section>`;
                 })

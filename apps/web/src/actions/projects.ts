@@ -1,6 +1,7 @@
 'use server';
 
 import { projects } from '@testproof/db';
+import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -29,4 +30,12 @@ export async function createProject(formData: FormData): Promise<void> {
     if (!row) throw new Error('Could not create project');
     revalidatePath('/projects');
     redirect(`/projects/${row.id}`);
+}
+
+export async function deleteProject(projectId: string): Promise<void> {
+    await requireUser();
+    const id = projectId.trim();
+    if (!id) throw new Error('Project id is required');
+    await getDb().delete(projects).where(eq(projects.id, id));
+    revalidatePath('/projects');
 }

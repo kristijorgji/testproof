@@ -1,9 +1,9 @@
 'use client';
 
 import type { Ledger } from '@testproof/core';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { filterLedgerForCoverage, type CoverageStatusFilter } from './coverage-filters';
+import { filterLedgerForCoverage, flowTreeContains, type CoverageStatusFilter } from './coverage-filters';
 
 import type { CoverageRow } from '@/lib/coverage-types';
 
@@ -18,6 +18,14 @@ export function useCoverageFilters({ ledger, coverage }: { ledger: Ledger; cover
         () => filterLedgerForCoverage(ledger, query, statusFilter, platformFilter, coverage),
         [ledger, query, statusFilter, platformFilter, coverage],
     );
+
+    useEffect(() => {
+        if (!selectedFlowId) return;
+        const visible = filteredAreas.some((area) =>
+            area.groups.some((group) => group.flows.some((flow) => flowTreeContains(flow, selectedFlowId))),
+        );
+        if (!visible) setSelectedFlowId(undefined);
+    }, [filteredAreas, selectedFlowId]);
 
     return {
         query,

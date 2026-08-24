@@ -50,7 +50,7 @@ export function CoveragePageContent({
                             onTogglePlatform={filters.togglePlatform}
                             onClearPlatforms={filters.clearPlatforms}
                         />
-                        <div className="grid gap-4 lg:grid-cols-2">
+                        <div className="grid min-h-0 gap-4 lg:grid-cols-2 lg:items-start">
                             <CoverageTree
                                 projectId={projectId}
                                 areas={filters.filteredAreas}

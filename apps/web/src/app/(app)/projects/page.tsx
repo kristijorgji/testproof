@@ -1,6 +1,6 @@
 import { projects } from '@testproof/db';
 
-import { createProject } from '@/actions/projects';
+import { createProject, deleteProject } from '@/actions/projects';
 import { type ProjectListItem, ProjectsPageContent } from '@/components/pages/ProjectsPageContent/ProjectsPageContent';
 import { getDb } from '@/server/db';
 import { requireUser } from '@/server/session';
@@ -13,5 +13,5 @@ export default async function ProjectsPage() {
     } catch {
         // Keep the empty list when the database is not available.
     }
-    return <ProjectsPageContent projects={rows} createAction={createProject} />;
+    return <ProjectsPageContent projects={rows} createAction={createProject} deleteAction={deleteProject} />;
 }

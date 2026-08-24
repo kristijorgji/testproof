@@ -35,6 +35,8 @@
     "postconditions": "Nachbedingungen",
     "unset": "Nicht gesetzt",
     "addFlow": "Flow hinzufügen",
+    "addChildFlow": "Kind hinzufügen",
+    "selectGroup": "Gruppe",
     "addArea": "Bereich hinzufügen",
     "newFlowId": "FLOW-AREA-NAME",
     "newFlowTitle": "Flow-Titel",
@@ -80,7 +82,10 @@
     "confirmDelete": "Diese Sitzung löschen?"
   },
   "common": {
-    "working": "Wird ausgeführt…"
+    "working": "Wird ausgeführt…",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "delete": "Löschen"
   },
   "conflict": {
     "title": "Remote-Ledger geändert",
@@ -91,11 +96,22 @@
     "signIn": "Anmelden",
     "signUp": "Konto erstellen",
     "signOut": "Abmelden",
+    "signInTab": "Anmelden",
+    "signUpTab": "Konto erstellen",
     "github": "Mit GitHub fortfahren",
     "email": "E-Mail",
     "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
     "name": "Name",
+    "nameOptional": "Name (optional)",
     "failed": "Anmeldung fehlgeschlagen",
+    "signUpFailed": "Konto konnte nicht erstellt werden",
+    "passwordMismatch": "Passwörter stimmen nicht überein",
+    "githubNotConfigured": "GitHub-Anmeldung ist auf diesem Server nicht konfiguriert. GITHUB_CLIENT_ID und GITHUB_CLIENT_SECRET setzen.",
+    "githubFailed": "GitHub-Anmeldung fehlgeschlagen. Erneut versuchen oder E-Mail nutzen.",
+    "networkError": "Netzwerkfehler. Verbindung prüfen und erneut versuchen.",
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort verbergen",
     "working": "Wird ausgeführt…"
   },
   "ledgerConfig": {
@@ -107,7 +123,10 @@
     "empty": "Noch keine Projekte.",
     "name": "Projektname",
     "slug": "slug",
-    "create": "Projekt erstellen"
+    "create": "Projekt erstellen",
+    "delete": "Löschen",
+    "confirmDelete": "Dieses Projekt löschen? Alle Läufe, Sitzungen und Ledger-Daten werden entfernt.",
+    "deleting": "Wird gelöscht…"
   },
   "project": {
     "title": "Projekt"

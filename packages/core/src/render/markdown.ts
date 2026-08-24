@@ -2,6 +2,8 @@ import { DEFAULT_MARKDOWN, type MarkdownRenderConfig } from '../config.js';
 import type { FlowCoverage } from '../coverage.js';
 import type { Flow, FlowArea, FlowGroup, Ledger } from '../schema.js';
 
+import { resolveDisplayPlatformLines } from './platform-lines.js';
+
 function linkLabel(repoRelativePath: string): string {
     const base = repoRelativePath.split('/').pop() ?? repoRelativePath;
     return base;
@@ -31,8 +33,8 @@ function wrapProse(text: string, indent: string, width = 100): string[] {
     return out;
 }
 
-function renderPlatformLine(platform: string, files: string[], indent: string): string[] {
-    if (files.length === 0) {
+function renderPlatformLine(platform: string, files: string[], covered: boolean, indent: string): string[] {
+    if (!covered && files.length === 0) {
         return [`${indent}- **${platform}:** [ ] \`todo\``];
     }
     const lines: string[] = [`${indent}- **${platform}:** [x]`];
@@ -42,7 +44,7 @@ function renderPlatformLine(platform: string, files: string[], indent: string): 
     return lines;
 }
 
-function renderFlow(flow: Flow, coverage: Map<string, FlowCoverage>, depth: number): string[] {
+function renderFlow(flow: Flow, coverage: Map<string, FlowCoverage>, ledger: Ledger, depth: number): string[] {
     const cov = coverage.get(flow.id);
     const status = cov?.status ?? 'todo';
     const topChecked = status === 'automated' || status === 'manual' ? 'x' : ' ';
@@ -62,16 +64,18 @@ function renderFlow(flow: Flow, coverage: Map<string, FlowCoverage>, depth: numb
         lines.push(head);
         lines.push(...wrapProse(rest, `${indent}  `));
     }
-    if (status !== 'manual') {
-        const files = cov?.filesByPlatform ?? {};
-        const demandedPlatforms = [...new Set((cov?.demanded ?? []).map((cell) => cell.platform))].sort();
-        const extraPlatforms = Object.keys(files).filter((name) => !demandedPlatforms.includes(name));
-        for (const platform of [...demandedPlatforms, ...extraPlatforms.sort()]) {
-            lines.push(...renderPlatformLine(platform, files[platform] ?? [], childIndent));
+    if (status !== 'manual' && cov) {
+        const dims = (line: { dimensions: Record<string, string> }): string =>
+            Object.entries(line.dimensions)
+                .map(([key, value]) => `${key}=${value}`)
+                .join(', ');
+        for (const line of resolveDisplayPlatformLines(flow, cov, ledger)) {
+            const label = dims(line) ? `${line.platform} (${dims(line)})` : line.platform;
+            lines.push(...renderPlatformLine(label, line.files, line.covered, childIndent));
         }
     }
     for (const child of flow.children ?? []) {
-        lines.push(...renderFlow(child, coverage, depth + 1));
+        lines.push(...renderFlow(child, coverage, ledger, depth + 1));
     }
     return lines;
 }
@@ -83,7 +87,7 @@ function slugify(title: string): string {
         .replace(/^-|-$/g, '');
 }
 
-function renderGroupBody(group: FlowGroup, coverage: Map<string, FlowCoverage>): string[] {
+function renderGroupBody(group: FlowGroup, coverage: Map<string, FlowCoverage>, ledger: Ledger): string[] {
     const lines: string[] = [];
     if (group.subtitle) {
         lines.push(`##### ${group.subtitle}`, '');
@@ -92,13 +96,13 @@ function renderGroupBody(group: FlowGroup, coverage: Map<string, FlowCoverage>):
         lines.push(...wrapProse(group.notes.trim(), ''), '');
     }
     for (const flow of group.flows) {
-        lines.push(...renderFlow(flow, coverage, 0));
+        lines.push(...renderFlow(flow, coverage, ledger, 0));
     }
     lines.push('');
     return lines;
 }
 
-function renderArea(area: FlowArea, coverage: Map<string, FlowCoverage>): string[] {
+function renderArea(area: FlowArea, coverage: Map<string, FlowCoverage>, ledger: Ledger): string[] {
     const lines: string[] = [`### ${area.title}`, ''];
     if (area.intro?.trim()) {
         lines.push(...wrapProse(area.intro.trim(), ''), '');
@@ -118,7 +122,7 @@ function renderArea(area: FlowArea, coverage: Map<string, FlowCoverage>): string
                 lastTitledGroup = group.title;
             }
         }
-        lines.push(...renderGroupBody(group, coverage));
+        lines.push(...renderGroupBody(group, coverage, ledger));
     }
     return lines;
 }
@@ -182,7 +186,7 @@ export function renderFlowsMarkdown(
     ];
 
     for (const area of ledger.areas) {
-        lines.push(...renderArea(area, coverage));
+        lines.push(...renderArea(area, coverage, ledger));
     }
 
     return `${lines.join('\n').replace(/\n{3,}/g, '\n\n')}\n`;

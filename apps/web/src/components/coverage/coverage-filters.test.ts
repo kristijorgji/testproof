@@ -65,3 +65,46 @@ describe('filterLedgerForCoverage', () => {
         expect(ids).toEqual(['FLOW-A']);
     });
 });
+
+describe('hierarchical platform filter', () => {
+    const hierarchicalLedger: Ledger = {
+        version: 2,
+        platforms: [
+            {
+                id: 'web',
+                title: 'Web',
+                children: [
+                    { id: 'web.chrome', title: 'Chrome' },
+                    { id: 'web.safari', title: 'Safari' },
+                ],
+            },
+        ],
+        areas: [
+            {
+                id: 'AUTH',
+                title: 'Auth',
+                groups: [
+                    {
+                        title: 'Login',
+                        flows: [{ id: 'FLOW-A', title: 'Sign in', targets: ['web'] }],
+                    },
+                ],
+            },
+        ],
+    };
+
+    const hierarchicalCoverage: Record<string, CoverageRow> = {
+        'FLOW-A': {
+            status: 'automated',
+            demanded: [{ platform: 'web.chrome', dimensions: {} }],
+            covered: [{ platform: 'web', dimensions: {} }],
+            files: { web: ['a.spec.ts'] },
+        },
+    };
+
+    it('matches parent filter to child demanded platforms', () => {
+        const areas = filterLedgerForCoverage(hierarchicalLedger, '', 'all', new Set(['web']), hierarchicalCoverage);
+        const ids = areas.flatMap((area) => area.groups.flatMap((group) => group.flows.map((flow: Flow) => flow.id)));
+        expect(ids).toEqual(['FLOW-A']);
+    });
+});

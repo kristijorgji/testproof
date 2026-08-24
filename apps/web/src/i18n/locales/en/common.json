@@ -35,6 +35,8 @@
     "postconditions": "Postconditions",
     "unset": "Unset",
     "addFlow": "Add flow",
+    "addChildFlow": "Add child",
+    "selectGroup": "Group",
     "addArea": "Add area",
     "newFlowId": "FLOW-AREA-NAME",
     "newFlowTitle": "Flow title",
@@ -80,7 +82,10 @@
     "confirmDelete": "Delete this session?"
   },
   "common": {
-    "working": "Working…"
+    "working": "Working…",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete"
   },
   "conflict": {
     "title": "Remote ledger changed",
@@ -91,11 +96,22 @@
     "signIn": "Sign in",
     "signUp": "Create account",
     "signOut": "Sign out",
+    "signInTab": "Sign in",
+    "signUpTab": "Create account",
     "github": "Continue with GitHub",
     "email": "Email",
     "password": "Password",
+    "confirmPassword": "Confirm password",
     "name": "Name",
+    "nameOptional": "Name (optional)",
     "failed": "Could not sign in",
+    "signUpFailed": "Could not create account",
+    "passwordMismatch": "Passwords do not match",
+    "githubNotConfigured": "GitHub sign-in is not configured on this server. Set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET.",
+    "githubFailed": "GitHub sign-in failed. Try again or use email.",
+    "networkError": "Network error. Check your connection and try again.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
     "working": "Working…"
   },
   "ledgerConfig": {
@@ -107,7 +123,10 @@
     "empty": "No projects yet.",
     "name": "Project name",
     "slug": "slug",
-    "create": "Create project"
+    "create": "Create project",
+    "delete": "Delete",
+    "confirmDelete": "Delete this project? All runs, sessions, and ledger data for this project will be removed.",
+    "deleting": "Deleting…"
   },
   "project": {
     "title": "Project"
