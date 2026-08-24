@@ -127,6 +127,8 @@ services:
       DATABASE_URL: postgres://testproof:testproof@postgres:5432/testproof
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3100}
+      TESTPROOF_DEFAULT_STORAGE: file
+      TESTPROOF_DEFAULT_LEDGER_FILE: /data/flows.yaml
     depends_on:
       postgres:
         condition: service_healthy
@@ -136,6 +138,12 @@ The container listens on 3100. Publish a different host port with
 `TESTPROOF_PORT`. `BETTER_AUTH_URL` is the public origin of this web UI
 (Better Auth is served from the same app) and must match the URL you open,
 for example `http://localhost:3200` when `TESTPROOF_PORT=3200`.
+
+`TESTPROOF_DEFAULT_STORAGE=file` plus `TESTPROOF_DEFAULT_LEDGER_FILE` seed
+new projects so **Flows** opens the mounted YAML immediately. Without those
+env vars, create a project then Settings → Storage → `file` and set the
+absolute path inside the container (for the snippet above,
+`/data/flows.yaml`).
 
 Create an env file next to that compose (not this repo’s `.env.example`) and
 set `BETTER_AUTH_SECRET` to at least 32 characters. Then from the product
@@ -147,10 +155,8 @@ docker compose --env-file .env.testproof up -d
 
 The image entrypoint runs `node packages/db/dist/migrate.js` before the app
 starts. Open http://localhost:3100 and sign up with email and password. Create
-a project. Settings → Storage → `file`, and enter **`/data/flows.yaml`** — the
-path **inside the container**, not the host path. Save.
-
-Flows → edit → Publish. The container writes through the mount into
+a project, then open **Flows** (with the default-storage env vars above the
+ledger is already wired). Edit → Publish writes through the mount into
 `docs/testing/flows.yaml`. Then:
 
 ```bash
@@ -623,15 +629,17 @@ is computed in CI by the CLI and posted to `POST /api/v1/coverage`.
 
 Environment (from `.env.example`):
 
-| Variable                                                  | Purpose                                                   |
-| --------------------------------------------------------- | --------------------------------------------------------- |
-| `DATABASE_URL`                                            | Postgres                                                  |
-| `BETTER_AUTH_SECRET`                                      | Session secret (≥ 32 characters)                          |
-| `TESTPROOF_PORT`                                          | Host port mapped to the container’s 3100 (default 3100)   |
-| `BETTER_AUTH_URL`                                         | Public origin of this web UI; must match the URL you open |
-| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`               | OAuth                                                     |
-| `GITHUB_WEBHOOK_SECRET`                                   | HMAC for `POST /api/webhooks/github`                      |
-| `TESTPROOF_URL` / `TESTPROOF_TOKEN` / `TESTPROOF_PROJECT` | CLI `push` and `ledger pull` / `ledger push`              |
+| Variable                                                  | Purpose                                                             |
+| --------------------------------------------------------- | ------------------------------------------------------------------- |
+| `DATABASE_URL`                                            | Postgres                                                            |
+| `BETTER_AUTH_SECRET`                                      | Session secret (≥ 32 characters)                                    |
+| `TESTPROOF_PORT`                                          | Host port mapped to the container’s 3100 (default 3100)             |
+| `BETTER_AUTH_URL`                                         | Public origin of this web UI; must match the URL you open           |
+| `TESTPROOF_DEFAULT_STORAGE`                               | When `file`, new projects use file storage (with ledger path below) |
+| `TESTPROOF_DEFAULT_LEDGER_FILE`                           | Absolute path inside the container for new file-mode projects       |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`               | OAuth                                                               |
+| `GITHUB_WEBHOOK_SECRET`                                   | HMAC for `POST /api/webhooks/github`                                |
+| `TESTPROOF_URL` / `TESTPROOF_TOKEN` / `TESTPROOF_PROJECT` | CLI `push` and `ledger pull` / `ledger push`                        |
 
 ## HTTP API
 

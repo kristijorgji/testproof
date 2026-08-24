@@ -9,6 +9,7 @@ export function SignInFields({
     setEmail,
     password,
     setPassword,
+    disabled,
 }: {
     name: string;
     setName: (value: string) => void;
@@ -16,37 +17,41 @@ export function SignInFields({
     setEmail: (value: string) => void;
     password: string;
     setPassword: (value: string) => void;
+    disabled?: boolean;
 }) {
     const { t } = useTranslation();
     return (
         <>
             <input
                 name="name"
-                className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
+                className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2 disabled:opacity-60"
                 type="text"
                 autoComplete="name"
                 placeholder={t('auth.name')}
                 value={name}
+                disabled={disabled}
                 onChange={(event) => setName(event.target.value)}
             />
             <input
                 name="email"
-                className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
+                className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2 disabled:opacity-60"
                 type="email"
                 autoComplete="email"
                 placeholder={t('auth.email')}
                 value={email}
                 required
+                disabled={disabled}
                 onChange={(event) => setEmail(event.target.value)}
             />
             <input
                 name="password"
-                className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
+                className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2 disabled:opacity-60"
                 type="password"
                 autoComplete="current-password"
                 placeholder={t('auth.password')}
                 value={password}
                 required
+                disabled={disabled}
                 onChange={(event) => setPassword(event.target.value)}
             />
         </>
