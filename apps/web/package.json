@@ -37,7 +37,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@storybook/addon-a11y": "^10.5.9",
+    "@storybook/addon-a11y": "^10.5.10",
     "@storybook/react-vite": "^10.5.10",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.2.0",
