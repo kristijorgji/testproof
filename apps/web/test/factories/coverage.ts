@@ -5,6 +5,7 @@ export function createCoverageRow(overrides: Partial<CoverageRow> = {}): Coverag
         status: 'automated',
         demanded: [{ platform: 'web', dimensions: {} }],
         covered: [{ platform: 'web', dimensions: {} }],
+        files: { web: ['home.spec.ts'] },
         ...overrides,
     };
 }

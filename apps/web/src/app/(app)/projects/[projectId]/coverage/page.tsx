@@ -1,10 +1,9 @@
 import { parseLedger } from '@testproof/core';
-import { flattenFlows } from '@testproof/core/parse';
 import { notFound } from 'next/navigation';
 
 import { CoveragePageContent } from '@/components/pages/CoveragePageContent/CoveragePageContent';
 import { LedgerConfigGateContent } from '@/components/pages/LedgerConfigGateContent/LedgerConfigGateContent';
-import { getLatestCoverage } from '@/server/coverage';
+import { getLatestCoverageSnapshot } from '@/server/coverage';
 import { isLedgerConfigError } from '@/server/ledger-config-error';
 import { readProjectLedger } from '@/server/ledger-source';
 import { getProject } from '@/server/project';
@@ -18,14 +17,15 @@ export default async function CoveragePage({ params }: { params: Promise<{ proje
 
     try {
         const ledgerFile = await readProjectLedger(projectId, user.id);
-        const coverage = await getLatestCoverage(projectId);
-        const flows = flattenFlows(parseLedger(ledgerFile.content));
+        const { rows, snapshot } = await getLatestCoverageSnapshot(projectId);
+        const ledger = parseLedger(ledgerFile.content);
         return (
             <CoveragePageContent
                 name={project.name}
                 projectId={projectId}
-                coverage={coverage}
-                flows={flows.map((flow) => ({ id: flow.id, title: flow.title }))}
+                ledger={ledger}
+                coverage={rows}
+                snapshot={snapshot}
             />
         );
     } catch (error) {
