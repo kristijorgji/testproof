@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 
+import { deleteProject } from '@/actions/projects';
 import { deleteApiToken, listProjectApiTokens, saveRepo } from '@/actions/settings';
 import { SettingsPageContent } from '@/components/pages/SettingsPageContent/SettingsPageContent';
 import { getProject, getProjectRepo } from '@/server/project';
@@ -22,6 +23,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ proje
             tokens={tokens}
             saveRepoAction={saveRepo.bind(null, projectId)}
             deleteTokenAction={deleteApiToken.bind(null, projectId)}
+            deleteAction={deleteProject}
         />
     );
 }

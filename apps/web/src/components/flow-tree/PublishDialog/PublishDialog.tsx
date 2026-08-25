@@ -3,64 +3,78 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { PublishConflictPanel } from './PublishConflictPanel';
+
+import type { PublishStorage } from '@/actions/action-result';
+import { FormAlert } from '@/components/common/FormAlert/FormAlert';
+
 export function PublishDialog({
+    storage,
     conflict,
+    pending,
+    formError,
     onPublish,
     onReplay,
     onDiscard,
 }: {
+    storage: PublishStorage;
     conflict?: { remote: string; draft: string };
-    onPublish?: (input: { message: string; pullRequest: boolean }) => void;
-    onReplay?: () => void;
-    onDiscard?: () => void;
+    pending: boolean;
+    formError: string | null;
+    onPublish: (input: { message: string; pullRequest: boolean }) => void;
+    onReplay: () => void;
+    onDiscard: () => void;
 }) {
     const { t } = useTranslation();
     const [message, setMessage] = useState('chore: update flows ledger');
-    const [pullRequest, setPullRequest] = useState(true);
+    const [pullRequest, setPullRequest] = useState(false);
+    const canPullRequest = storage === 'git';
+    const submitLabel =
+        storage === 'file'
+            ? t('editor.publishToFile')
+            : storage === 'db'
+              ? t('editor.publishToDb')
+              : t('editor.publish');
 
     if (conflict) {
-        return (
-            <div className="rounded border border-red-400 p-4">
-                <h2 className="mb-2 font-semibold">{t('conflict.title')}</h2>
-                <div className="grid gap-2 md:grid-cols-2">
-                    <pre className="max-h-64 overflow-auto text-xs">{conflict.remote}</pre>
-                    <pre className="max-h-64 overflow-auto text-xs">{conflict.draft}</pre>
-                </div>
-                <div className="mt-3 flex gap-2">
-                    <button
-                        type="button"
-                        className="rounded bg-[var(--accent)] px-3 py-1 text-white"
-                        onClick={onReplay}
-                    >
-                        {t('conflict.replay')}
-                    </button>
-                    <button type="button" className="rounded border px-3 py-1" onClick={onDiscard}>
-                        {t('conflict.discard')}
-                    </button>
-                </div>
-            </div>
-        );
+        return <PublishConflictPanel conflict={conflict} pending={pending} onReplay={onReplay} onDiscard={onDiscard} />;
     }
 
     return (
         <form
             className="flex flex-col gap-3 rounded border border-[var(--border)] p-4"
-            onSubmit={(e) => {
-                e.preventDefault();
-                onPublish?.({ message, pullRequest });
+            onSubmit={(event) => {
+                event.preventDefault();
+                onPublish({
+                    message: canPullRequest ? message : 'chore: update flows ledger',
+                    pullRequest: canPullRequest ? pullRequest : false,
+                });
             }}
         >
-            <input
-                className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-            />
-            <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" checked={pullRequest} onChange={(e) => setPullRequest(e.target.checked)} />
-                {t('editor.pullRequest')}
-            </label>
-            <button type="submit" className="rounded bg-[var(--accent)] px-3 py-2 text-white">
-                {t('editor.publish')}
+            {canPullRequest ? (
+                <>
+                    <input
+                        className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
+                        value={message}
+                        onChange={(event) => setMessage(event.target.value)}
+                    />
+                    <label className="flex items-center gap-2 text-sm">
+                        <input
+                            type="checkbox"
+                            checked={pullRequest}
+                            onChange={(event) => setPullRequest(event.target.checked)}
+                        />
+                        {t('editor.pullRequest')}
+                    </label>
+                </>
+            ) : null}
+            {formError ? <FormAlert variant="error" message={formError} /> : null}
+            <button
+                type="submit"
+                disabled={pending}
+                className="rounded bg-[var(--accent)] px-3 py-2 text-white disabled:opacity-60"
+            >
+                {pending ? t('common.working') : submitLabel}
             </button>
         </form>
     );

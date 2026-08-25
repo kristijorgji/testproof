@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { Toaster } from '@/components/common/Toaster/Toaster';
 import { I18nProvider } from '@/components/i18n/I18nProvider/I18nProvider';
 import { ThemeProvider } from '@/components/theme/ThemeProvider/ThemeProvider';
 import { getLocaleFromCookie } from '@/i18n/get-locale';
@@ -21,7 +22,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             </head>
             <body>
                 <I18nProvider locale={locale}>
-                    <ThemeProvider initialMode="system">{children}</ThemeProvider>
+                    <ThemeProvider initialMode="system">
+                        {children}
+                        <Toaster />
+                    </ThemeProvider>
                 </I18nProvider>
             </body>
         </html>

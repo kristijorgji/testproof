@@ -4,11 +4,14 @@ import type { PlatformNode } from '@testproof/core';
 
 import { FlowDetail } from '../FlowDetail/FlowDetail';
 import { PublishDialog } from '../PublishDialog/PublishDialog';
+import { usePublishAction } from '../PublishDialog/usePublishAction';
 import { YamlDiff } from '../YamlDiff/YamlDiff';
 
 import { dispatchFlowChange } from './dispatchFlowChange';
 import { FlowEditorToolbar } from './FlowEditorToolbar';
 import type { FlowCoverageById, FlowEditorActions } from './useFlowEditorActions';
+
+import type { DraftActionResult, PublishResult, PublishStorage } from '@/actions/action-result';
 
 export function FlowEditorMain({
     actions,
@@ -17,6 +20,8 @@ export function FlowEditorMain({
     beforeYaml,
     afterYaml,
     conflict,
+    storage,
+    ledgerFilePath,
     onPublish,
     onReplay,
     onDiscard,
@@ -28,38 +33,47 @@ export function FlowEditorMain({
     beforeYaml: string;
     afterYaml: string;
     conflict?: { remote: string; draft: string };
-    onPublish: (input: { message: string; pullRequest: boolean }) => Promise<void>;
-    onReplay: () => Promise<void>;
-    onDiscard: () => Promise<void>;
+    storage: PublishStorage;
+    ledgerFilePath: string | null;
+    onPublish: (input: { message: string; pullRequest: boolean }) => Promise<PublishResult>;
+    onReplay: () => Promise<DraftActionResult>;
+    onDiscard: () => Promise<DraftActionResult>;
     onRequestDelete: () => void;
 }) {
     const { selected, tab, apply } = actions;
+    const publish = usePublishAction({ storage, ledgerFilePath, onPublish, onReplay, onDiscard });
 
     return (
-        <main className="flex-1 pb-20">
+        <main className="flex min-h-0 flex-1 flex-col">
             <FlowEditorToolbar actions={actions} onRequestDelete={onRequestDelete} />
-            {tab === 'changes' ? (
-                <div className="p-4">
-                    <YamlDiff before={beforeYaml} after={afterYaml} />
-                </div>
-            ) : selected ? (
-                <FlowDetail
-                    key={selected.id}
-                    flow={selected}
-                    platforms={platforms}
-                    demanded={coverage[selected.id]?.demanded}
-                    covered={coverage[selected.id]?.covered}
-                    onChange={(partial) => dispatchFlowChange(selected.id, partial, apply)}
-                />
-            ) : null}
+            <div className="min-h-0 flex-1 overflow-y-auto pb-4">
+                {tab === 'changes' ? (
+                    <div className="p-4">
+                        <YamlDiff before={beforeYaml} after={afterYaml} />
+                    </div>
+                ) : selected ? (
+                    <FlowDetail
+                        key={selected.id}
+                        flow={selected}
+                        platforms={platforms}
+                        demanded={coverage[selected.id]?.demanded}
+                        covered={coverage[selected.id]?.covered}
+                        onChange={(partial) => dispatchFlowChange(selected.id, partial, apply)}
+                    />
+                ) : null}
+            </div>
             <div className="sticky bottom-0 border-t border-[var(--border)] bg-[var(--card)] p-3">
                 <PublishDialog
+                    storage={storage}
                     conflict={conflict}
-                    onPublish={(input) => void onPublish(input)}
-                    onReplay={() => void onReplay()}
-                    onDiscard={() => void onDiscard()}
+                    pending={publish.pending}
+                    formError={publish.formError}
+                    onPublish={publish.requestPublish}
+                    onReplay={publish.replay}
+                    onDiscard={publish.discard}
                 />
             </div>
+            {publish.confirmDialog}
         </main>
     );
 }

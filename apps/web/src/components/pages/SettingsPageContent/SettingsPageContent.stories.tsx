@@ -21,6 +21,7 @@ const meta: Meta<typeof SettingsPageContent> = {
         tokens: [],
         saveRepoAction: fn(),
         deleteTokenAction: fn(),
+        deleteAction: fn(),
     },
     parameters: { pathname: `/projects/${project.id}/settings` },
 };

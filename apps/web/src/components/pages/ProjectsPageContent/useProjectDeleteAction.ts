@@ -6,7 +6,10 @@ import { useTranslation } from 'react-i18next';
 
 import { useMountedConfirmDialog } from '@/components/common/ConfirmDialog/useMountedConfirmDialog';
 
-export function useProjectDeleteAction(deleteAction: (projectId: string) => void | Promise<void>): {
+export function useProjectDeleteAction(
+    deleteAction: (projectId: string) => void | Promise<void>,
+    onDeleted?: () => void,
+): {
     deleting: boolean;
     requestDelete: (projectId: string) => void;
     confirmDialog: React.ReactNode;
@@ -25,7 +28,8 @@ export function useProjectDeleteAction(deleteAction: (projectId: string) => void
             onConfirm: () => {
                 startDelete(async () => {
                     await deleteAction(projectId);
-                    router.refresh();
+                    if (onDeleted) onDeleted();
+                    else router.refresh();
                 });
             },
         });

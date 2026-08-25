@@ -47,6 +47,8 @@ export default async function FlowsPage({ params }: { params: Promise<{ projectI
                 beforeYaml={ledgerFile.content}
                 afterYaml={after}
                 conflict={conflict}
+                storage={project.storage === 'file' || project.storage === 'db' ? project.storage : 'git'}
+                ledgerFilePath={project.ledgerFilePath}
                 onPatch={appendDraftPatch.bind(null, projectId)}
                 onPublish={publishDraft.bind(null, projectId)}
                 onReplay={replayDraft.bind(null, projectId)}

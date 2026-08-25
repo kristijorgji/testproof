@@ -36,6 +36,8 @@
     "unset": "Unset",
     "addFlow": "Add flow",
     "addChildFlow": "Add child",
+    "collapse": "Collapse",
+    "expand": "Expand",
     "selectGroup": "Group",
     "addArea": "Add area",
     "newFlowId": "FLOW-AREA-NAME",
@@ -49,7 +51,28 @@
     "confirmDeleteCovered": "This flow has coverage history. Delete it anyway?",
     "invalidFlowId": "Flow id must match FLOW-[A-Z0-9-]+",
     "duplicateFlowId": "That flow id already exists",
-    "areaRequired": "Area id and title are required"
+    "areaRequired": "Area id and title are required",
+    "publishToFile": "Publish to file",
+    "publishToDb": "Publish to database",
+    "confirmPublishFile": "Write ledger file?",
+    "confirmPublishFileBody": "Write changes to {{path}}? The mounted flows.yaml will update.",
+    "confirmPublishGit": "Publish ledger?",
+    "confirmPublishGitBody": "Commit these draft changes to the GitHub repository.",
+    "confirmPublishGitPrBody": "Open a pull request with these draft changes.",
+    "confirmPublishDb": "Publish ledger?",
+    "confirmPublishDbBody": "Write these draft changes to the internal ledger.",
+    "publishSuccessFile": "Wrote {{path}}",
+    "publishSuccessGit": "Published ledger commit",
+    "publishSuccessPr": "Opened a pull request",
+    "publishSuccessDb": "Published ledger",
+    "publishError": {
+      "prNotAllowed": "Pull requests are only available for git storage",
+      "fileMissing": "Ledger file does not exist",
+      "fileNotWritable": "Ledger file is not writable",
+      "conflict": "Remote ledger changed. Replay or discard your draft.",
+      "publishFailed": "Could not publish the ledger",
+      "projectNotFound": "Project not found"
+    }
   },
   "coverage": {
     "empty": "No flows in the ledger yet.",
@@ -162,7 +185,9 @@
     "ledgerPath": "Path in the repository",
     "ledgerFilePath": "Absolute path to flows.yaml",
     "saveStorage": "Save storage",
-    "exportYaml": "Download flows.yaml"
+    "exportYaml": "Download flows.yaml",
+    "dangerZone": "Danger zone",
+    "deleteProjectHelp": "Permanently delete this project and its runs, sessions, and ledger data."
   },
   "runs": {
     "title": "Runs",

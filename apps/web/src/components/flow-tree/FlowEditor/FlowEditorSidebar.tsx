@@ -1,10 +1,12 @@
 'use client';
 
 import type { Ledger } from '@testproof/core';
+import { useTranslation } from 'react-i18next';
 
-import { FlowEditorAreaSection } from './FlowEditorAreaSection';
 import { FlowEditorCreateForm } from './FlowEditorCreateForm';
 import type { FlowCoverageById, FlowEditorActions } from './useFlowEditorActions';
+
+import { FlowNavTree } from '@/components/flow-tree/FlowNavTree/FlowNavTree';
 
 export function FlowEditorSidebar({
     ledger,
@@ -19,26 +21,56 @@ export function FlowEditorSidebar({
     onRequestDelete: (flowId: string) => void;
     onAddChild: (flowId: string) => void;
 }) {
-    const { selectedId, setSelectedId, collapsedAreas, toggleArea } = actions;
+    const { t } = useTranslation();
+    const {
+        selectedId,
+        setSelectedId,
+        collapsedAreas,
+        collapsedFlows,
+        toggleArea,
+        toggleFlow,
+        setCollapsedAreas,
+        setCollapsedFlows,
+        apply,
+    } = actions;
 
     return (
-        <aside className="flex max-h-[70vh] w-full flex-col border-b border-[var(--border)] md:w-80 md:border-r md:border-b-0">
-            <div className="min-h-0 flex-1 overflow-y-auto">
-                {ledger.areas.map((area) => (
-                    <FlowEditorAreaSection
-                        key={area.id}
-                        area={area}
-                        coverage={coverage}
-                        collapsed={collapsedAreas.has(area.id)}
-                        selectedId={selectedId}
-                        onToggleArea={toggleArea}
-                        onSelect={setSelectedId}
-                        onRequestDelete={onRequestDelete}
-                        onAddChild={onAddChild}
-                    />
-                ))}
+        <div className="flex min-h-0 flex-1 flex-col">
+            <FlowNavTree
+                ledger={ledger}
+                selectedId={selectedId}
+                collapsedAreaIds={collapsedAreas}
+                collapsedFlowIds={collapsedFlows}
+                enableDrag
+                statusByFlowId={(id) => coverage[id]?.status ?? 'todo'}
+                renderFlowActions={(flowId) => (
+                    <>
+                        <button
+                            type="button"
+                            className="text-xs text-[var(--accent)] underline"
+                            onClick={() => onAddChild(flowId)}
+                        >
+                            {t('editor.addChildFlow')}
+                        </button>
+                        <button
+                            type="button"
+                            className="text-xs text-[var(--accent)] underline"
+                            onClick={() => onRequestDelete(flowId)}
+                        >
+                            {t('common.delete')}
+                        </button>
+                    </>
+                )}
+                onSelect={setSelectedId}
+                onToggleArea={toggleArea}
+                onToggleFlow={toggleFlow}
+                onCollapsedAreaIdsChange={setCollapsedAreas}
+                onCollapsedFlowIdsChange={setCollapsedFlows}
+                onMove={apply}
+            />
+            <div className="shrink-0">
+                <FlowEditorCreateForm ledger={ledger} actions={actions} />
             </div>
-            <FlowEditorCreateForm ledger={ledger} actions={actions} />
-        </aside>
+        </div>
     );
 }

@@ -36,6 +36,8 @@
     "unset": "Nicht gesetzt",
     "addFlow": "Flow hinzufügen",
     "addChildFlow": "Kind hinzufügen",
+    "collapse": "Einklappen",
+    "expand": "Ausklappen",
     "selectGroup": "Gruppe",
     "addArea": "Bereich hinzufügen",
     "newFlowId": "FLOW-AREA-NAME",
@@ -49,7 +51,28 @@
     "confirmDeleteCovered": "Dieser Flow hat Coverage-Historie. Trotzdem löschen?",
     "invalidFlowId": "Flow-ID muss FLOW-[A-Z0-9-]+ entsprechen",
     "duplicateFlowId": "Diese Flow-ID existiert bereits",
-    "areaRequired": "Bereichs-ID und Titel sind erforderlich"
+    "areaRequired": "Bereichs-ID und Titel sind erforderlich",
+    "publishToFile": "In Datei veröffentlichen",
+    "publishToDb": "In Datenbank veröffentlichen",
+    "confirmPublishFile": "Ledger-Datei schreiben?",
+    "confirmPublishFileBody": "Änderungen nach {{path}} schreiben? Die gemountete flows.yaml wird aktualisiert.",
+    "confirmPublishGit": "Ledger veröffentlichen?",
+    "confirmPublishGitBody": "Diese Entwurfsänderungen als Commit ins GitHub-Repository schreiben.",
+    "confirmPublishGitPrBody": "Einen Pull Request mit diesen Entwurfsänderungen öffnen.",
+    "confirmPublishDb": "Ledger veröffentlichen?",
+    "confirmPublishDbBody": "Diese Entwurfsänderungen ins interne Ledger schreiben.",
+    "publishSuccessFile": "{{path}} geschrieben",
+    "publishSuccessGit": "Ledger-Commit veröffentlicht",
+    "publishSuccessPr": "Pull Request geöffnet",
+    "publishSuccessDb": "Ledger veröffentlicht",
+    "publishError": {
+      "prNotAllowed": "Pull Requests sind nur bei Git-Speicher verfügbar",
+      "fileMissing": "Ledger-Datei existiert nicht",
+      "fileNotWritable": "Ledger-Datei ist nicht schreibbar",
+      "conflict": "Remote-Ledger hat sich geändert. Entwurf erneut anwenden oder verwerfen.",
+      "publishFailed": "Ledger konnte nicht veröffentlicht werden",
+      "projectNotFound": "Projekt nicht gefunden"
+    }
   },
   "coverage": {
     "empty": "Noch keine Flows im Ledger.",
@@ -162,7 +185,9 @@
     "ledgerPath": "Pfad im Repository",
     "ledgerFilePath": "Absoluter Pfad zu flows.yaml",
     "saveStorage": "Speicher speichern",
-    "exportYaml": "flows.yaml herunterladen"
+    "exportYaml": "flows.yaml herunterladen",
+    "dangerZone": "Gefahrenzone",
+    "deleteProjectHelp": "Dieses Projekt und seine Läufe, Sitzungen und Ledger-Daten dauerhaft löschen."
   },
   "runs": {
     "title": "Läufe",

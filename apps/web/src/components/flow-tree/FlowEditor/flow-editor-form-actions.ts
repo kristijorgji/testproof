@@ -2,7 +2,9 @@ import type { Flow, FlowParent, Ledger, LedgerPatch } from '@testproof/core';
 import { flattenFlowIds } from '@testproof/core/parse';
 import { FLOW_ID_RE } from '@testproof/core/schema';
 
-import { findFlowLocation, hasCoverageWarning, nextFlowIdAfterDelete, parseGroupKey } from './flow-editor-helpers';
+import { findFlowById, findFlowLocation, isDescendantFlow } from '../FlowNavTree/flow-nav-rows';
+
+import { hasCoverageWarning, nextFlowIdAfterDelete, parseGroupKey } from './flow-editor-helpers';
 import type { FlowCoverageById } from './useFlowEditorActions';
 
 export function buildAddFlowPatch(input: {
@@ -27,13 +29,22 @@ export function buildAddFlowPatch(input: {
     if (input.createParentId) {
         const location = findFlowLocation(input.ledger, input.createParentId);
         if (location) {
-            parent = { areaId: location.areaId, groupIndex: location.groupIndex };
-            index = location.index;
+            const parentFlow = findFlowById(input.ledger, input.createParentId);
+            parent = {
+                areaId: location.areaId,
+                groupIndex: location.groupIndex,
+                parentFlowId: input.createParentId,
+            };
+            index = parentFlow?.children?.length ?? 0;
         }
     } else if (input.selectedId) {
         const location = findFlowLocation(input.ledger, input.selectedId);
         if (location) {
-            parent = { areaId: location.areaId, groupIndex: location.groupIndex };
+            parent = {
+                areaId: location.areaId,
+                groupIndex: location.groupIndex,
+                parentFlowId: location.parentFlowId,
+            };
             index = location.index + 1;
         }
     }
@@ -73,11 +84,43 @@ export function buildMoveFlowPatch(ledger: Ledger, flowId: string, delta: number
     const location = findFlowLocation(ledger, flowId);
     if (!location) return null;
     const next = location.index + delta;
-    if (next < 0 || next >= location.groupLength) return null;
+    if (next < 0 || next >= location.siblingCount) return null;
+    return buildMoveFlowTo(ledger, flowId, {
+        areaId: location.areaId,
+        groupIndex: location.groupIndex,
+        parentFlowId: location.parentFlowId,
+        index: next,
+    });
+}
+
+export function buildMoveFlowTo(
+    ledger: Ledger,
+    flowId: string,
+    to: FlowParent & { index: number },
+): LedgerPatch | null {
+    const from = findFlowLocation(ledger, flowId);
+    if (!from) return null;
+    if (to.parentFlowId === flowId) return null;
+    if (to.parentFlowId && isDescendantFlow(ledger, flowId, to.parentFlowId)) return null;
+
+    let index = to.index;
+    const sameParent =
+        from.areaId === to.areaId && from.groupIndex === to.groupIndex && from.parentFlowId === to.parentFlowId;
+    if (sameParent && from.index < index) {
+        index -= 1;
+    }
+    if (index < 0) return null;
+    if (sameParent && from.index === index) return null;
+
     return {
         op: 'move-flow',
         flowId,
-        to: { areaId: location.areaId, groupIndex: location.groupIndex, index: next },
+        to: {
+            areaId: to.areaId,
+            groupIndex: to.groupIndex,
+            parentFlowId: to.parentFlowId,
+            index,
+        },
     };
 }
 

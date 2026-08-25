@@ -27,7 +27,7 @@ export function CoverageFlowPanel({
 
     if (!flow) {
         return (
-            <div className="flex min-h-[70vh] items-start rounded border border-[var(--border)] p-4 text-sm text-[var(--muted)]">
+            <div className="flex h-full min-h-[20rem] items-start p-4 text-sm text-[var(--muted)]">
                 {t('coverage.selectFlow')}
             </div>
         );
@@ -39,7 +39,7 @@ export function CoverageFlowPanel({
     const hasFiles = fileEntries.some(([, files]) => files.length > 0);
 
     return (
-        <section className="flex max-h-[70vh] min-h-0 flex-col overflow-hidden rounded border border-[var(--border)]">
+        <section className="flex h-full min-h-0 flex-col overflow-hidden">
             <header className="sticky top-0 z-10 border-b border-[var(--border)] bg-[var(--card)] p-4">
                 <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge status={status} />

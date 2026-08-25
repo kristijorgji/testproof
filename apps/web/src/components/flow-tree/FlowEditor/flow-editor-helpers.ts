@@ -3,23 +3,6 @@ import { flattenFlowIds } from '@testproof/core/parse';
 
 import type { FlowCoverageById } from './useFlowEditorActions';
 
-export function findFlowLocation(
-    ledger: Ledger,
-    flowId: string,
-): (FlowParent & { index: number; groupLength: number }) | undefined {
-    for (const area of ledger.areas) {
-        for (let groupIndex = 0; groupIndex < area.groups.length; groupIndex += 1) {
-            const group = area.groups[groupIndex];
-            if (!group) continue;
-            const index = group.flows.findIndex((flow) => flow.id === flowId);
-            if (index >= 0) {
-                return { areaId: area.id, groupIndex, index, groupLength: group.flows.length };
-            }
-        }
-    }
-    return undefined;
-}
-
 export function nextFlowIdAfterDelete(ledger: Ledger, deletedId: string): string | undefined {
     const ids = flattenFlowIds(ledger).filter((id) => id !== deletedId);
     const all = flattenFlowIds(ledger);
