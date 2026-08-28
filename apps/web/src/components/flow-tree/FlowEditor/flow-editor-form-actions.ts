@@ -126,7 +126,7 @@ export function buildOutdentFlowPatch(ledger: Ledger, flowId: string): LedgerPat
     });
 }
 
-export function nextGeneratedFlowId(ledger: Ledger, prefix = 'FLOW-NEW'): string {
+function nextGeneratedFlowId(ledger: Ledger, prefix = 'FLOW-NEW'): string {
     const ids = new Set(flattenFlowIds(ledger));
     let n = 1;
     while (ids.has(`${prefix}-${n}`)) n += 1;
