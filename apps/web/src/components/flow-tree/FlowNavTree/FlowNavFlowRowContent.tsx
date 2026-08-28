@@ -5,6 +5,7 @@ import type { CoverageStatus } from '@testproof/core';
 import type { NavRow } from './flow-nav-rows';
 
 import { StatusBadge } from '@/components/status/StatusBadge/StatusBadge';
+import { formatFlowIdForDisplay } from '@/lib/format-flow-id-display';
 
 export function FlowNavFlowRowContent({
     row,
@@ -15,6 +16,7 @@ export function FlowNavFlowRowContent({
     status?: CoverageStatus;
     onSelect?: (flowId: string) => void;
 }) {
+    const displayId = formatFlowIdForDisplay(row.id);
     const label = `${row.id} ${row.title}`;
     return (
         <button
@@ -24,8 +26,10 @@ export function FlowNavFlowRowContent({
             onClick={() => onSelect?.(row.id)}
         >
             {status ? <StatusBadge status={status} /> : null}
-            <code className="min-w-0 truncate whitespace-nowrap text-xs">{row.id}</code>
-            <span className="min-w-0 truncate text-sm text-[var(--muted)]">{row.title}</span>
+            <span className="min-w-0 truncate text-sm">{row.title}</span>
+            <code className="min-w-0 shrink truncate whitespace-nowrap text-[11px] text-[var(--muted)]">
+                {displayId}
+            </code>
         </button>
     );
 }

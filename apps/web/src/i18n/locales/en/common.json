@@ -7,7 +7,17 @@
     "coverage": "Coverage",
     "runs": "Runs",
     "sessions": "Sessions",
-    "settings": "Settings"
+    "settings": "Settings",
+    "about": "About"
+  },
+  "about": {
+    "title": "About",
+    "blurb": "Git-native test case management. Definitions stay in YAML; runs live in Postgres.",
+    "version": "Version",
+    "source": "Source",
+    "issuesLead": "To report a bug or request a feature, open an issue on",
+    "issuesLink": "GitHub",
+    "issuesTrail": ". Include this version number in your report."
   },
   "layout": {
     "resizePanels": "Resize panels"

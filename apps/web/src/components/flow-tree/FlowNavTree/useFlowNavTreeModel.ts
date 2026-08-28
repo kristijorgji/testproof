@@ -20,6 +20,7 @@ export function useFlowNavTreeModel({
     collapsedGroupKeys,
     onCollapsedAreaIdsChange,
     onCollapsedFlowIdsChange,
+    onCollapsedGroupKeysChange,
 }: {
     ledger: Ledger;
     selectedId?: string;
@@ -28,6 +29,7 @@ export function useFlowNavTreeModel({
     collapsedGroupKeys: Set<string>;
     onCollapsedAreaIdsChange: (update: (current: Set<string>) => Set<string>) => void;
     onCollapsedFlowIdsChange: (update: (current: Set<string>) => Set<string>) => void;
+    onCollapsedGroupKeysChange?: (update: (current: Set<string>) => Set<string>) => void;
 }): FlowNavTreeModel {
     const scrollRef = useRef<HTMLDivElement>(null);
     const rows = useMemo(
@@ -58,6 +60,7 @@ export function useFlowNavTreeModel({
         rows,
         setCollapsedAreaIds: onCollapsedAreaIdsChange,
         setCollapsedFlowIds: onCollapsedFlowIdsChange,
+        setCollapsedGroupKeys: onCollapsedGroupKeysChange,
         scrollToFlow,
     });
 

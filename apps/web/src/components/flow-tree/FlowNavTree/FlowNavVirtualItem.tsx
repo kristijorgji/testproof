@@ -52,6 +52,19 @@ export function FlowNavVirtualItem({
         );
     }
 
+    if (row.kind === 'cluster') {
+        const collapsed = collapsedGroupKeys.has(row.key);
+        return (
+            <FlowNavRow
+                row={row}
+                selected={false}
+                collapsed={collapsed}
+                enableDrag={false}
+                onToggle={() => onToggleGroup(row.key)}
+            />
+        );
+    }
+
     const collapsed = row.kind === 'area' ? collapsedAreaIds.has(row.areaId) : collapsedGroupKeys.has(row.key);
     const onToggle = row.kind === 'area' ? () => onToggleArea(row.areaId) : () => onToggleGroup(row.key);
     return enableDrag ? (

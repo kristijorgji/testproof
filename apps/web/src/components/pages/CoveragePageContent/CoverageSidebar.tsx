@@ -31,7 +31,7 @@ export function CoverageSidebar({
 }) {
     const { t } = useTranslation();
     return (
-        <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
             <div className="shrink-0 border-b border-[var(--border)] p-3">
                 <h1 className="mb-3 text-lg font-semibold">{t('coverage.title')}</h1>
                 <CoverageSummaryBar snapshot={snapshot} />
@@ -72,6 +72,7 @@ export function CoverageSidebar({
                     onToggleGroup={filters.toggleGroup}
                     onCollapsedAreaIdsChange={filters.setCollapsedAreas}
                     onCollapsedFlowIdsChange={filters.setCollapsedFlows}
+                    onCollapsedGroupKeysChange={filters.setCollapsedGroups}
                 />
             )}
         </div>

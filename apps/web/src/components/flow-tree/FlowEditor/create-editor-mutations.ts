@@ -14,6 +14,9 @@ import {
     nextSelectedAfterDelete,
     removeConfirmFor,
 } from './flow-editor-form-actions';
+import { parseGroupKey } from './flow-editor-helpers';
+
+import { flowIdPrefixForArea } from '@/lib/format-flow-id-display';
 
 export function createEditorMutations(input: {
     ledger: Ledger;
@@ -83,7 +86,8 @@ export function createEditorMutations(input: {
             }
             apply(result.patch);
             setSelectedId(form.newFlowId);
-            form.setNewFlowId('');
+            const parent = parseGroupKey(form.createGroupKey);
+            form.setNewFlowId(parent ? flowIdPrefixForArea(parent.areaId) : 'FLOW-');
             form.setNewFlowTitle('');
             form.setCreateParentId(undefined);
             bumpFocusTitle();

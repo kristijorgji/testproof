@@ -92,8 +92,83 @@ describe('flattenVisibleNavRows', () => {
             collapsedFlowIds: new Set(),
         });
         expect(rows.filter((row) => row.kind === 'group').map((row) => row.title)).toEqual([
-            'Registration — a. Consumer',
-            'Registration — b. Vendor',
+            'a. Consumer',
+            'b. Vendor',
+        ]);
+        expect(rows.filter((row) => row.kind === 'cluster').map((row) => `${row.key}:${row.title}`)).toEqual([
+            'A::cluster::Registration:Registration',
+        ]);
+    });
+
+    it('clusters same-title groups under a parent row', () => {
+        const ledger: Ledger = {
+            version: 2,
+            areas: [
+                {
+                    id: 'AUTH',
+                    title: 'AUTH',
+                    groups: [
+                        {
+                            title: 'Registration',
+                            subtitle: 'a. Consumer',
+                            flows: [{ id: 'FLOW-A', title: 'Validate' }],
+                        },
+                        {
+                            title: 'Registration',
+                            subtitle: 'b. Vendor',
+                            flows: [{ id: 'FLOW-B', title: 'Confirm' }],
+                        },
+                        { title: 'Login', flows: [{ id: 'FLOW-L', title: 'Login' }] },
+                    ],
+                },
+            ],
+        };
+        const rows = flattenVisibleNavRows(ledger, {
+            collapsedAreaIds: new Set(),
+            collapsedFlowIds: new Set(),
+        });
+        expect(rows.map((row) => `${row.kind}:${row.key}`)).toEqual([
+            'area:AUTH',
+            'cluster:AUTH::cluster::Registration',
+            'group:AUTH::0',
+            'flow:FLOW-A',
+            'group:AUTH::1',
+            'flow:FLOW-B',
+            'group:AUTH::2',
+            'flow:FLOW-L',
+        ]);
+    });
+
+    it('omits clustered groups when the cluster is collapsed', () => {
+        const ledger: Ledger = {
+            version: 2,
+            areas: [
+                {
+                    id: 'AUTH',
+                    title: 'AUTH',
+                    groups: [
+                        {
+                            title: 'Registration',
+                            subtitle: 'a. Consumer',
+                            flows: [{ id: 'FLOW-A', title: 'Validate' }],
+                        },
+                        {
+                            title: 'Registration',
+                            subtitle: 'b. Vendor',
+                            flows: [{ id: 'FLOW-B', title: 'Confirm' }],
+                        },
+                    ],
+                },
+            ],
+        };
+        const rows = flattenVisibleNavRows(ledger, {
+            collapsedAreaIds: new Set(),
+            collapsedFlowIds: new Set(),
+            collapsedGroupKeys: new Set(['AUTH::cluster::Registration']),
+        });
+        expect(rows.map((row) => `${row.kind}:${row.key}`)).toEqual([
+            'area:AUTH',
+            'cluster:AUTH::cluster::Registration',
         ]);
     });
 

@@ -7,7 +7,17 @@
     "coverage": "Abdeckung",
     "runs": "Läufe",
     "sessions": "Sitzungen",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "about": "Über"
+  },
+  "about": {
+    "title": "Über",
+    "blurb": "Git-native Testfallverwaltung. Definitionen bleiben in YAML; Läufe leben in Postgres.",
+    "version": "Version",
+    "source": "Quellcode",
+    "issuesLead": "Um einen Fehler zu melden oder eine Funktion vorzuschlagen, öffne ein Issue auf",
+    "issuesLink": "GitHub",
+    "issuesTrail": ". Nenne diese Versionsnummer in deinem Bericht."
   },
   "layout": {
     "resizePanels": "Bereiche vergrößern oder verkleinern"

@@ -1,10 +1,18 @@
-import type { Flow, FlowParent, Ledger } from '@testproof/core';
+import type { Flow, FlowGroup, FlowParent, Ledger } from '@testproof/core';
 
 import { groupDisplayTitle } from '@/lib/group-display-title';
 
 export type NavRow =
     | { kind: 'area'; key: string; areaId: string; title: string }
-    | { kind: 'group'; key: string; areaId: string; groupIndex: number; title: string }
+    | { kind: 'cluster'; key: string; areaId: string; title: string }
+    | {
+          kind: 'group';
+          key: string;
+          areaId: string;
+          groupIndex: number;
+          title: string;
+          nestedUnderCluster: boolean;
+      }
     | {
           kind: 'flow';
           key: string;
@@ -30,29 +38,34 @@ export interface FlowLocation extends FlowParent {
     siblingCount: number;
 }
 
+function clusterKeyForTitle(areaId: string, title: string): string {
+    return `${areaId}::cluster::${title}`;
+}
+
+function groupNavKey(areaId: string, groupIndex: number): string {
+    return `${areaId}::${groupIndex}`;
+}
+
+/** Keys that must be expanded so a flow under a (possibly clustered) group is visible. */
+export function navCollapseKeysForFlow(ledger: Ledger, flowId: string): string[] {
+    const location = findFlowLocation(ledger, flowId);
+    if (!location) return [];
+    const area = ledger.areas.find((item) => item.id === location.areaId);
+    const group = area?.groups[location.groupIndex];
+    if (!area || !group) return [];
+    const keys = [groupNavKey(location.areaId, location.groupIndex)];
+    if (shouldClusterTitle(area.groups, group.title)) {
+        keys.push(clusterKeyForTitle(location.areaId, group.title));
+    }
+    return keys;
+}
+
 export function flattenVisibleNavRows(ledger: Ledger, options: FlattenNavOptions): NavRow[] {
     const rows: NavRow[] = [];
     for (const area of ledger.areas) {
         rows.push({ kind: 'area', key: area.id, areaId: area.id, title: area.title });
         if (options.collapsedAreaIds.has(area.id)) continue;
-        for (let groupIndex = 0; groupIndex < area.groups.length; groupIndex += 1) {
-            const group = area.groups[groupIndex];
-            if (!group) continue;
-            rows.push({
-                kind: 'group',
-                key: `${area.id}::${groupIndex}`,
-                areaId: area.id,
-                groupIndex,
-                title: groupDisplayTitle(group),
-            });
-            if (options.collapsedGroupKeys?.has(`${area.id}::${groupIndex}`)) continue;
-            appendFlowRows(rows, group.flows, {
-                areaId: area.id,
-                groupIndex,
-                depth: 0,
-                collapsedFlowIds: options.collapsedFlowIds,
-            });
-        }
+        appendGroupedRows(rows, area.id, area.groups, options);
     }
     return rows;
 }
@@ -93,6 +106,60 @@ export function collectAncestorIds(ledger: Ledger, flowId: string): string[] {
         location = findFlowLocation(ledger, location.parentFlowId);
     }
     return ids;
+}
+
+function shouldClusterTitle(groups: FlowGroup[], title: string): boolean {
+    return groups.filter((group) => group.title === title).length > 1;
+}
+
+function appendGroupedRows(rows: NavRow[], areaId: string, groups: FlowGroup[], options: FlattenNavOptions): void {
+    const seenTitles = new Set<string>();
+    for (let groupIndex = 0; groupIndex < groups.length; groupIndex += 1) {
+        const group = groups[groupIndex];
+        if (!group || seenTitles.has(group.title)) continue;
+        seenTitles.add(group.title);
+        const indexes = groups
+            .map((item, index) => (item.title === group.title ? index : -1))
+            .filter((index) => index >= 0);
+        if (indexes.length > 1) {
+            const clusterKey = clusterKeyForTitle(areaId, group.title);
+            rows.push({ kind: 'cluster', key: clusterKey, areaId, title: group.title });
+            if (options.collapsedGroupKeys?.has(clusterKey)) continue;
+            for (const index of indexes) {
+                const clustered = groups[index];
+                if (!clustered) continue;
+                appendGroupAndFlows(rows, areaId, index, clustered, true, options);
+            }
+            continue;
+        }
+        appendGroupAndFlows(rows, areaId, groupIndex, group, false, options);
+    }
+}
+
+function appendGroupAndFlows(
+    rows: NavRow[],
+    areaId: string,
+    groupIndex: number,
+    group: FlowGroup,
+    nestedUnderCluster: boolean,
+    options: FlattenNavOptions,
+): void {
+    const key = groupNavKey(areaId, groupIndex);
+    rows.push({
+        kind: 'group',
+        key,
+        areaId,
+        groupIndex,
+        title: nestedUnderCluster ? (group.subtitle ?? group.title) : groupDisplayTitle(group),
+        nestedUnderCluster,
+    });
+    if (options.collapsedGroupKeys?.has(key)) return;
+    appendFlowRows(rows, group.flows, {
+        areaId,
+        groupIndex,
+        depth: nestedUnderCluster ? 1 : 0,
+        collapsedFlowIds: options.collapsedFlowIds,
+    });
 }
 
 function appendFlowRows(

@@ -30,6 +30,9 @@ export function ProjectNav({ projectId, name }: { projectId: string; name: strin
                 ))}
             </div>
             <div className="flex items-center gap-3">
+                <Link href="/about" className="text-sm">
+                    {t('nav.about')}
+                </Link>
                 <ThemeToggle />
                 <LocaleSwitcher />
                 <SignOutButton />

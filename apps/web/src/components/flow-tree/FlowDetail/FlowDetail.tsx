@@ -15,6 +15,7 @@ export function FlowDetail({
     onChange,
     focusTitleToken,
     breadcrumb,
+    hideIdentity = false,
 }: {
     flow: Flow;
     platforms: PlatformNode[];
@@ -23,6 +24,7 @@ export function FlowDetail({
     onChange?: (patch: Partial<Flow>) => void;
     focusTitleToken?: number;
     breadcrumb?: string;
+    hideIdentity?: boolean;
 }) {
     const { t } = useTranslation();
     const [more, setMore] = useState(false);
@@ -41,6 +43,7 @@ export function FlowDetail({
         <FlowDetailBody
             flowId={flow.id}
             breadcrumb={breadcrumb}
+            hideIdentity={hideIdentity}
             titleInputRef={titleInputRef}
             form={form}
             titleError={titleError}

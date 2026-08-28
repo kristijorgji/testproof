@@ -41,7 +41,7 @@ export function CoverageFlowPanel({
 
     return (
         <section className="flex h-full min-h-0 flex-col overflow-hidden">
-            <header className="sticky top-0 z-10 border-b border-[var(--border)] bg-[var(--card)] p-4">
+            <header className="shrink-0 border-b border-[var(--border)] bg-[var(--card)] p-4">
                 <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge status={status} />
                     <code className="text-xs">{flow.id}</code>

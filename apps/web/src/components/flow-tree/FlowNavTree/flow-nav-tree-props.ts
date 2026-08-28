@@ -16,6 +16,7 @@ export interface FlowNavTreeProps {
     onToggleGroup: (groupKey: string) => void;
     onCollapsedAreaIdsChange: (update: (current: Set<string>) => Set<string>) => void;
     onCollapsedFlowIdsChange: (update: (current: Set<string>) => Set<string>) => void;
+    onCollapsedGroupKeysChange?: (update: (current: Set<string>) => Set<string>) => void;
     onMove?: (patch: LedgerPatch) => void;
     onIndent?: () => void;
     onOutdent?: () => void;

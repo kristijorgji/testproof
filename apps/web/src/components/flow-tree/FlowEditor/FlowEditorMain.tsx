@@ -9,27 +9,15 @@ import { YamlDiff } from '../YamlDiff/YamlDiff';
 
 import { dispatchFlowChange } from './dispatchFlowChange';
 import { flowBreadcrumb } from './flow-breadcrumb';
+import { FlowEditorIdentityHeader } from './FlowEditorIdentityHeader';
+import { FlowEditorPublishFooter } from './FlowEditorPublishFooter';
 import { FlowEditorToolbar } from './FlowEditorToolbar';
 import type { FlowCoverageById, FlowEditorActions } from './useFlowEditorActions';
 
 import type { DraftActionResult, PublishResult, PublishStorage } from '@/actions/action-result';
 import { Scrollbar } from '@/components/common/Scrollbar/Scrollbar';
 
-export function FlowEditorMain({
-    actions,
-    ledger,
-    platforms,
-    coverage,
-    beforeYaml,
-    afterYaml,
-    conflict,
-    storage,
-    ledgerFilePath,
-    onPublish,
-    onReplay,
-    onDiscard,
-    onRequestDelete,
-}: {
+export function FlowEditorMain(props: {
     actions: FlowEditorActions;
     ledger: Ledger;
     platforms: PlatformNode[];
@@ -44,12 +32,25 @@ export function FlowEditorMain({
     onDiscard: () => Promise<DraftActionResult>;
     onRequestDelete: () => void;
 }) {
+    const { actions, ledger, platforms, coverage, beforeYaml, afterYaml, onRequestDelete } = props;
     const { selected, tab, apply, focusTitleToken } = actions;
-    const publish = usePublishAction({ storage, ledgerFilePath, onPublish, onReplay, onDiscard });
+    const publish = usePublishAction({
+        storage: props.storage,
+        ledgerFilePath: props.ledgerFilePath,
+        onPublish: props.onPublish,
+        onReplay: props.onReplay,
+        onDiscard: props.onDiscard,
+    });
+    const breadcrumb = selected ? flowBreadcrumb(ledger, selected.id) : undefined;
 
     return (
-        <main className="flex min-h-0 flex-1 flex-col">
-            <FlowEditorToolbar actions={actions} onRequestDelete={onRequestDelete} />
+        <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            <div className="shrink-0">
+                <FlowEditorToolbar actions={actions} onRequestDelete={onRequestDelete} />
+            </div>
+            {tab === 'edit' && selected ? (
+                <FlowEditorIdentityHeader flowId={selected.id} breadcrumb={breadcrumb} />
+            ) : null}
             <Scrollbar className="min-h-0 flex-1 pb-4">
                 {tab === 'changes' ? (
                     <div className="p-4">
@@ -62,23 +63,23 @@ export function FlowEditorMain({
                         platforms={platforms}
                         demanded={coverage[selected.id]?.demanded}
                         covered={coverage[selected.id]?.covered}
-                        breadcrumb={flowBreadcrumb(ledger, selected.id)}
+                        hideIdentity
                         focusTitleToken={focusTitleToken}
                         onChange={(partial) => dispatchFlowChange(selected.id, partial, apply)}
                     />
                 ) : null}
             </Scrollbar>
-            <div className="sticky bottom-0 border-t border-[var(--border)] bg-[var(--card)] p-3">
+            <FlowEditorPublishFooter>
                 <PublishDialog
-                    storage={storage}
-                    conflict={conflict}
+                    storage={props.storage}
+                    conflict={props.conflict}
                     pending={publish.pending}
                     formError={publish.formError}
                     onPublish={publish.requestPublish}
                     onReplay={publish.replay}
                     onDiscard={publish.discard}
                 />
-            </div>
+            </FlowEditorPublishFooter>
             {publish.confirmDialog}
         </main>
     );

@@ -50,6 +50,7 @@ export interface FlowEditorActions {
     toggleGroup: (groupKey: string) => void;
     setCollapsedAreas: Dispatch<SetStateAction<Set<string>>>;
     setCollapsedFlows: Dispatch<SetStateAction<Set<string>>>;
+    setCollapsedGroups: Dispatch<SetStateAction<Set<string>>>;
 }
 
 export function useFlowEditorActions({
@@ -103,5 +104,6 @@ export function useFlowEditorActions({
         toggleGroup: (groupKey: string) => setCollapsedGroups((current) => toggleSetValue(current, groupKey)),
         setCollapsedAreas,
         setCollapsedFlows,
+        setCollapsedGroups,
     };
 }
