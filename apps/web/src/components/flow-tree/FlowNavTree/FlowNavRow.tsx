@@ -40,7 +40,7 @@ export function FlowNavRow({
                 aria-expanded={!collapsed}
                 onClick={onToggle}
             >
-                <span>{collapsed ? '▸' : '▾'}</span>
+                <span className="flex h-6 w-6 items-center justify-center">{collapsed ? '▸' : '▾'}</span>
                 <span className="truncate">{row.title}</span>
             </button>
         );
@@ -48,9 +48,16 @@ export function FlowNavRow({
 
     if (row.kind === 'group') {
         return (
-            <div className="px-3 py-1 text-xs text-[var(--muted)]" style={{ paddingLeft: 20 }}>
-                {row.title}
-            </div>
+            <button
+                type="button"
+                className="flex w-full items-center gap-2 py-1 text-left text-xs text-[var(--muted)]"
+                style={{ paddingLeft: 20 }}
+                aria-expanded={!collapsed}
+                onClick={onToggle}
+            >
+                <span className="flex h-6 w-6 items-center justify-center">{collapsed ? '▸' : '▾'}</span>
+                <span className="truncate">{row.title}</span>
+            </button>
         );
     }
 

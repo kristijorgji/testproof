@@ -4,8 +4,14 @@ import { FLOW_ID_RE } from '@testproof/core/schema';
 
 import { findFlowById, findFlowLocation, isDescendantFlow } from '../FlowNavTree/flow-nav-rows';
 
-import { hasCoverageWarning, nextFlowIdAfterDelete, parseGroupKey } from './flow-editor-helpers';
-import type { FlowCoverageById } from './useFlowEditorActions';
+import type { FlowCoverageById } from './flow-coverage-types';
+import {
+    flowHasChildren,
+    hasCoverageWarning,
+    nextFlowIdAfterDelete,
+    parseGroupKey,
+    selectionSurvivesDelete,
+} from './flow-editor-helpers';
 
 export function buildAddFlowPatch(input: {
     ledger: Ledger;
@@ -93,6 +99,66 @@ export function buildMoveFlowPatch(ledger: Ledger, flowId: string, delta: number
     });
 }
 
+export function buildIndentFlowPatch(ledger: Ledger, flowId: string): LedgerPatch | null {
+    const location = findFlowLocation(ledger, flowId);
+    if (!location || location.index <= 0) return null;
+    const siblings = siblingFlows(ledger, location);
+    const previous = siblings[location.index - 1];
+    if (!previous) return null;
+    return buildMoveFlowTo(ledger, flowId, {
+        areaId: location.areaId,
+        groupIndex: location.groupIndex,
+        parentFlowId: previous.id,
+        index: previous.children?.length ?? 0,
+    });
+}
+
+export function buildOutdentFlowPatch(ledger: Ledger, flowId: string): LedgerPatch | null {
+    const location = findFlowLocation(ledger, flowId);
+    if (!location?.parentFlowId) return null;
+    const parentLocation = findFlowLocation(ledger, location.parentFlowId);
+    if (!parentLocation) return null;
+    return buildMoveFlowTo(ledger, flowId, {
+        areaId: parentLocation.areaId,
+        groupIndex: parentLocation.groupIndex,
+        parentFlowId: parentLocation.parentFlowId,
+        index: parentLocation.index + 1,
+    });
+}
+
+export function nextGeneratedFlowId(ledger: Ledger, prefix = 'FLOW-NEW'): string {
+    const ids = new Set(flattenFlowIds(ledger));
+    let n = 1;
+    while (ids.has(`${prefix}-${n}`)) n += 1;
+    return `${prefix}-${n}`;
+}
+
+export function buildAddChildFlowPatch(ledger: Ledger, parentFlowId: string): LedgerPatch | null {
+    const location = findFlowLocation(ledger, parentFlowId);
+    const parent = findFlowById(ledger, parentFlowId);
+    if (!location || !parent) return null;
+    const id = nextGeneratedFlowId(ledger);
+    return {
+        op: 'add-flow',
+        parent: {
+            areaId: location.areaId,
+            groupIndex: location.groupIndex,
+            parentFlowId,
+        },
+        flow: { id, title: id },
+        index: parent.children?.length ?? 0,
+    };
+}
+
+function siblingFlows(ledger: Ledger, location: { areaId: string; groupIndex: number; parentFlowId?: string }): Flow[] {
+    const area = ledger.areas.find((item) => item.id === location.areaId);
+    const group = area?.groups[location.groupIndex];
+    if (!group) return [];
+    if (!location.parentFlowId) return group.flows;
+    const parent = findFlowById(ledger, location.parentFlowId);
+    return parent?.children ?? [];
+}
+
 export function buildMoveFlowTo(
     ledger: Ledger,
     flowId: string,
@@ -128,12 +194,16 @@ export function removeConfirmFor(
     flowId: string,
     flows: Flow[],
     coverage: FlowCoverageById,
-): 'covered' | 'plain' | null {
+    ledger: Ledger,
+): { kind: 'covered' | 'plain'; hasChildren: boolean } | null {
     if (!flows.some((flow) => flow.id === flowId)) return null;
-    return hasCoverageWarning(flowId, coverage) ? 'covered' : 'plain';
+    return {
+        kind: hasCoverageWarning(flowId, coverage) ? 'covered' : 'plain',
+        hasChildren: flowHasChildren(ledger, flowId),
+    };
 }
 
 export function nextSelectedAfterDelete(ledger: Ledger, flowId: string, selectedId?: string): string | undefined {
-    if (selectedId !== flowId) return selectedId;
+    if (selectionSurvivesDelete(ledger, flowId, selectedId)) return selectedId;
     return nextFlowIdAfterDelete(ledger, flowId);
 }

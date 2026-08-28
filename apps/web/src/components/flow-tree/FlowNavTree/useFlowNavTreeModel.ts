@@ -17,6 +17,7 @@ export function useFlowNavTreeModel({
     selectedId,
     collapsedAreaIds,
     collapsedFlowIds,
+    collapsedGroupKeys,
     onCollapsedAreaIdsChange,
     onCollapsedFlowIdsChange,
 }: {
@@ -24,13 +25,14 @@ export function useFlowNavTreeModel({
     selectedId?: string;
     collapsedAreaIds: Set<string>;
     collapsedFlowIds: Set<string>;
+    collapsedGroupKeys: Set<string>;
     onCollapsedAreaIdsChange: (update: (current: Set<string>) => Set<string>) => void;
     onCollapsedFlowIdsChange: (update: (current: Set<string>) => Set<string>) => void;
 }): FlowNavTreeModel {
     const scrollRef = useRef<HTMLDivElement>(null);
     const rows = useMemo(
-        () => flattenVisibleNavRows(ledger, { collapsedAreaIds, collapsedFlowIds }),
-        [ledger, collapsedAreaIds, collapsedFlowIds],
+        () => flattenVisibleNavRows(ledger, { collapsedAreaIds, collapsedFlowIds, collapsedGroupKeys }),
+        [ledger, collapsedAreaIds, collapsedFlowIds, collapsedGroupKeys],
     );
     const flowIds = useMemo(
         () => rows.filter((row): row is Extract<NavRow, { kind: 'flow' }> => row.kind === 'flow').map((row) => row.id),

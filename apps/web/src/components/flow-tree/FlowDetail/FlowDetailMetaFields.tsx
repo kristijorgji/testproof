@@ -13,8 +13,8 @@ export function FlowDetailMetaFields({ flow, onChange }: { flow: Flow; onChange?
                 {t('editor.owner')}
                 <input
                     className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
-                    defaultValue={flow.owner ?? ''}
-                    onBlur={(e) => onChange?.({ owner: e.target.value || undefined })}
+                    value={flow.owner ?? ''}
+                    onChange={(e) => onChange?.({ owner: e.target.value || undefined })}
                 />
             </label>
             <label className="grid gap-1">
@@ -23,8 +23,8 @@ export function FlowDetailMetaFields({ flow, onChange }: { flow: Flow; onChange?
                     type="number"
                     min={0}
                     className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
-                    defaultValue={flow.estimateMinutes ?? ''}
-                    onBlur={(e) =>
+                    value={flow.estimateMinutes ?? ''}
+                    onChange={(e) =>
                         onChange?.({
                             estimateMinutes: e.target.value === '' ? undefined : Number(e.target.value),
                         })
@@ -36,16 +36,16 @@ export function FlowDetailMetaFields({ flow, onChange }: { flow: Flow; onChange?
                 {t('editor.preconditions')}
                 <textarea
                     className="min-h-16 rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
-                    defaultValue={flow.preconditions ?? ''}
-                    onBlur={(e) => onChange?.({ preconditions: e.target.value || undefined })}
+                    value={flow.preconditions ?? ''}
+                    onChange={(e) => onChange?.({ preconditions: e.target.value || undefined })}
                 />
             </label>
             <label className="grid gap-1">
                 {t('editor.postconditions')}
                 <textarea
                     className="min-h-16 rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2"
-                    defaultValue={flow.postconditions ?? ''}
-                    onBlur={(e) => onChange?.({ postconditions: e.target.value || undefined })}
+                    value={flow.postconditions ?? ''}
+                    onChange={(e) => onChange?.({ postconditions: e.target.value || undefined })}
                 />
             </label>
         </>

@@ -21,14 +21,17 @@ const ledger = createLedger({
 function FlowNavTreeHarness(props: FlowNavTreeProps) {
     const [collapsedAreaIds, setCollapsedAreaIds] = useState(props.collapsedAreaIds);
     const [collapsedFlowIds, setCollapsedFlowIds] = useState(props.collapsedFlowIds);
+    const [collapsedGroupKeys, setCollapsedGroupKeys] = useState(props.collapsedGroupKeys);
     return (
         <div className="h-80 w-80 border border-[var(--border)]">
             <FlowNavTree
                 {...props}
                 collapsedAreaIds={collapsedAreaIds}
                 collapsedFlowIds={collapsedFlowIds}
+                collapsedGroupKeys={collapsedGroupKeys}
                 onToggleArea={(id) => setCollapsedAreaIds((current) => toggleSetValue(current, id))}
                 onToggleFlow={(id) => setCollapsedFlowIds((current) => toggleSetValue(current, id))}
+                onToggleGroup={(key) => setCollapsedGroupKeys((current) => toggleSetValue(current, key))}
                 onCollapsedAreaIdsChange={setCollapsedAreaIds}
                 onCollapsedFlowIdsChange={setCollapsedFlowIds}
             />
@@ -45,10 +48,12 @@ const meta: Meta<typeof FlowNavTree> = {
         selectedId: parent.id,
         collapsedAreaIds: new Set<string>(),
         collapsedFlowIds: new Set<string>(),
+        collapsedGroupKeys: new Set<string>(),
         statusByFlowId: (id) => (id === child.id ? 'todo' : 'automated'),
         onSelect: fn(),
         onToggleArea: fn(),
         onToggleFlow: fn(),
+        onToggleGroup: fn(),
         onCollapsedAreaIdsChange: fn(),
         onCollapsedFlowIdsChange: fn(),
     },
@@ -61,6 +66,17 @@ export const Selected: Story = {};
 
 export const CollapsedArea: Story = {
     args: { collapsedAreaIds: new Set(['AUTH']), selectedId: undefined },
+};
+
+export const CollapsedGroup: Story = {
+    args: { collapsedGroupKeys: new Set(['AUTH::0']), selectedId: undefined },
+};
+
+export const ChildDropHighlight: Story = {
+    args: {
+        selectedId: child.id,
+        statusByFlowId: () => 'todo',
+    },
 };
 
 export const WithStatuses: Story = {

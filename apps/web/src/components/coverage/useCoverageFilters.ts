@@ -23,6 +23,7 @@ export function useCoverageFilters({
     const [platformFilter, setPlatformFilter] = useState<Set<string>>(new Set());
     const [collapsedAreas, setCollapsedAreas] = useState<Set<string>>(new Set());
     const [collapsedFlows, setCollapsedFlows] = useState<Set<string>>(new Set());
+    const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
 
     const filteredAreas = useMemo(
         () => filterLedgerForCoverage(ledger, query, statusFilter, platformFilter, coverage),
@@ -54,6 +55,7 @@ export function useCoverageFilters({
         clearPlatforms: () => setPlatformFilter(new Set()),
         collapsedAreas,
         collapsedFlows,
+        collapsedGroups,
         toggleArea: (areaId: string) => {
             setCollapsedAreas((current) => {
                 const next = new Set(current);
@@ -67,6 +69,14 @@ export function useCoverageFilters({
                 const next = new Set(current);
                 if (next.has(flowId)) next.delete(flowId);
                 else next.add(flowId);
+                return next;
+            });
+        },
+        toggleGroup: (groupKey: string) => {
+            setCollapsedGroups((current) => {
+                const next = new Set(current);
+                if (next.has(groupKey)) next.delete(groupKey);
+                else next.add(groupKey);
                 return next;
             });
         },

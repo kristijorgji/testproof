@@ -1,6 +1,6 @@
 'use client';
 
-import type { PlatformNode } from '@testproof/core';
+import type { Ledger, PlatformNode } from '@testproof/core';
 
 import { FlowDetail } from '../FlowDetail/FlowDetail';
 import { PublishDialog } from '../PublishDialog/PublishDialog';
@@ -8,6 +8,7 @@ import { usePublishAction } from '../PublishDialog/usePublishAction';
 import { YamlDiff } from '../YamlDiff/YamlDiff';
 
 import { dispatchFlowChange } from './dispatchFlowChange';
+import { flowBreadcrumb } from './flow-breadcrumb';
 import { FlowEditorToolbar } from './FlowEditorToolbar';
 import type { FlowCoverageById, FlowEditorActions } from './useFlowEditorActions';
 
@@ -15,6 +16,7 @@ import type { DraftActionResult, PublishResult, PublishStorage } from '@/actions
 
 export function FlowEditorMain({
     actions,
+    ledger,
     platforms,
     coverage,
     beforeYaml,
@@ -28,6 +30,7 @@ export function FlowEditorMain({
     onRequestDelete,
 }: {
     actions: FlowEditorActions;
+    ledger: Ledger;
     platforms: PlatformNode[];
     coverage: FlowCoverageById;
     beforeYaml: string;
@@ -40,7 +43,7 @@ export function FlowEditorMain({
     onDiscard: () => Promise<DraftActionResult>;
     onRequestDelete: () => void;
 }) {
-    const { selected, tab, apply } = actions;
+    const { selected, tab, apply, focusTitleToken } = actions;
     const publish = usePublishAction({ storage, ledgerFilePath, onPublish, onReplay, onDiscard });
 
     return (
@@ -58,6 +61,8 @@ export function FlowEditorMain({
                         platforms={platforms}
                         demanded={coverage[selected.id]?.demanded}
                         covered={coverage[selected.id]?.covered}
+                        breadcrumb={flowBreadcrumb(ledger, selected.id)}
+                        focusTitleToken={focusTitleToken}
                         onChange={(partial) => dispatchFlowChange(selected.id, partial, apply)}
                     />
                 ) : null}

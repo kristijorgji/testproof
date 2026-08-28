@@ -20,6 +20,7 @@ export type NavRow =
 export interface FlattenNavOptions {
     collapsedAreaIds: ReadonlySet<string>;
     collapsedFlowIds: ReadonlySet<string>;
+    collapsedGroupKeys?: ReadonlySet<string>;
 }
 
 export interface FlowLocation extends FlowParent {
@@ -42,6 +43,7 @@ export function flattenVisibleNavRows(ledger: Ledger, options: FlattenNavOptions
                 groupIndex,
                 title: group.title,
             });
+            if (options.collapsedGroupKeys?.has(`${area.id}::${groupIndex}`)) continue;
             appendFlowRows(rows, group.flows, {
                 areaId: area.id,
                 groupIndex,
