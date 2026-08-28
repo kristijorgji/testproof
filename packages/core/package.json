@@ -26,6 +26,16 @@
       "types": "./dist/schema.d.ts",
       "import": "./dist/schema.js",
       "default": "./dist/schema.js"
+    },
+    "./patch": {
+      "types": "./dist/patch.d.ts",
+      "import": "./dist/patch.js",
+      "default": "./dist/patch.js"
+    },
+    "./document": {
+      "types": "./dist/document.d.ts",
+      "import": "./dist/document.js",
+      "default": "./dist/document.js"
     }
   },
   "files": [

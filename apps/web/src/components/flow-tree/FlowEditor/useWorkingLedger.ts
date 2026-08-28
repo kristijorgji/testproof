@@ -1,13 +1,9 @@
 'use client';
 
-import {
-    applyPatches,
-    type Ledger,
-    type LedgerPatch,
-    openLedgerDocument,
-    parseLedger,
-    serializeLedgerDocument,
-} from '@testproof/core';
+import { openLedgerDocument, serializeLedgerDocument } from '@testproof/core/document';
+import { parseLedger } from '@testproof/core/parse';
+import { applyPatches, type LedgerPatch } from '@testproof/core/patch';
+import type { Ledger } from '@testproof/core/schema';
 import { useEffect, useRef, useState, useTransition } from 'react';
 
 export function useWorkingLedger({
