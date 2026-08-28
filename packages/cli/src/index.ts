@@ -9,7 +9,7 @@ import { validateCommand } from './commands/validate.js';
 import { loadConfig } from './load-config.js';
 
 async function main(): Promise<void> {
-    const program = new Command('testproof').description('Git-native test case management').version('0.4.10');
+    const program = new Command('testproof').description('Git-native test case management').version('0.4.11');
 
     program
         .command('init')
