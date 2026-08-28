@@ -5,34 +5,12 @@ import { useTranslation } from 'react-i18next';
 
 import type { AuthTab } from './auth-tab';
 import { resolveAuthRedirectTarget } from './resolve-auth-redirect';
+import { mapGithubError, type SignInActions } from './sign-in-actions-types';
 
 import { authClient } from '@/lib/auth-client';
+import { readPreferredProjectId, resolveAuthLandingPath } from '@/lib/preferred-project';
 
-function mapGithubError(message: string | undefined, t: (key: string) => string): string {
-    const lower = (message ?? '').toLowerCase();
-    if (lower.includes('provider') || lower.includes('github') || lower.includes('not configured')) {
-        return t('auth.githubNotConfigured');
-    }
-    return t('auth.githubFailed');
-}
-
-export function useSignInActions(nextPath: string): {
-    tab: AuthTab;
-    setTab: (tab: AuthTab) => void;
-    email: string;
-    setEmail: (value: string) => void;
-    password: string;
-    setPassword: (value: string) => void;
-    confirmPassword: string;
-    setConfirmPassword: (value: string) => void;
-    name: string;
-    setName: (value: string) => void;
-    error: string | null;
-    passwordError: string | null;
-    pending: boolean;
-    submit: () => Promise<void>;
-    signInGithub: () => Promise<void>;
-} {
+export function useSignInActions(nextPath: string): SignInActions {
     const { t } = useTranslation();
     const [tab, setTab] = useState<AuthTab>('signIn');
     const [email, setEmail] = useState('');
@@ -49,8 +27,9 @@ export function useSignInActions(nextPath: string): {
         setPasswordError(null);
         setPending(true);
         try {
-            const result = await authClient.signIn.email({ email, password, callbackURL: nextPath });
-            const target = resolveAuthRedirectTarget(result, nextPath);
+            const callbackURL = resolveAuthLandingPath(nextPath, readPreferredProjectId());
+            const result = await authClient.signIn.email({ email, password, callbackURL });
+            const target = resolveAuthRedirectTarget(result, callbackURL);
             if (!target) {
                 setError(result.error?.message ?? t('auth.failed'));
                 setPending(false);
@@ -73,13 +52,14 @@ export function useSignInActions(nextPath: string): {
         }
         setPending(true);
         try {
+            const callbackURL = resolveAuthLandingPath(nextPath, readPreferredProjectId());
             const result = await authClient.signUp.email({
                 email,
                 password,
                 name: name || email,
-                callbackURL: nextPath,
+                callbackURL,
             });
-            const target = resolveAuthRedirectTarget(result, nextPath);
+            const target = resolveAuthRedirectTarget(result, callbackURL);
             if (!target) {
                 setError(result.error?.message ?? t('auth.signUpFailed'));
                 setPending(false);
@@ -103,7 +83,8 @@ export function useSignInActions(nextPath: string): {
         setPasswordError(null);
         setPending(true);
         try {
-            const result = await authClient.signIn.social({ provider: 'github', callbackURL: nextPath });
+            const callbackURL = resolveAuthLandingPath(nextPath, readPreferredProjectId());
+            const result = await authClient.signIn.social({ provider: 'github', callbackURL });
             if (result.error) {
                 setError(mapGithubError(result.error.message, t));
                 setPending(false);

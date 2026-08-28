@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ProjectListRow } from './ProjectListRow';
@@ -8,6 +9,7 @@ import { useProjectDeleteAction } from './useProjectDeleteAction';
 
 import { SignOutButton } from '@/components/auth/SignOutButton/SignOutButton';
 import { CreateProjectFields } from '@/components/projects/CreateProjectFields/CreateProjectFields';
+import { clearPreferredProjectId, syncPreferredProjectId, writePreferredProjectId } from '@/lib/preferred-project';
 
 export type { ProjectListItem } from './ProjectListRow';
 
@@ -22,6 +24,11 @@ export function ProjectsPageContent({
 }) {
     const { t } = useTranslation();
     const { deleting, requestDelete, confirmDialog } = useProjectDeleteAction(deleteAction);
+    const [preferredId, setPreferredId] = useState<string | null>(null);
+
+    useEffect(() => {
+        setPreferredId(syncPreferredProjectId(projects.map((project) => project.id)));
+    }, [projects]);
 
     return (
         <main className="mx-auto max-w-3xl p-6">
@@ -34,18 +41,33 @@ export function ProjectsPageContent({
                     <SignOutButton />
                 </div>
             </div>
-            <form action={createAction} className="mb-6 grid gap-2 rounded border border-[var(--border)] p-4">
+            {projects.length === 0 ? <p className="mb-6 text-[var(--muted)]">{t('projects.empty')}</p> : null}
+            <ul className="mb-6 grid gap-2">
+                {projects.map((project) => (
+                    <ProjectListRow
+                        key={project.id}
+                        project={project}
+                        preferred={preferredId === project.id}
+                        deleting={deleting}
+                        onDelete={requestDelete}
+                        onSetPreferred={() => {
+                            writePreferredProjectId(project.id);
+                            setPreferredId(project.id);
+                        }}
+                        onClearPreferred={() => {
+                            clearPreferredProjectId();
+                            setPreferredId(null);
+                        }}
+                    />
+                ))}
+            </ul>
+            <form action={createAction} className="grid gap-2 rounded border border-[var(--border)] p-4">
+                <h2 className="text-sm font-medium text-[var(--muted)]">{t('projects.createHeading')}</h2>
                 <CreateProjectFields />
                 <button type="submit" className="rounded bg-[var(--accent)] px-3 py-2 text-white">
                     {t('projects.create')}
                 </button>
             </form>
-            {projects.length === 0 ? <p className="text-[var(--muted)]">{t('projects.empty')}</p> : null}
-            <ul className="grid gap-2">
-                {projects.map((project) => (
-                    <ProjectListRow key={project.id} project={project} deleting={deleting} onDelete={requestDelete} />
-                ))}
-            </ul>
             {confirmDialog}
         </main>
     );

@@ -10,6 +10,7 @@ const meta = {
         storage: 'file',
         pending: false,
         formError: null,
+        dirty: false,
         onPublish: fn(),
         onReplay: fn(),
         onDiscard: fn(),
@@ -21,8 +22,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Ready: Story = {};
 
-export const FileMode: Story = {
-    args: { storage: 'file' },
+export const DirtyFileMode: Story = {
+    args: { storage: 'file', dirty: true },
 };
 
 export const GitMode: Story = {

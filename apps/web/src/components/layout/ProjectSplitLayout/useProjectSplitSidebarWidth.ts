@@ -33,9 +33,17 @@ export function useProjectSplitSidebarWidth(): {
     }, []);
 
     const commitWidth = useCallback((next: number) => {
-        const clamped = clampSidebarWidth(next);
+        const clamped = clampSidebarWidth(next, window.innerWidth);
         setWidth(clamped);
         writeStoredSidebarWidth(clamped);
+    }, []);
+
+    useEffect(() => {
+        const onResize = (): void => {
+            setWidth((current) => clampSidebarWidth(current, window.innerWidth));
+        };
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
     }, []);
 
     useEffect(() => {

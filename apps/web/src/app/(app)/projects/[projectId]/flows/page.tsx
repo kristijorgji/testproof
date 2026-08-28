@@ -35,7 +35,9 @@ export default async function FlowsPage({ params }: { params: Promise<{ projectI
         const ledger = parseLedger(after);
         const coverage = await getLatestCoverage(projectId);
 
-        const conflict = draft?.status === 'stale' ? { remote: ledgerFile.content, draft: after } : undefined;
+        const drifted = draft != null && draft.baseBlobSha !== ledgerFile.sha;
+        const conflict =
+            draft?.status === 'stale' || drifted ? { remote: ledgerFile.content, draft: after } : undefined;
 
         return (
             <FlowsPageContent
