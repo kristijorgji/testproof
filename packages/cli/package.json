@@ -1,6 +1,6 @@
 {
   "name": "testproof",
-  "version": "0.4.9",
+  "version": "0.4.10",
   "description": "Testproof CLI — validate, generate, report and push flow coverage",
   "license": "MIT",
   "type": "module",
@@ -43,7 +43,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@testproof/core": "^0.4.9",
+    "@testproof/core": "^0.4.10",
     "commander": "^15.0.0",
     "jiti": "^2.6.1"
   },
