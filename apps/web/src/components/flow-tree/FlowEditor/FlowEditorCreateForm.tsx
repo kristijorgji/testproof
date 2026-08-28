@@ -8,6 +8,7 @@ import { FlowCreateFields } from './FlowCreateFields';
 import type { FlowEditorActions } from './useFlowEditorActions';
 
 import { FormAlert } from '@/components/common/FormAlert/FormAlert';
+import { groupDisplayTitle } from '@/lib/group-display-title';
 
 export function FlowEditorCreateForm({ ledger, actions }: { ledger: Ledger; actions: FlowEditorActions }) {
     const { t } = useTranslation();
@@ -17,7 +18,7 @@ export function FlowEditorCreateForm({ ledger, actions }: { ledger: Ledger; acti
             ledger.areas.flatMap((area) =>
                 area.groups.map((group, groupIndex) => ({
                     key: `${area.id}::${groupIndex}`,
-                    label: `${area.title} / ${group.subtitle ? `${group.title} — ${group.subtitle}` : group.title}`,
+                    label: `${area.title} / ${groupDisplayTitle(group)}`,
                 })),
             ),
         [ledger.areas],

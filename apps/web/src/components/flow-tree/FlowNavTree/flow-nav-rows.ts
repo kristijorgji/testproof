@@ -1,5 +1,7 @@
 import type { Flow, FlowParent, Ledger } from '@testproof/core';
 
+import { groupDisplayTitle } from '@/lib/group-display-title';
+
 export type NavRow =
     | { kind: 'area'; key: string; areaId: string; title: string }
     | { kind: 'group'; key: string; areaId: string; groupIndex: number; title: string }
@@ -41,7 +43,7 @@ export function flattenVisibleNavRows(ledger: Ledger, options: FlattenNavOptions
                 key: `${area.id}::${groupIndex}`,
                 areaId: area.id,
                 groupIndex,
-                title: group.title,
+                title: groupDisplayTitle(group),
             });
             if (options.collapsedGroupKeys?.has(`${area.id}::${groupIndex}`)) continue;
             appendFlowRows(rows, group.flows, {

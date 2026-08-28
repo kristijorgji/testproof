@@ -15,7 +15,20 @@ const parent = createFlow({
     children: [child],
 });
 const ledger = createLedger({
-    areas: [{ id: 'AUTH', title: 'AUTH', groups: [createGroup({ title: 'Login', flows: [parent] })] }],
+    areas: [
+        {
+            id: 'AUTH',
+            title: 'AUTH',
+            groups: [
+                createGroup({ title: 'Registration', subtitle: 'a. Consumer', flows: [parent] }),
+                createGroup({
+                    title: 'Registration',
+                    subtitle: 'b. Vendor',
+                    flows: [createFlow({ id: 'FLOW-AUTH-REG-VENDOR', title: 'Vendor signup completes' })],
+                }),
+            ],
+        },
+    ],
 });
 
 function FlowNavTreeHarness(props: FlowNavTreeProps) {

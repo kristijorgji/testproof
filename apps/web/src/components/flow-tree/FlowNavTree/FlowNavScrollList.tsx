@@ -7,7 +7,9 @@ import type { KeyboardEvent, ReactNode, RefObject } from 'react';
 import { useFlowNavDndState } from './flow-nav-dnd-context';
 import type { NavRow } from './flow-nav-rows';
 import { FlowNavDropIndicator } from './FlowNavDropIndicator';
-import { FlowNavVirtualItem } from './FlowNavVirtualItem';
+import { FlowNavVirtualRows } from './FlowNavVirtualRows';
+
+import { Scrollbar } from '@/components/common/Scrollbar/Scrollbar';
 
 export function FlowNavScrollList({
     scrollRef,
@@ -44,36 +46,25 @@ export function FlowNavScrollList({
 }) {
     const dnd = useFlowNavDndState();
     return (
-        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto outline-none" tabIndex={0} onKeyDown={onKeyDown}>
+        <Scrollbar ref={scrollRef} className="min-h-0 flex-1 outline-none" tabIndex={0} onKeyDown={onKeyDown}>
             <div className="relative w-full" style={{ height: virtualizer.getTotalSize() }}>
-                {virtualizer.getVirtualItems().map((virtualRow) => {
-                    const row = rows[virtualRow.index];
-                    if (!row) return null;
-                    return (
-                        <div
-                            key={row.key}
-                            className="absolute top-0 left-0 w-full"
-                            style={{ transform: `translateY(${virtualRow.start}px)` }}
-                        >
-                            <FlowNavVirtualItem
-                                row={row}
-                                selectedId={selectedId}
-                                collapsedAreaIds={collapsedAreaIds}
-                                collapsedFlowIds={collapsedFlowIds}
-                                collapsedGroupKeys={collapsedGroupKeys}
-                                enableDrag={enableDrag}
-                                statusByFlowId={statusByFlowId}
-                                renderFlowActions={renderFlowActions}
-                                onSelect={onSelect}
-                                onToggleArea={onToggleArea}
-                                onToggleFlow={onToggleFlow}
-                                onToggleGroup={onToggleGroup}
-                            />
-                        </div>
-                    );
-                })}
+                <FlowNavVirtualRows
+                    rows={rows}
+                    virtualizer={virtualizer}
+                    selectedId={selectedId}
+                    collapsedAreaIds={collapsedAreaIds}
+                    collapsedFlowIds={collapsedFlowIds}
+                    collapsedGroupKeys={collapsedGroupKeys}
+                    enableDrag={enableDrag}
+                    statusByFlowId={statusByFlowId}
+                    renderFlowActions={renderFlowActions}
+                    onSelect={onSelect}
+                    onToggleArea={onToggleArea}
+                    onToggleFlow={onToggleFlow}
+                    onToggleGroup={onToggleGroup}
+                />
                 <FlowNavDropIndicator rows={rows} virtualizer={virtualizer} projection={dnd.projection} />
             </div>
-        </div>
+        </Scrollbar>
     );
 }

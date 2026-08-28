@@ -13,6 +13,7 @@ import { FlowEditorToolbar } from './FlowEditorToolbar';
 import type { FlowCoverageById, FlowEditorActions } from './useFlowEditorActions';
 
 import type { DraftActionResult, PublishResult, PublishStorage } from '@/actions/action-result';
+import { Scrollbar } from '@/components/common/Scrollbar/Scrollbar';
 
 export function FlowEditorMain({
     actions,
@@ -49,7 +50,7 @@ export function FlowEditorMain({
     return (
         <main className="flex min-h-0 flex-1 flex-col">
             <FlowEditorToolbar actions={actions} onRequestDelete={onRequestDelete} />
-            <div className="min-h-0 flex-1 overflow-y-auto pb-4">
+            <Scrollbar className="min-h-0 flex-1 pb-4">
                 {tab === 'changes' ? (
                     <div className="p-4">
                         <YamlDiff before={beforeYaml} after={afterYaml} />
@@ -66,7 +67,7 @@ export function FlowEditorMain({
                         onChange={(partial) => dispatchFlowChange(selected.id, partial, apply)}
                     />
                 ) : null}
-            </div>
+            </Scrollbar>
             <div className="sticky bottom-0 border-t border-[var(--border)] bg-[var(--card)] p-3">
                 <PublishDialog
                     storage={storage}
