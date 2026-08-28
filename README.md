@@ -9,10 +9,25 @@ Git-native test case management. Flow **definitions** stay in YAML in your repo.
 Install the CLI, write a `flows.yaml` ledger, and optionally run the web UI
 against that file. Start with [Get started](#get-started).
 
+## Screenshots
+
+Flows editor — tree, coverage-status filters, and sticky detail chrome:
+
+![Flows editor](docs/images/flows-editor.webp)
+
+Coverage view — same tree badges plus platform filters:
+
+![Coverage](docs/images/coverage.webp)
+
+Projects landing — pick a default project and create new ones:
+
+![Projects](docs/images/projects.webp)
+
 ## Table of contents
 
 - [Install](#install)
 - [Get started](#get-started)
+- [Screenshots](#screenshots)
 - [Concepts](#concepts)
 - [Ledger schema (v2)](#ledger-schema-v2)
 - [`testproof.config.ts`](#testproofconfigts)
