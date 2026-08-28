@@ -10,7 +10,7 @@ const meta: Meta<typeof ProjectsPageContent> = {
     title: 'Pages/ProjectsPage',
     component: ProjectsPageContent,
     decorators: [withPageProviders],
-    args: { createAction: fn() },
+    args: { createAction: fn(), deleteAction: fn() },
 };
 
 export default meta;

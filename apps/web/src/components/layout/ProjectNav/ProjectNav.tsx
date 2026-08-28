@@ -22,7 +22,12 @@ export function ProjectNav({ projectId, name }: { projectId: string; name: strin
                 <Link href="/projects" className="font-semibold">
                     {t('app.name')}
                 </Link>
-                <span className="text-[var(--muted)]">{name}</span>
+                <Link href="/projects" className="text-sm">
+                    {t('nav.projects')}
+                </Link>
+                <Link href="/projects" className="text-[var(--muted)]">
+                    {name}
+                </Link>
                 {links.map(([key, href]) => (
                     <Link key={href} className="text-sm" href={`/projects/${projectId}/${href}`}>
                         {t(key)}
