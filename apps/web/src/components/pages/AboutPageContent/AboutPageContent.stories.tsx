@@ -5,6 +5,8 @@ import { withPageProviders } from '../../../../.storybook/decorators/withPagePro
 
 import { AboutPageContent } from './AboutPageContent';
 
+import { TESTPROOF_VERSION } from '@/lib/app-version';
+
 const meta: Meta<typeof AboutPageContent> = {
     title: 'Pages/AboutPage',
     component: AboutPageContent,
@@ -18,6 +20,6 @@ export const Default: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
         await expect(canvas.getByRole('heading', { name: 'About' })).toBeInTheDocument();
-        await expect(canvas.getByText('0.4.10')).toBeInTheDocument();
+        await expect(canvas.getByText(TESTPROOF_VERSION)).toBeInTheDocument();
     },
 };
