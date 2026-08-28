@@ -1,5 +1,5 @@
 /** Kept in lockstep with @testproof/core via `pnpm set-version`. */
-export const TESTPROOF_VERSION = '0.4.11';
+export const TESTPROOF_VERSION = '0.4.12';
 
 export const TESTPROOF_GITHUB_URL = 'https://github.com/kristijorgji/testproof';
 export const TESTPROOF_GITHUB_ISSUES_URL = 'https://github.com/kristijorgji/testproof/issues';
