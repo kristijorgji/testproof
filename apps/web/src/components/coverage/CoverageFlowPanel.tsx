@@ -5,6 +5,7 @@ import { flattenFlows } from '@testproof/core/parse';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { Scrollbar } from '@/components/common/Scrollbar/Scrollbar';
 import { StatusBadge } from '@/components/status/StatusBadge/StatusBadge';
 import type { CoverageRow } from '@/lib/coverage-types';
 
@@ -47,7 +48,7 @@ export function CoverageFlowPanel({
                 </div>
                 <h2 className="mt-1 text-lg font-medium">{flow.title}</h2>
             </header>
-            <div className="min-h-0 flex-1 overflow-y-auto p-4">
+            <Scrollbar className="min-h-0 flex-1 p-4">
                 <div className="grid gap-4">
                     <div className="border-b border-[var(--border)] pb-4">
                         <h3 className="mb-2 text-sm font-medium">{t('coverage.demanded')}</h3>
@@ -103,7 +104,7 @@ export function CoverageFlowPanel({
                         )}
                     </div>
                 </div>
-            </div>
+            </Scrollbar>
         </section>
     );
 }

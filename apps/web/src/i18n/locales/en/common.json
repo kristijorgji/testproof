@@ -9,6 +9,9 @@
     "sessions": "Sessions",
     "settings": "Settings"
   },
+  "layout": {
+    "resizePanels": "Resize panels"
+  },
   "editor": {
     "more": "More fields",
     "publish": "Publish",

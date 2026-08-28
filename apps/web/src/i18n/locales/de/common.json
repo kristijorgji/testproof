@@ -9,6 +9,9 @@
     "sessions": "Sitzungen",
     "settings": "Einstellungen"
   },
+  "layout": {
+    "resizePanels": "Bereiche vergrößern oder verkleinern"
+  },
   "editor": {
     "more": "Weitere Felder",
     "publish": "Veröffentlichen",

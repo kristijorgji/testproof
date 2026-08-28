@@ -65,6 +65,38 @@ describe('flattenVisibleNavRows', () => {
         expect(rows.some((row) => row.kind === 'flow' && row.id === 'FLOW-PARENT')).toBe(true);
     });
 
+    it('includes group subtitle in the display title when present', () => {
+        const ledger: Ledger = {
+            version: 2,
+            areas: [
+                {
+                    id: 'A',
+                    title: 'Area A',
+                    groups: [
+                        {
+                            title: 'Registration',
+                            subtitle: 'a. Consumer',
+                            flows: [{ id: 'FLOW-A', title: 'Validate' }],
+                        },
+                        {
+                            title: 'Registration',
+                            subtitle: 'b. Vendor',
+                            flows: [{ id: 'FLOW-B', title: 'Confirm' }],
+                        },
+                    ],
+                },
+            ],
+        };
+        const rows = flattenVisibleNavRows(ledger, {
+            collapsedAreaIds: new Set(),
+            collapsedFlowIds: new Set(),
+        });
+        expect(rows.filter((row) => row.kind === 'group').map((row) => row.title)).toEqual([
+            'Registration — a. Consumer',
+            'Registration — b. Vendor',
+        ]);
+    });
+
     it('omits groups and flows when an area is collapsed', () => {
         const rows = flattenVisibleNavRows(sampleLedger(), {
             collapsedAreaIds: new Set(['A']),
