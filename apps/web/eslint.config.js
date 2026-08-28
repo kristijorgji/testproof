@@ -15,9 +15,9 @@ export default await createEslintConfig({
         },
         {
             files: [
-                'src/**/*.stories.{ts,tsx}',
-                '.storybook/**/*.{ts,tsx}',
-                'test/**/*.{ts,tsx}',
+                '**/src/**/*.stories.{ts,tsx}',
+                '**/.storybook/**/*.{ts,tsx}',
+                '**/test/**/*.{ts,tsx}',
                 '**/*.test.{ts,tsx}',
             ],
             rules: {
