@@ -47,6 +47,7 @@ function FlowNavTreeHarness(props: FlowNavTreeProps) {
                 onToggleGroup={(key) => setCollapsedGroupKeys((current) => toggleSetValue(current, key))}
                 onCollapsedAreaIdsChange={setCollapsedAreaIds}
                 onCollapsedFlowIdsChange={setCollapsedFlowIds}
+                onCollapsedGroupKeysChange={setCollapsedGroupKeys}
             />
         </div>
     );
