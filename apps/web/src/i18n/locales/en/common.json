@@ -8,7 +8,8 @@
     "runs": "Runs",
     "sessions": "Sessions",
     "settings": "Settings",
-    "about": "About"
+    "about": "About",
+    "projects": "Projects"
   },
   "about": {
     "title": "About",
@@ -90,7 +91,9 @@
       "conflict": "Remote ledger changed. Replay or discard your draft.",
       "publishFailed": "Could not publish the ledger",
       "projectNotFound": "Project not found"
-    }
+    },
+    "reloadFromFile": "Reload from file",
+    "discardChanges": "Discard changes"
   },
   "coverage": {
     "empty": "No flows in the ledger yet.",
@@ -111,7 +114,8 @@
     "noTestFiles": "No tagged test files for this flow in the latest snapshot.",
     "editFlow": "Edit",
     "noMatches": "No flows match the current filters.",
-    "snapshotMeta": "{{branch}} @ {{commit}} · {{date}}"
+    "snapshotMeta": "{{branch}} @ {{commit}} · {{date}}",
+    "filterCoverageStatus": "Coverage status"
   },
   "sessions": {
     "new": "New session",
@@ -167,7 +171,11 @@
     "create": "Create project",
     "delete": "Delete",
     "confirmDelete": "Delete this project? All runs, sessions, and ledger data for this project will be removed.",
-    "deleting": "Deleting…"
+    "deleting": "Deleting…",
+    "setDefault": "Set as default",
+    "clearDefault": "Clear default",
+    "defaultBadge": "Default",
+    "createHeading": "Create project"
   },
   "project": {
     "title": "Project"

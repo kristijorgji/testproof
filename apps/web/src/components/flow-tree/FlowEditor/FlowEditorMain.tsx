@@ -75,6 +75,7 @@ export function FlowEditorMain(props: {
                     conflict={props.conflict}
                     pending={publish.pending}
                     formError={publish.formError}
+                    dirty={beforeYaml !== afterYaml}
                     onPublish={publish.requestPublish}
                     onReplay={publish.replay}
                     onDiscard={publish.discard}

@@ -8,7 +8,8 @@
     "runs": "Läufe",
     "sessions": "Sitzungen",
     "settings": "Einstellungen",
-    "about": "Über"
+    "about": "Über",
+    "projects": "Projekte"
   },
   "about": {
     "title": "Über",
@@ -90,7 +91,9 @@
       "conflict": "Remote-Ledger hat sich geändert. Entwurf erneut anwenden oder verwerfen.",
       "publishFailed": "Ledger konnte nicht veröffentlicht werden",
       "projectNotFound": "Projekt nicht gefunden"
-    }
+    },
+    "reloadFromFile": "Aus Datei neu laden",
+    "discardChanges": "Änderungen verwerfen"
   },
   "coverage": {
     "empty": "Noch keine Flows im Ledger.",
@@ -111,7 +114,8 @@
     "noTestFiles": "Keine getaggten Testdateien für diesen Flow im letzten Snapshot.",
     "editFlow": "Bearbeiten",
     "noMatches": "Keine Flows entsprechen den aktuellen Filtern.",
-    "snapshotMeta": "{{branch}} @ {{commit}} · {{date}}"
+    "snapshotMeta": "{{branch}} @ {{commit}} · {{date}}",
+    "filterCoverageStatus": "Coverage-Status"
   },
   "sessions": {
     "new": "Neue Sitzung",
@@ -167,7 +171,11 @@
     "create": "Projekt erstellen",
     "delete": "Löschen",
     "confirmDelete": "Dieses Projekt löschen? Alle Läufe, Sitzungen und Ledger-Daten werden entfernt.",
-    "deleting": "Wird gelöscht…"
+    "deleting": "Wird gelöscht…",
+    "setDefault": "Als Standard setzen",
+    "clearDefault": "Standard entfernen",
+    "defaultBadge": "Standard",
+    "createHeading": "Projekt erstellen"
   },
   "project": {
     "title": "Projekt"
