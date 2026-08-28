@@ -763,14 +763,23 @@ auto-merge, releases) are in [docs/maintaining.md](docs/maintaining.md).
 `v*` tags via [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/)
 (OIDC, no `NPM_TOKEN`). The same tag also creates a GitHub Release and pushes
 `ghcr.io/kristijorgji/testproof:<version>` plus `:latest`. The workflow fails if
-the tag does not match `packages/core/package.json` version.
+the tag does not match `packages/core/package.json` version, or if the tagged
+commit is not already on `main`.
+
+Always release from an up-to-date `main` after the version bump is merged (or
+commit the bump directly on `main` if you push with sufficient permissions):
 
 ```bash
+git checkout main
+git pull
 pnpm set-version 0.2.0
 git commit -am "chore(release): 0.2.0"
 git tag v0.2.0
-git push --follow-tags
+git push origin main --follow-tags
 ```
+
+Tag ruleset setup and other maintainer gates live in
+[docs/maintaining.md](docs/maintaining.md).
 
 The first publish of each package is a one-time `npm publish --access public`
 from `packages/core` and `packages/cli` after `npm login`. Then attach a trusted

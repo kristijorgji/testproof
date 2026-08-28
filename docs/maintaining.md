@@ -34,8 +34,8 @@ Repo setting **Allow auto-merge** must stay on. If it is off, the
 `dependabot-auto-merge` job fails with `Auto merge is not allowed for this repository`.
 
 [`.github/workflows/dependabot-auto-merge.yml`](../.github/workflows/dependabot-auto-merge.yml)
-enables squash auto-merge for patch and minor bumps only. Majors stay manual
-(`release.yml` docker actions are not exercised by PR CI).
+enables squash auto-merge for every Dependabot PR (patch, minor, and major)
+once required checks pass.
 
 ### Rebase when behind
 
@@ -77,4 +77,47 @@ on `v*` tags via [npm trusted publishing](https://docs.npmjs.com/trusted-publish
 pushes `ghcr.io/kristijorgji/testproof:<version>` plus `:latest`. The tag must
 match `packages/core/package.json` version.
 
-See [Releasing](../README.md#releasing) for the `pnpm set-version` commands.
+**Tag only from `main`.** The release workflow refuses to publish unless the
+tagged commit is reachable from `origin/main`. Never create a `v*` tag on a
+feature branch or unmerged PR commit.
+
+```bash
+git checkout main
+git pull
+pnpm set-version 0.2.0
+git commit -am "chore(release): 0.2.0"
+git tag v0.2.0
+git push origin main --follow-tags
+```
+
+See [Releasing](../README.md#releasing) for the first-time npm trusted-publisher
+setup.
+
+### Tag ruleset (recommended)
+
+GitHub cannot natively require “this commit is on `main`,” but a **tag** ruleset
+can limit who may create or move `v*` tags. Create one in
+**Settings → Rules → Rulesets → New ruleset → New tag ruleset**:
+
+| Field       | Value                                                    |
+| ----------- | -------------------------------------------------------- |
+| Name        | `release-tags`                                           |
+| Enforcement | Active                                                   |
+| Target tags | include `refs/tags/v*`                                   |
+| Rules       | Restrict creations, Restrict updates, Restrict deletions |
+
+Leave bypass actors empty (or only repository admins) so casual pushes and
+agents cannot retag. The workflow `main`-ancestor check remains the enforcement
+that the tagged SHA is already on the default branch.
+
+Via API (admins only):
+
+```bash
+gh api repos/kristijorgji/testproof/rulesets -f name='release-tags' -f target='tag' -f enforcement='active' \
+  --input - <<'JSON'
+{
+  "conditions": { "ref_name": { "include": ["refs/tags/v*"], "exclude": [] } },
+  "rules": [{ "type": "creation" }, { "type": "update", "parameters": { "update_allows_fetch_and_merge": false } }, { "type": "deletion" }]
+}
+JSON
+```
