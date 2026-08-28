@@ -160,7 +160,7 @@ importers:
   packages/cli:
     dependencies:
       '@testproof/core':
-        specifier: ^0.4.9
+        specifier: ^0.4.10
         version: link:../core
       commander:
         specifier: ^15.0.0
