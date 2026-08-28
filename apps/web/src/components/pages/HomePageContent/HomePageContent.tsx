@@ -11,6 +11,9 @@ export function HomePageContent() {
     return (
         <main className="mx-auto max-w-2xl p-8">
             <div className="mb-6 flex justify-end gap-3">
+                <Link href="/about" className="text-sm self-center">
+                    {t('nav.about')}
+                </Link>
                 <ThemeToggle />
                 <LocaleSwitcher />
             </div>

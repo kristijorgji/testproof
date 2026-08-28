@@ -13,6 +13,7 @@ export function FlowNavTree(props: FlowNavTreeProps) {
         collapsedGroupKeys: props.collapsedGroupKeys,
         onCollapsedAreaIdsChange: props.onCollapsedAreaIdsChange,
         onCollapsedFlowIdsChange: props.onCollapsedFlowIdsChange,
+        onCollapsedGroupKeysChange: props.onCollapsedGroupKeysChange,
     });
 
     return (

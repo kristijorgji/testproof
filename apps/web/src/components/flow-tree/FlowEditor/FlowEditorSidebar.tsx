@@ -20,7 +20,7 @@ export function FlowEditorSidebar({
     onRequestDelete: (flowId: string) => void;
 }) {
     return (
-        <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
             <FlowNavTree
                 ledger={ledger}
                 selectedId={actions.selectedId}
@@ -42,6 +42,7 @@ export function FlowEditorSidebar({
                 onToggleGroup={actions.toggleGroup}
                 onCollapsedAreaIdsChange={actions.setCollapsedAreas}
                 onCollapsedFlowIdsChange={actions.setCollapsedFlows}
+                onCollapsedGroupKeysChange={actions.setCollapsedGroups}
                 onMove={actions.apply}
                 onIndent={actions.indentSelected}
                 onOutdent={actions.outdentSelected}

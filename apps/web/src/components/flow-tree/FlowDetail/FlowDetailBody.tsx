@@ -12,6 +12,7 @@ import type { FlowDetailFormState } from './useFlowDetailForm';
 export function FlowDetailBody({
     flowId,
     breadcrumb,
+    hideIdentity = false,
     titleInputRef,
     form,
     titleError,
@@ -25,6 +26,7 @@ export function FlowDetailBody({
 }: {
     flowId: string;
     breadcrumb?: string;
+    hideIdentity?: boolean;
     titleInputRef: RefObject<HTMLInputElement | null>;
     form: FlowDetailFormState;
     titleError: string | null;
@@ -39,8 +41,8 @@ export function FlowDetailBody({
     const { t } = useTranslation();
     return (
         <section className="flex flex-col gap-3 p-4">
-            <code className="text-xs text-[var(--muted)]">{flowId}</code>
-            {breadcrumb ? <p className="text-xs text-[var(--muted)]">{breadcrumb}</p> : null}
+            {!hideIdentity && <code className="text-xs text-[var(--muted)]">{flowId}</code>}
+            {!hideIdentity && breadcrumb ? <p className="text-xs text-[var(--muted)]">{breadcrumb}</p> : null}
             <input
                 ref={titleInputRef}
                 className="rounded border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-lg"

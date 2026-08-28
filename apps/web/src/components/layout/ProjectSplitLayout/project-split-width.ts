@@ -1,6 +1,6 @@
 export const PROJECT_SPLIT_SIDEBAR_DEFAULT = 384;
-export const PROJECT_SPLIT_SIDEBAR_MIN = 240;
-export const PROJECT_SPLIT_SIDEBAR_MAX = 560;
+export const PROJECT_SPLIT_SIDEBAR_MIN = 200;
+export const PROJECT_SPLIT_SIDEBAR_MAX = 720;
 export const PROJECT_SPLIT_SIDEBAR_STEP = 16;
 
 const PROJECT_SPLIT_SIDEBAR_WIDTH_KEY = 'testproof.project-split-sidebar-width';

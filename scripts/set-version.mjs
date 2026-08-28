@@ -63,6 +63,18 @@ if (nextIndex === cliIndex) {
 }
 fs.writeFileSync(cliIndexPath, nextIndex);
 
+const webVersionPath = path.join(root, 'apps/web/src/lib/app-version.ts');
+const webVersion = fs.readFileSync(webVersionPath, 'utf8');
+const nextWebVersion = webVersion.replace(
+    /export const TESTPROOF_VERSION = '(?:\d+\.\d+\.\d+)';/,
+    `export const TESTPROOF_VERSION = '${version}';`,
+);
+if (nextWebVersion === webVersion) {
+    console.error('Could not update TESTPROOF_VERSION in apps/web/src/lib/app-version.ts');
+    process.exit(1);
+}
+fs.writeFileSync(webVersionPath, nextWebVersion);
+
 const { execFileSync } = await import('node:child_process');
 execFileSync('pnpm', ['install', '--lockfile-only'], { cwd: root, stdio: 'inherit' });
 console.log(`Set @testproof/core and testproof to ${version}`);

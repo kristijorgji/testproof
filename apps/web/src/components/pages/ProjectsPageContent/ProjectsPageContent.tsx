@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 
 import { ProjectListRow } from './ProjectListRow';
@@ -24,9 +25,14 @@ export function ProjectsPageContent({
 
     return (
         <main className="mx-auto max-w-3xl p-6">
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex items-center justify-between gap-3">
                 <h1 className="text-2xl font-semibold">{t('projects.title')}</h1>
-                <SignOutButton />
+                <div className="flex items-center gap-3">
+                    <Link href="/about" className="text-sm">
+                        {t('nav.about')}
+                    </Link>
+                    <SignOutButton />
+                </div>
             </div>
             <form action={createAction} className="mb-6 grid gap-2 rounded border border-[var(--border)] p-4">
                 <CreateProjectFields />

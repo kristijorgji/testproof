@@ -11,9 +11,9 @@ export function ProjectSplitLayout({ sidebar, detail }: { sidebar: ReactNode; de
     const { width, desktop, beginDrag, nudge } = useProjectSplitSidebarWidth();
 
     return (
-        <div className="flex min-h-[calc(100vh-3.5rem)] flex-col md:flex-row">
+        <div className="flex h-[calc(100vh-3.5rem)] min-h-0 flex-col md:flex-row">
             <aside
-                className="flex max-h-[50vh] min-h-0 w-full shrink-0 flex-col border-b border-[var(--border)] md:max-h-none md:border-r-0 md:border-b-0"
+                className="flex max-h-[50vh] min-h-0 w-full shrink-0 flex-col overflow-hidden border-b border-[var(--border)] md:max-h-none md:border-r-0 md:border-b-0"
                 style={desktop ? { width } : undefined}
             >
                 {sidebar}
