@@ -56,6 +56,7 @@ export function CoverageSidebar({
                     selectedId={selectedFlowId}
                     collapsedAreaIds={filters.collapsedAreas}
                     collapsedFlowIds={filters.collapsedFlows}
+                    collapsedGroupKeys={filters.collapsedGroups}
                     statusByFlowId={(id) => coverage[id]?.status ?? 'todo'}
                     renderFlowActions={(flowId) => (
                         <Link
@@ -68,6 +69,7 @@ export function CoverageSidebar({
                     onSelect={onSelectedFlowIdChange}
                     onToggleArea={filters.toggleArea}
                     onToggleFlow={filters.toggleFlow}
+                    onToggleGroup={filters.toggleGroup}
                     onCollapsedAreaIdsChange={filters.setCollapsedAreas}
                     onCollapsedFlowIdsChange={filters.setCollapsedFlows}
                 />

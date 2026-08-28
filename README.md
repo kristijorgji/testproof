@@ -49,7 +49,7 @@ Work in **your product repository**. That is where `docs/testing/flows.yaml`,
 `testproof.config.ts`, and every `npx testproof …` command live.
 
 You do **not** clone this repository to run the CLI or the web UI. Pull the
-published image (`ghcr.io/kristijorgji/testproof:0.4.8`) from a compose file
+published image (`ghcr.io/kristijorgji/testproof:0.4.9`) from a compose file
 in the product repo. Clone this repo only when you are [developing the
 image](#develop-the-image).
 
@@ -118,7 +118,7 @@ services:
       timeout: 5s
       retries: 10
   web:
-    image: ghcr.io/kristijorgji/testproof:0.4.8
+    image: ghcr.io/kristijorgji/testproof:0.4.9
     ports:
       - '${TESTPROOF_PORT:-3100}:3100'
     volumes:
@@ -436,7 +436,7 @@ export default defineConfig({
 
 ## CLI reference
 
-Program name `testproof`, version `0.4.8`. Unhandled errors print to stderr and
+Program name `testproof`, version `0.4.9`. Unhandled errors print to stderr and
 exit `1`.
 
 | Command       | Flags                         | Exit codes                                                                                                                                                                    |
@@ -606,7 +606,7 @@ Default `platform` argument: `'mobile'`.
 
 The default path is [Track B](#track-b--web-ui-in-docker-editing-your-own-yaml-file-mode):
 a compose file **in the product repo** that pulls
-`ghcr.io/kristijorgji/testproof:0.4.8` (linux/amd64 and linux/arm64). Do not
+`ghcr.io/kristijorgji/testproof:0.4.9` (linux/amd64 and linux/arm64). Do not
 copy this repository’s `.env.example` into the product repo.
 
 This repo’s [`docker-compose.yml`](docker-compose.yml) is for contributors. It
@@ -763,14 +763,23 @@ auto-merge, releases) are in [docs/maintaining.md](docs/maintaining.md).
 `v*` tags via [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/)
 (OIDC, no `NPM_TOKEN`). The same tag also creates a GitHub Release and pushes
 `ghcr.io/kristijorgji/testproof:<version>` plus `:latest`. The workflow fails if
-the tag does not match `packages/core/package.json` version.
+the tag does not match `packages/core/package.json` version, or if the tagged
+commit is not already on `main`.
+
+Always release from an up-to-date `main` after the version bump is merged (or
+commit the bump directly on `main` if you push with sufficient permissions):
 
 ```bash
+git checkout main
+git pull
 pnpm set-version 0.2.0
 git commit -am "chore(release): 0.2.0"
 git tag v0.2.0
-git push --follow-tags
+git push origin main --follow-tags
 ```
+
+Tag ruleset setup and other maintainer gates live in
+[docs/maintaining.md](docs/maintaining.md).
 
 The first publish of each package is a one-time `npm publish --access public`
 from `packages/core` and `packages/cli` after `npm login`. Then attach a trusted

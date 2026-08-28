@@ -10,7 +10,7 @@ export function FlowDetailFlagFields({ flow, onChange }: { flow: Flow; onChange?
             <label className="flex items-center gap-2">
                 <input
                     type="checkbox"
-                    defaultChecked={flow.flaky}
+                    checked={Boolean(flow.flaky)}
                     onChange={(e) => onChange?.({ flaky: e.target.checked })}
                 />
                 {t('editor.flaky')}
@@ -18,7 +18,7 @@ export function FlowDetailFlagFields({ flow, onChange }: { flow: Flow; onChange?
             <label className="flex items-center gap-2">
                 <input
                     type="checkbox"
-                    defaultChecked={flow.muted}
+                    checked={Boolean(flow.muted)}
                     onChange={(e) => onChange?.({ muted: e.target.checked })}
                 />
                 {t('editor.muted')}
@@ -26,7 +26,7 @@ export function FlowDetailFlagFields({ flow, onChange }: { flow: Flow; onChange?
             <label className="flex items-center gap-2">
                 <input
                     type="checkbox"
-                    defaultChecked={flow.manual}
+                    checked={Boolean(flow.manual)}
                     onChange={(e) => onChange?.({ manual: e.target.checked })}
                 />
                 {t('editor.manual')}

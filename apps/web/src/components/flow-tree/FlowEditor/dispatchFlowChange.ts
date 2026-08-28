@@ -1,8 +1,11 @@
 import type { Flow, LedgerPatch } from '@testproof/core';
 
 export function dispatchFlowChange(flowId: string, partial: Partial<Flow>, apply: (patch: LedgerPatch) => void): void {
-    if (partial.title) {
-        apply({ op: 'set-flow-field', flowId, field: 'title', value: partial.title });
+    if (partial.title !== undefined) {
+        const title = partial.title.trim();
+        if (title.length > 0) {
+            apply({ op: 'set-flow-field', flowId, field: 'title', value: title });
+        }
     }
     if (partial.notes !== undefined) {
         apply({ op: 'set-flow-field', flowId, field: 'notes', value: partial.notes || null });

@@ -6,13 +6,19 @@ export interface FlowNavTreeProps {
     selectedId?: string;
     collapsedAreaIds: Set<string>;
     collapsedFlowIds: Set<string>;
+    collapsedGroupKeys: Set<string>;
     enableDrag?: boolean;
     statusByFlowId?: (id: string) => CoverageStatus;
     renderFlowActions?: (flowId: string) => ReactNode;
     onSelect?: (flowId: string) => void;
     onToggleArea: (areaId: string) => void;
     onToggleFlow: (flowId: string) => void;
+    onToggleGroup: (groupKey: string) => void;
     onCollapsedAreaIdsChange: (update: (current: Set<string>) => Set<string>) => void;
     onCollapsedFlowIdsChange: (update: (current: Set<string>) => Set<string>) => void;
     onMove?: (patch: LedgerPatch) => void;
+    onIndent?: () => void;
+    onOutdent?: () => void;
+    onRequestDelete?: () => void;
+    onFocusTitle?: () => void;
 }

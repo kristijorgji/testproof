@@ -1,7 +1,12 @@
 import type { Ledger } from '@testproof/core';
 import { describe, expect, it } from 'vitest';
 
-import { buildAddFlowPatch, buildMoveFlowPatch } from '../FlowEditor/flow-editor-form-actions';
+import {
+    buildAddFlowPatch,
+    buildIndentFlowPatch,
+    buildMoveFlowPatch,
+    buildOutdentFlowPatch,
+} from '../FlowEditor/flow-editor-form-actions';
 
 import { collectAncestorIds, findFlowLocation, flattenVisibleNavRows, isDescendantFlow } from './flow-nav-rows';
 
@@ -72,6 +77,21 @@ describe('flattenVisibleNavRows', () => {
             'flow:FLOW-OTHER',
         ]);
     });
+
+    it('omits flows when a group is collapsed', () => {
+        const rows = flattenVisibleNavRows(sampleLedger(), {
+            collapsedAreaIds: new Set(),
+            collapsedFlowIds: new Set(),
+            collapsedGroupKeys: new Set(['A::0']),
+        });
+        expect(rows.map((row) => `${row.kind}:${row.key}`)).toEqual([
+            'area:A',
+            'group:A::0',
+            'area:B',
+            'group:B::0',
+            'flow:FLOW-OTHER',
+        ]);
+    });
 });
 
 describe('findFlowLocation', () => {
@@ -125,5 +145,26 @@ describe('buildMoveFlowPatch', () => {
     it('is a no-op when a nested child has no sibling to swap with', () => {
         expect(buildMoveFlowPatch(sampleLedger(), 'FLOW-CHILD', 1)).toBeNull();
         expect(buildMoveFlowPatch(sampleLedger(), 'FLOW-CHILD', -1)).toBeNull();
+    });
+});
+
+describe('indent and outdent', () => {
+    it('indents a flow under its previous sibling', () => {
+        const ledger = sampleLedger();
+        // FLOW-OTHER is alone in B; add a second root in A after parent via sibling in B
+        ledger.areas[1]?.groups[0]?.flows.push({ id: 'FLOW-SECOND', title: 'Second' });
+        expect(buildIndentFlowPatch(ledger, 'FLOW-SECOND')).toEqual({
+            op: 'move-flow',
+            flowId: 'FLOW-SECOND',
+            to: { areaId: 'B', groupIndex: 0, parentFlowId: 'FLOW-OTHER', index: 0 },
+        });
+    });
+
+    it('outdents a child after its parent', () => {
+        expect(buildOutdentFlowPatch(sampleLedger(), 'FLOW-CHILD')).toEqual({
+            op: 'move-flow',
+            flowId: 'FLOW-CHILD',
+            to: { areaId: 'A', groupIndex: 0, index: 1 },
+        });
     });
 });

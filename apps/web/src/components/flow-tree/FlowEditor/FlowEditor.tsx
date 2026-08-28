@@ -7,15 +7,16 @@ import { FlowEditorMain } from './FlowEditorMain';
 import { FlowEditorSidebar } from './FlowEditorSidebar';
 import { useFlowEditorActions } from './useFlowEditorActions';
 import { useFlowEditorDelete } from './useFlowEditorDelete';
+import { useWorkingLedger } from './useWorkingLedger';
 
 import { ProjectSplitLayout } from '@/components/layout/ProjectSplitLayout/ProjectSplitLayout';
 
 export function FlowEditor({
-    ledger,
+    ledger: serverLedger,
     platforms,
     coverage,
     beforeYaml,
-    afterYaml,
+    afterYaml: serverAfterYaml,
     conflict,
     storage,
     ledgerFilePath,
@@ -25,10 +26,15 @@ export function FlowEditor({
     onDiscard,
 }: FlowEditorProps) {
     const searchParams = useSearchParams();
-    const actions = useFlowEditorActions({
-        ledger,
-        coverage,
+    const working = useWorkingLedger({
+        serverLedger,
+        serverAfterYaml,
         onPatch,
+    });
+    const actions = useFlowEditorActions({
+        ledger: working.ledger,
+        coverage,
+        apply: working.apply,
         initialSelectedId: searchParams.get('flow') ?? undefined,
     });
     const { requestDeleteForFlow, confirmDialog } = useFlowEditorDelete(actions);
@@ -38,23 +44,20 @@ export function FlowEditor({
             <ProjectSplitLayout
                 sidebar={
                     <FlowEditorSidebar
-                        ledger={ledger}
+                        ledger={working.ledger}
                         coverage={coverage}
                         actions={actions}
                         onRequestDelete={requestDeleteForFlow}
-                        onAddChild={(flowId) => {
-                            actions.setSelectedId(flowId);
-                            actions.setCreateParentId(flowId);
-                        }}
                     />
                 }
                 detail={
                     <FlowEditorMain
                         actions={actions}
+                        ledger={working.ledger}
                         platforms={platforms}
                         coverage={coverage}
                         beforeYaml={beforeYaml}
-                        afterYaml={afterYaml}
+                        afterYaml={working.afterYaml}
                         conflict={conflict}
                         storage={storage}
                         ledgerFilePath={ledgerFilePath}

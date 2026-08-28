@@ -1,6 +1,6 @@
 {
   "name": "@testproof/core",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "description": "Testproof ledger schema, YAML round-trip editing, coverage derivation and renderers",
   "license": "MIT",
   "type": "module",
@@ -26,6 +26,16 @@
       "types": "./dist/schema.d.ts",
       "import": "./dist/schema.js",
       "default": "./dist/schema.js"
+    },
+    "./patch": {
+      "types": "./dist/patch.d.ts",
+      "import": "./dist/patch.js",
+      "default": "./dist/patch.js"
+    },
+    "./document": {
+      "types": "./dist/document.d.ts",
+      "import": "./dist/document.js",
+      "default": "./dist/document.js"
     }
   },
   "files": [
