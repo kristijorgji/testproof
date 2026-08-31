@@ -24,7 +24,7 @@
     "@tanstack/react-virtual": "^3.14.10",
     "@testproof/core": "workspace:*",
     "@testproof/db": "workspace:*",
-    "better-auth": "^1.7.1",
+    "better-auth": "^1.7.2",
     "clsx": "^2.1.1",
     "diff": "^9.0.0",
     "drizzle-orm": "^0.45.2",
