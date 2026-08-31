@@ -1,21 +1,16 @@
 import type { LedgerPatch } from '@testproof/core';
-import {
-    applyPatches,
-    ledgerPlatforms,
-    openLedgerDocument,
-    parseLedger,
-    serializeLedgerDocument,
-} from '@testproof/core';
+import { ledgerPlatforms } from '@testproof/core';
 import { notFound } from 'next/navigation';
 
 import { appendDraftPatch, discardDraft, publishDraft, replayDraft } from '@/actions/drafts';
 import { FlowsPageContent } from '@/components/pages/FlowsPageContent/FlowsPageContent';
 import { LedgerConfigGateContent } from '@/components/pages/LedgerConfigGateContent/LedgerConfigGateContent';
+import { isLedgerConfigError } from '@/lib/ledger-config-error';
 import { getLatestCoverage } from '@/server/coverage';
-import { isLedgerConfigError } from '@/server/ledger-config-error';
 import { readProjectLedger } from '@/server/ledger-source';
 import { getOpenDraft, getProject } from '@/server/project';
 import { requireUser } from '@/server/session';
+import { loadWorkingLedger } from '@/server/working-ledger';
 
 export default async function FlowsPage({ params }: { params: Promise<{ projectId: string }> }) {
     const user = await requireUser();
@@ -27,12 +22,7 @@ export default async function FlowsPage({ params }: { params: Promise<{ projectI
         const ledgerFile = await readProjectLedger(projectId, user.id);
         const draft = await getOpenDraft(projectId, user.id);
         const patches = (draft?.patches as LedgerPatch[] | undefined) ?? [];
-        const after = (() => {
-            const doc = openLedgerDocument(ledgerFile.content);
-            applyPatches(doc, patches);
-            return serializeLedgerDocument(doc);
-        })();
-        const ledger = parseLedger(after);
+        const { afterYaml: after, ledger } = loadWorkingLedger(ledgerFile.content, patches);
         const coverage = await getLatestCoverage(projectId);
 
         const drifted = draft != null && draft.baseBlobSha !== ledgerFile.sha;
@@ -59,7 +49,15 @@ export default async function FlowsPage({ params }: { params: Promise<{ projectI
         );
     } catch (error) {
         if (isLedgerConfigError(error)) {
-            return <LedgerConfigGateContent name={project.name} projectId={projectId} message={error.message} />;
+            return (
+                <LedgerConfigGateContent
+                    name={project.name}
+                    projectId={projectId}
+                    code={error.code}
+                    path={error.path}
+                    causeMessage={error.causeMessage}
+                />
+            );
         }
         throw error;
     }

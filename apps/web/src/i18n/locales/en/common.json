@@ -161,7 +161,17 @@
   },
   "ledgerConfig": {
     "title": "Configure ledger storage",
-    "openSettings": "Open settings"
+    "openSettings": "Open settings",
+    "missingGitRepo": "Connect a GitHub repository in Settings",
+    "missingGitToken": "Connect a GitHub account to read or publish a git ledger",
+    "missingFilePath": "File storage requires a ledger file path. Set it in project Settings.",
+    "relativeFilePath": "File storage requires an absolute ledger path",
+    "fileMissing": "Cannot read the ledger file at {{path}}. The file may be missing, or a Docker single-file bind mount went stale after the host file was rewritten. Recreate the web container (or mount the parent directory) and confirm the path in Settings.",
+    "fileNotReadable": "Cannot read the ledger file at {{path}}. Check file permissions and the container mount.",
+    "fileNotWritable": "Cannot write the ledger file at {{path}}. Check file permissions and the container mount.",
+    "invalidLedger": "The ledger file is invalid. {{detail}}",
+    "missingDbLedger": "No ledger document. Switch storage to db in Settings to seed one.",
+    "pathLabel": "Path: {{path}}"
   },
   "projects": {
     "title": "Projects",

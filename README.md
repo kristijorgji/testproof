@@ -137,7 +137,7 @@ services:
     ports:
       - '${TESTPROOF_PORT:-3100}:3100'
     volumes:
-      - ./docs/testing/flows.yaml:/data/flows.yaml
+      - ./docs/testing:/data
     environment:
       DATABASE_URL: postgres://testproof:testproof@postgres:5432/testproof
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
@@ -159,6 +159,12 @@ new projects so **Flows** opens the mounted YAML immediately. Without those
 env vars, create a project then Settings → Storage → `file` and set the
 absolute path inside the container (for the snippet above,
 `/data/flows.yaml`).
+
+Mount the **directory** that contains the ledger (`./docs/testing:/data`), not
+the YAML file itself. A single-file bind goes stale when the host file is
+replaced (new inode); Flows then cannot open `/data/flows.yaml`. From 0.4.13
+that shows a storage gate with the path and how to fix it, not an opaque 500.
+Recreate the web container after changing the mount.
 
 Create an env file next to that compose (not this repo’s `.env.example`) and
 set `BETTER_AUTH_SECRET` to at least 32 characters. Then from the product
