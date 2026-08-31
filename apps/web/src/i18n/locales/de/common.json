@@ -161,7 +161,17 @@
   },
   "ledgerConfig": {
     "title": "Ledger-Speicher konfigurieren",
-    "openSettings": "Einstellungen öffnen"
+    "openSettings": "Einstellungen öffnen",
+    "missingGitRepo": "Verbinde in den Einstellungen ein GitHub-Repository",
+    "missingGitToken": "Verbinde ein GitHub-Konto, um ein Git-Ledger zu lesen oder zu veröffentlichen",
+    "missingFilePath": "Dateispeicher benötigt einen Ledger-Dateipfad. Lege ihn in den Projekteinstellungen fest.",
+    "relativeFilePath": "Dateispeicher benötigt einen absoluten Ledger-Pfad",
+    "fileMissing": "Die Ledger-Datei unter {{path}} ist nicht lesbar. Die Datei fehlt, oder ein Docker-Einzeldatei-Bind-Mount ist veraltet, nachdem die Host-Datei ersetzt wurde. Starte den Web-Container neu (oder mounte das übergeordnete Verzeichnis) und prüfe den Pfad in den Einstellungen.",
+    "fileNotReadable": "Die Ledger-Datei unter {{path}} ist nicht lesbar. Prüfe Dateiberechtigungen und den Container-Mount.",
+    "fileNotWritable": "Die Ledger-Datei unter {{path}} ist nicht schreibbar. Prüfe Dateiberechtigungen und den Container-Mount.",
+    "invalidLedger": "Das Ledger ist ungültig. {{detail}}",
+    "missingDbLedger": "Kein Ledger-Dokument. Stelle den Speicher in den Einstellungen auf db, um eines anzulegen.",
+    "pathLabel": "Pfad: {{path}}"
   },
   "projects": {
     "title": "Projekte",

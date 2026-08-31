@@ -12,7 +12,7 @@ const meta: Meta<typeof LedgerConfigGateContent> = {
     args: {
         projectId: 'project-1',
         name: 'Demo',
-        message: 'Connect a GitHub repository in Settings',
+        code: 'missingGitRepo',
     },
     parameters: {
         pathname: '/projects/project-1/flows',
@@ -27,5 +27,17 @@ export const Default: Story = {
         const canvas = within(canvasElement);
         await expect(canvas.getByRole('link', { name: 'Open settings' })).toBeInTheDocument();
         await expect(canvas.getByText('Connect a GitHub repository in Settings')).toBeInTheDocument();
+    },
+};
+
+export const FileMissing: Story = {
+    args: {
+        code: 'fileMissing',
+        path: '/data/flows.yaml',
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        await expect(canvas.getByText(/Cannot read the ledger file at \/data\/flows\.yaml/)).toBeInTheDocument();
+        await expect(canvas.getByText('Path: /data/flows.yaml')).toBeInTheDocument();
     },
 };

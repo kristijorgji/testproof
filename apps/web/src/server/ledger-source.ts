@@ -8,11 +8,13 @@ import { drafts, ledgerDocuments, projects, repos, type StorageMode } from '@tes
 import { and, eq } from 'drizzle-orm';
 
 import { getDb } from './db';
+import { readLedgerFileSync, writeLedgerFileSync } from './file-ledger-io';
 import { createOctokit } from './github/client';
 import { publishCommit, PublishConflictError, publishPullRequest } from './github/publish';
 import { readLedger } from './github/read';
-import { LedgerConfigError } from './ledger-config-error';
 import { getGithubAccessToken } from './session';
+
+import { LedgerConfigError } from '@/lib/ledger-config-error';
 
 const EMPTY_LEDGER_YAML = `version: 2
 areas:
@@ -109,7 +111,7 @@ class FileLedgerSource implements LedgerSource {
     constructor(private readonly filePath: string) {}
 
     async read(): Promise<LedgerRead> {
-        const content = fs.readFileSync(/* turbopackIgnore: true */ this.filePath, 'utf8');
+        const content = readLedgerFileSync(this.filePath);
         const sha = shaOf(content);
         return { content, sha, revision: revisionFromSha(sha) };
     }
@@ -119,8 +121,7 @@ class FileLedgerSource implements LedgerSource {
         if (opts.baseRevision !== undefined && opts.baseRevision !== current.revision) {
             throw new RevisionConflictError(current.revision);
         }
-        fs.mkdirSync(/* turbopackIgnore: true */ path.dirname(this.filePath), { recursive: true });
-        fs.writeFileSync(/* turbopackIgnore: true */ this.filePath, yaml);
+        writeLedgerFileSync(this.filePath, yaml);
     }
 }
 
@@ -136,7 +137,7 @@ class DbLedgerSource implements LedgerSource {
             .from(ledgerDocuments)
             .where(eq(ledgerDocuments.projectId, this.projectId))
             .limit(1);
-        if (!row) throw new Error('No ledger document. Switch storage to db in Settings to seed one.');
+        if (!row) throw new LedgerConfigError('missingDbLedger');
         return { content: row.yaml, sha: shaOf(row.yaml), revision: row.revision };
     }
 
@@ -179,18 +180,18 @@ export async function getLedgerSource(projectId: string, userId: string): Promis
     if (storage === 'git') {
         const [repo] = await getDb().select().from(repos).where(eq(repos.projectId, projectId)).limit(1);
         const token = userId ? await getGithubAccessToken(userId) : undefined;
-        if (!repo) throw new LedgerConfigError('Connect a GitHub repository in Settings');
-        if (!token) throw new LedgerConfigError('Connect a GitHub account to read or publish a git ledger');
+        if (!repo) throw new LedgerConfigError('missingGitRepo');
+        if (!token) throw new LedgerConfigError('missingGitToken');
         return new GitLedgerSource(repo.owner, repo.name, project.ledgerPath, project.defaultBranch, token);
     }
 
     if (storage === 'file') {
         const raw = project.ledgerFilePath;
         if (!raw) {
-            throw new LedgerConfigError('File storage requires a ledger file path. Set it in project Settings.');
+            throw new LedgerConfigError('missingFilePath');
         }
         if (!path.isAbsolute(raw)) {
-            throw new LedgerConfigError('File storage requires an absolute ledger path');
+            throw new LedgerConfigError('relativeFilePath');
         }
         return new FileLedgerSource(raw);
     }
