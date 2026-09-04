@@ -242,13 +242,13 @@ importers:
     dependencies:
       '@kristijorgji/eslint-config-react-typescript':
         specifier: ^2.2.1
-        version: 2.2.1(@next/eslint-plugin-next@16.3.3(eslint@9.39.5(jiti@2.7.0)))(@typescript-eslint/eslint-plugin@8.67.0(@typescript-eslint/parser@8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/utils@8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.5(jiti@2.7.0)))(eslint-plugin-react-dom@5.18.6(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-react-x@5.18.6(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-react@7.37.5(eslint@9.39.5(jiti@2.7.0)))(eslint-plugin-storybook@10.5.10(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(prettier@3.9.6)(typescript@5.9.3)
+        version: 2.2.1(@next/eslint-plugin-next@16.3.4(eslint@9.39.5(jiti@2.7.0)))(@typescript-eslint/eslint-plugin@8.67.0(@typescript-eslint/parser@8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/utils@8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.5(jiti@2.7.0)))(eslint-plugin-react-dom@5.18.6(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-react-x@5.18.6(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-react@7.37.5(eslint@9.39.5(jiti@2.7.0)))(eslint-plugin-storybook@10.5.10(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(prettier@3.9.6)(typescript@5.9.3)
       '@kristijorgji/eslint-config-typescript':
         specifier: ^1.2.3
         version: 1.2.3(@typescript-eslint/eslint-plugin@8.67.0(@typescript-eslint/parser@8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/utils@8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(prettier@3.9.6)(typescript@5.9.3)
       '@next/eslint-plugin-next':
         specifier: ^16
-        version: 16.3.3(eslint@9.39.5(jiti@2.7.0))
+        version: 16.3.4(eslint@9.39.5(jiti@2.7.0))
       eslint:
         specifier: ^9
         version: 9.39.5(jiti@2.7.0)
@@ -1347,8 +1347,8 @@ packages:
   '@next/env@16.3.3':
     resolution: {integrity: sha512-U2eYQRwXj+dsqxV79zFqExDdatnNY/ZWc2nsJU1p/OgT7fd3dXwlF6OjYaFQCfMoeTA19PWq+wVmYgimVA+V+g==}
 
-  '@next/eslint-plugin-next@16.3.3':
-    resolution: {integrity: sha512-pbEh30vvjKpDoTAmo1v3q2uM4JUi8QaEBpbmjWvGfoec2jLghy/WNtvzAT0bk+Ik9oz6etjt4YjXEk4BQnicCw==}
+  '@next/eslint-plugin-next@16.3.4':
+    resolution: {integrity: sha512-szW9y2Aumu4z88YXfTzcFsgUAg2k64uzbtcO5L9f1AKS4w/GUKJcbFllRflROVyNPgJtGOnvNxiyp3v6b+prIA==}
 
   '@next/swc-darwin-arm64@16.3.3':
     resolution: {integrity: sha512-8Hiv32QJPwdV6KYJ8meR9SBA061tQqnIKTJDocvOXlEQqib0xMFpzArosuffFUUc0sslbh7QQ8a3Yey1QV8EIw==}
@@ -5955,7 +5955,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@kristijorgji/eslint-config-react-typescript@2.2.1(@next/eslint-plugin-next@16.3.3(eslint@9.39.5(jiti@2.7.0)))(@typescript-eslint/eslint-plugin@8.67.0(@typescript-eslint/parser@8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/utils@8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.5(jiti@2.7.0)))(eslint-plugin-react-dom@5.18.6(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-react-x@5.18.6(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-react@7.37.5(eslint@9.39.5(jiti@2.7.0)))(eslint-plugin-storybook@10.5.10(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(prettier@3.9.6)(typescript@5.9.3)':
+  '@kristijorgji/eslint-config-react-typescript@2.2.1(@next/eslint-plugin-next@16.3.4(eslint@9.39.5(jiti@2.7.0)))(@typescript-eslint/eslint-plugin@8.67.0(@typescript-eslint/parser@8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/utils@8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.5(jiti@2.7.0)))(eslint-plugin-react-dom@5.18.6(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-react-x@5.18.6(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-react@7.37.5(eslint@9.39.5(jiti@2.7.0)))(eslint-plugin-storybook@10.5.10(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(prettier@3.9.6)(typescript@5.9.3)':
     dependencies:
       '@kristijorgji/eslint-config-typescript': 1.2.3(@typescript-eslint/eslint-plugin@8.67.0(@typescript-eslint/parser@8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/utils@8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(prettier@3.9.6)(typescript@5.9.3)
       '@kristijorgji/eslint-plugin': 0.2.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
@@ -5967,7 +5967,7 @@ snapshots:
       prettier: 3.9.6
       typescript: 5.9.3
     optionalDependencies:
-      '@next/eslint-plugin-next': 16.3.3(eslint@9.39.5(jiti@2.7.0))
+      '@next/eslint-plugin-next': 16.3.4(eslint@9.39.5(jiti@2.7.0))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.39.5(jiti@2.7.0))
       eslint-plugin-react: 7.37.5(eslint@9.39.5(jiti@2.7.0))
       eslint-plugin-react-dom: 5.18.6(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
@@ -6051,7 +6051,7 @@ snapshots:
 
   '@next/env@16.3.3': {}
 
-  '@next/eslint-plugin-next@16.3.3(eslint@9.39.5(jiti@2.7.0))':
+  '@next/eslint-plugin-next@16.3.4(eslint@9.39.5(jiti@2.7.0))':
     dependencies:
       '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.5(jiti@2.7.0))
       fast-glob: 3.3.1
