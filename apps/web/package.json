@@ -21,7 +21,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@hono/zod-openapi": "^1.6.3",
     "@tanstack/react-query": "^5.102.8",
-    "@tanstack/react-virtual": "^3.14.10",
+    "@tanstack/react-virtual": "^3.14.11",
     "@testproof/core": "workspace:*",
     "@testproof/db": "workspace:*",
     "better-auth": "^1.7.3",
