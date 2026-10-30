@@ -42,7 +42,7 @@
     "zod": "^4.6.6"
   },
   "devDependencies": {
-    "@storybook/addon-a11y": "^10.6.3",
+    "@storybook/addon-a11y": "^10.6.4",
     "@storybook/react-vite": "^10.6.4",
     "@tailwindcss/postcss": "^4.3.3",
     "@testproof/eslint-config": "workspace:*",
