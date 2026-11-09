@@ -75,8 +75,8 @@ importers:
         specifier: ^4.13.16
         version: 4.13.16
       i18next:
-        specifier: ^26.7.1
-        version: 26.7.1(typescript@7.0.2)
+        specifier: ^26.7.2
+        version: 26.7.2(typescript@7.0.2)
       lucide-react:
         specifier: ^1.66.0
         version: 1.66.0(@types/react@19.2.18)(react@19.2.8)
@@ -94,7 +94,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-i18next:
         specifier: ^17.1.13
-        version: 17.1.13(i18next@26.7.1(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+        version: 17.1.13(i18next@26.7.2(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
       server-only:
         specifier: ^0.0.1
         version: 0.0.1
@@ -3801,8 +3801,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  i18next@26.7.1:
-    resolution: {integrity: sha512-cX+3RRVczel/V2kCMTACckSGSpqgtWYEA6beXNYVms7dOQiHojdPYHD26lT4IKimNeoGWrLvtPgjftbRvmZJVw==}
+  i18next@26.7.2:
+    resolution: {integrity: sha512-RsOY3BeaCDdkk52NeJSFAXELQ2rQXBO/tOub6L8ue2ICPfR/FRDWDOfEDg4xMPd1SqO5goVYQ6i72qWEUB/PPw==}
     peerDependencies:
       typescript: ^5 || ^6 || ^7
     peerDependenciesMeta:
@@ -8172,7 +8172,7 @@ snapshots:
 
   husky@9.1.7: {}
 
-  i18next@26.7.1(typescript@7.0.2):
+  i18next@26.7.2(typescript@7.0.2):
     optionalDependencies:
       typescript: 7.0.2
 
@@ -8870,11 +8870,11 @@ snapshots:
       react: 19.2.8
       scheduler: 0.27.0
 
-  react-i18next@17.1.13(i18next@26.7.1(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2):
+  react-i18next@17.1.13(i18next@26.7.2(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2):
     dependencies:
       '@babel/runtime': 7.29.13
       html-parse-stringify: 4.0.1
-      i18next: 26.7.1(typescript@7.0.2)
+      i18next: 26.7.2(typescript@7.0.2)
       react: 19.2.8
       use-sync-external-store: 1.7.0(react@19.2.8)
     optionalDependencies:
