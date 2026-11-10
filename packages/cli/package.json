@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@testproof/core": "^0.4.13",
-    "commander": "^15.0.0",
+    "commander": "^15.1.0",
     "jiti": "^2.6.1"
   },
   "devDependencies": {
