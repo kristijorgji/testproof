@@ -93,8 +93,8 @@ importers:
         specifier: 19.2.8
         version: 19.2.8(react@19.2.8)
       react-i18next:
-        specifier: ^18.0.0
-        version: 18.0.0(i18next@27.0.1(typescript@7.0.2))(react@19.2.8)(typescript@7.0.2)
+        specifier: ^18.0.1
+        version: 18.0.1(@types/react@19.2.18)(i18next@27.0.1(typescript@7.0.2))(react@19.2.8)(typescript@7.0.2)
       server-only:
         specifier: ^0.0.1
         version: 0.0.1
@@ -4469,14 +4469,17 @@ packages:
     peerDependencies:
       react: ^19.2.8
 
-  react-i18next@18.0.0:
-    resolution: {integrity: sha512-xXq/pcuMRwrW4iH0If/RjbPH3zuEqWVtaw4PjDsG54vx0FTook7aS3kop7DXy3g66wHkYUji8l7ZBrA8kfj67Q==}
+  react-i18next@18.0.1:
+    resolution: {integrity: sha512-kPWXI0E/lrPj3+/umcKNzYZVnWmEedLiamMzDIHfbs+5ANf6yzvlZsjKou8f7kaGkfMMDLIZBejV+4aSN1CyBw==}
     engines: {node: '>=22'}
     peerDependencies:
-      i18next: '>= 27.0.0'
+      '@types/react': '*'
+      i18next: '>= 27.0.1'
       react: '>= 18.0.0'
       typescript: ^5 || ^6 || ^7
     peerDependenciesMeta:
+      '@types/react':
+        optional: true
       typescript:
         optional: true
 
@@ -8944,12 +8947,13 @@ snapshots:
       react: 19.2.8
       scheduler: 0.27.0
 
-  react-i18next@18.0.0(i18next@27.0.1(typescript@7.0.2))(react@19.2.8)(typescript@7.0.2):
+  react-i18next@18.0.1(@types/react@19.2.18)(i18next@27.0.1(typescript@7.0.2))(react@19.2.8)(typescript@7.0.2):
     dependencies:
       html-parse-stringify: 4.0.1
       i18next: 27.0.1(typescript@7.0.2)
       react: 19.2.8
     optionalDependencies:
+      '@types/react': 19.2.18
       typescript: 7.0.2
 
   react-is@16.13.1: {}
